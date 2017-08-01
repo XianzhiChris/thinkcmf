@@ -1,0 +1,67 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminIndex/index')}">所有记录</a></li>
+        <li>
+            <a href="{:url('AdminIndex/add')}">添加记录</a>
+        </li>
+        <li class="active"><a href="#">编辑记录</a></li>
+    </ul>
+    <form action="{:url('AdminIndex/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <input type="hidden" name="post[id]" value="{$post.id}">
+                    <tr>
+                        <th width="150">方式</th>
+                        <td>
+                            <if $post.post_type=="1">
+                                微信
+                                <elseif $post.post_type=="2">
+                                    支付宝
+                                    <else/>
+                                    银行卡
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>用户ID</th>
+                        <td>{$post.user_id}</td>
+                    </tr>
+                    <tr>
+                        <th>金额</th>
+                        <td>
+                            {$post.post_jine}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>提现</th>
+                        <td>
+                            <if $post.status=="1">
+                                <input type="checkbox" name="post[status]" id="status" value="1" checked>
+                                <else/>
+                                <input type="checkbox" name="post[status]" id="status" value="1">
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>备注</th>
+                        <td><input class="form-control" type="text" name="post[remark]" id="remark" value="{$post.remark}"
+                                   placeholder="请输入备注"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

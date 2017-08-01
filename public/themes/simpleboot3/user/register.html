@@ -15,13 +15,13 @@
         <div class="col-md-4 col-md-offset-4">
             <h2 class="text-center">用户注册</h2>
             <php>
-                $mobile_tab_active=empty($theme_vars['enable_mobile'])?'':'active';
-                $email_tab_active=empty($theme_vars['enable_mobile'])?'active':'';
+                $mobile_tab_active=empty($theme_vars['enable_mobile']['value'])?'':'active';
+                $email_tab_active=empty($theme_vars['enable_mobile']['value'])?'active':'';
             </php>
-            <notempty name="theme_vars.enable_mobile">
+            <notempty name="theme_vars.enable_mobile.value">
                 <ul class="nav nav-tabs nav-justified" id="myTab" style="margin-bottom: 15px;">
-                    <li class="active"><a href="#mobile" data-toggle="tab">手机注册</a></li>
-                    <li><a href="#email" data-toggle="tab">邮箱注册</a></li>
+                    <li><a href="#mobile" data-toggle="tab">手机注册</a></li>
+                    <li class="active"><a href="#email" data-toggle="tab">邮箱注册</a></li>
                 </ul>
             </notempty>
 
@@ -30,7 +30,7 @@
             </php>
 
             <div class="tab-content">
-                <notempty name="theme_vars.enable_mobile">
+                <notempty name="theme_vars.enable_mobile.value">
                     <div class="tab-pane {$mobile_tab_active}" id="mobile">
                         <form class="js-ajax-form" action="{:url('user/Register/doRegister')}" method="post">
 
