@@ -1,10 +1,149 @@
+<style>
+    /*-----------------导航hack--------------------*/
+    .nav-list > li.open {
+        position: relative;
+    }
+
+    .nav-list > li.open .back {
+        display: none;
+    }
+
+    .nav-list > li.open .normal {
+        display: inline-block !important;
+    }
+
+    .nav-list > li.open a {
+        padding-left: 7px;
+    }
+
+    .nav-list > li .submenu > li > a {
+        background: #fff;
+    }
+
+    .nav-list > li .submenu > li a > [class*="fa-"]:first-child {
+        left: 20px;
+    }
+
+    .nav-list > li ul.submenu ul.submenu > li a > [class*="fa-"]:first-child {
+        left: 30px;
+    }
+
+    /*----------------导航hack--------------------*/
+</style>
 <div class="list-group">
-    <a class="list-group-item" href="{:cmf_url('user/Profile/edit')}"><i class="fa fa-list-alt fa-fw"></i> 修改资料</a>
-    <a class="list-group-item" href="{:cmf_url('user/Profile/password')}"><i class="fa fa-lock fa-fw"></i> 修改密码</a>
-    <a class="list-group-item" href="{:cmf_url('user/Profile/avatar')}"><i class="fa fa-user fa-fw"></i> 编辑头像</a>
-    <a class="list-group-item" href="{:cmf_url('user/Profile/binding')}"><i class="fa fa-exchange fa-fw"></i> 绑定账号</a>
-    <a class="list-group-item" href="{:cmf_url('user/favorite/index')}"><i class="fa fa-star-o fa-fw"></i> 我的收藏</a>
-    <!--<a class="list-group-item" href="{:url('portal/article/myIndex')}"><i class="fa fa-file-text fa-fw"></i> 我的文章</a>-->
-    <!--<a class="list-group-item" href="{:url('chem/order/index')}"><i class="fa fa-list fa-fw"></i> 我的订单</a>-->
-    <a class="list-group-item" href="{:cmf_url('user/comment/index')}"><i class="fa fa-comments-o fa-fw"></i> 我的评论</a>
+    <ul class="nav nav-list">
+        <li><a href="{:cmf_url('user/Guanjianci/index')}"><i class="fa fa-rocket"></i><span class="menu-text"> 关键词点击 </span></a></li>
+        <li><a href="{:cmf_url('user/Pinglun/index')}"><i class="fa fa-paint-brush normal"></i><span class="menu-text"> 评论任务 </span></a></li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-rmb"></i>
+                <span class="menu-text normal"> 财务信息 </span>
+                <b class="arrow fa fa-angle-right normal"></b>
+                <i class="fa fa-reply back"></i>
+                <span class="menu-text back">返回</span>
+
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a href="{:cmf_url('user/Mingxi/index')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									财务明细								</span>
+                    </a>
+
+                </li>
+
+                <li>
+                    <a href="{:cmf_url('user/Chongzhi/index')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									账户充值								</span>
+                    </a>
+
+                </li>
+
+                <li>
+                    <a href="{:cmf_url('user/Fapiao/index')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									发票索取								</span>
+                    </a>
+
+                </li>
+                <!--<li>-->
+                    <!--<a href="{:cmf_url('user/Tixian/index')}">-->
+                        <!--<i class="fa fa-caret-right"></i>-->
+                        <!--<span class="menu-text">-->
+									<!--申请提现								</span>-->
+                    <!--</a>-->
+
+                <!--</li>-->
+
+            </ul>
+
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-trophy"></i>
+                <span class="menu-text normal"> 团队管理 </span>
+                <b class="arrow fa fa-angle-right normal"></b>
+                <i class="fa fa-reply back"></i>
+                <span class="menu-text back">返回</span>
+
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a href="{:cmf_url('user/Tuandui/index')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									团队人员								</span>
+                    </a>
+
+                </li>
+
+                <li>
+                    <a href="{:cmf_url('user/Tuandui/jiangjin')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									团队奖金								</span>
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </li>
+        <li><a href="#" class="dropdown-toggle">
+            <i class="fa fa-user"></i>
+            <span class="menu-text normal"> 个人信息 </span>
+            <b class="arrow fa fa-angle-right normal"></b>
+            <i class="fa fa-reply back"></i>
+            <span class="menu-text back">返回</span>
+
+        </a>
+
+            <ul class="submenu">
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/Profile/edit')}"><i class="fa fa-list-alt fa-fw"></i> 修改资料</a>
+                </li>
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/Profile/password')}"><i class="fa fa-lock fa-fw"></i> 修改密码</a>
+                </li>
+            </ul></li>
+    </ul>
+    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/edit')}"><i class="fa fa-list-alt fa-fw"></i> 修改资料</a>-->
+    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/password')}"><i class="fa fa-lock fa-fw"></i> 修改密码</a>-->
+    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/avatar')}"><i class="fa fa-user fa-fw"></i> 编辑头像</a>-->
+    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/binding')}"><i class="fa fa-exchange fa-fw"></i> 绑定账号</a>-->
+    <!--<a class="list-group-item" href="{:cmf_url('user/favorite/index')}"><i class="fa fa-star-o fa-fw"></i> 我的收藏</a>-->
+    <!--&lt;!&ndash;<a class="list-group-item" href="{:url('portal/article/myIndex')}"><i class="fa fa-file-text fa-fw"></i> 我的文章</a>&ndash;&gt;-->
+    <!--&lt;!&ndash;<a class="list-group-item" href="{:url('chem/order/index')}"><i class="fa fa-list fa-fw"></i> 我的订单</a>&ndash;&gt;-->
+    <!--<a class="list-group-item" href="{:cmf_url('user/comment/index')}"><i class="fa fa-comments-o fa-fw"></i> 我的评论</a>-->
 </div>
+<script src="__TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__TMPL__/public/assets/js/bootstrap.min.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>

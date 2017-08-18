@@ -9,7 +9,7 @@
             "enable_mobile": {
                 "title": "手机注册",
                 "type": "select",
-                "value": 0,
+                "value": 1,
                 "options": {
                     "1": "开启",
                     "0": "关闭"

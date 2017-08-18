@@ -38,8 +38,9 @@
                 <th width="50">ID</th>
                 <th>关键词</th>
                 <th width="100">链接</th>
-                <th width="200">用户</th>
+                <!--<th width="200">用户</th>-->
                 <th width="100">点击次数</th>
+                <th width="100">点击天数</th>
                 <th width="100">相关词</th>
                 <th width="150">发布时间</th>
                 <th width="200">备注</th>
@@ -55,14 +56,15 @@
                     <td><b>{$vo.id}</b></td>
                     <td>{$vo.post_title}</td>
                     <td><a href="{$vo.post_url}" target="_blank">查看</a></td>
-                    <td>
-                        <notempty name="vo.user_nickname">
-                            {$vo.user_nickname}
-                            <else/>
-                            {$vo.user_email}
-                        </notempty>
-                    </td>
+                    <!--<td>-->
+                        <!--<notempty name="vo.user_nickname">-->
+                            <!--{$vo.user_nickname}-->
+                            <!--<else/>-->
+                            <!--{$vo.user_email}-->
+                        <!--</notempty>-->
+                    <!--</td>-->
                     <td>{$vo.post_dianjicishu}</td>
+                    <td>{$vo.post_tianshu}</td>
                     <td><a href="{:url('AdminXiangguanci/index',array('guanjianci_id'=>$vo['id']))}">查看</a></td>
                     <td>
                         <notempty name="vo.create_time">
@@ -86,8 +88,9 @@
                 <th width="50">ID</th>
                 <th>关键词</th>
                 <th width="100">链接</th>
-                <th width="200">用户</th>
+                <!--<th width="200">用户</th>-->
                 <th width="100">点击次数</th>
+                <th width="100">点击天数</th>
                 <th width="100">相关词</th>
                 <th width="150">发布时间</th>
                 <th width="200">备注</th>

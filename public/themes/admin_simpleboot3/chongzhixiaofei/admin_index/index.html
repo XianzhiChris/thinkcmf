@@ -60,6 +60,7 @@
                 <th width="50">ID</th>
                 <th width="50">类型</th>
                 <th>标题</th>
+                <th width="100">积分</th>
                 <th width="100">金额</th>
                 <th width="200">用户</th>
                 <th width="150">发布时间</th>
@@ -75,14 +76,19 @@
                     </td>
                     <td><b>{$vo.id}</b></td>
                     <td><b><!--{$vo.post_type}-->
-                    <if $vo.post_type=="1">
-                        充值
-                        <else/>
-                        消费
-                    </if>
+                        <eq name="vo.type" value="1">
+                            充值
+                        </eq>
+                        <eq name="vo.type" value="2">
+                            消费
+                        </eq>
+                        <eq name="vo.type" value="3">
+                            提现
+                        </eq>
                     </b>
                     </td>
                     <td>{$vo.post_title}</td>
+                    <td>{$vo.post_score}</td>
                     <td>{$vo.post_jine}</td>
                     <td><!--{$vo.user_id}-->
                         <notempty name="vo.user_nickname">
@@ -113,6 +119,7 @@
                 <th width="50">ID</th>
                 <th width="50">类型</th>
                 <th>标题</th>
+                <th width="65">积分</th>
                 <th width="65">金额</th>
                 <th width="65">用户</th>
                 <th width="130">发布时间</th>

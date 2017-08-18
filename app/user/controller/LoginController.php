@@ -30,7 +30,7 @@ class LoginController extends HomeBaseController
         }
         session('login_http_referer', $redirect);
         if (cmf_is_user_login()) { //已经登录时直接跳到首页
-            return redirect($this->request->root() . '/');
+            return redirect($this->request->root() . '/user/profile/center');
         } else {
             return $this->fetch(":login");
         }
@@ -56,13 +56,14 @@ class LoginController extends HomeBaseController
             ]);
 
             $data = $this->request->post();
-            if (!$validate->check($data)) {
-                $this->error($validate->getError());
-            }
-
-            if (!cmf_captcha_check($data['captcha'])) {
-                $this->error('验证码错误');
-            }
+            //todo:临时关掉验证码
+//            if (!$validate->check($data)) {
+//                $this->error($validate->getError());
+//            }
+//
+//            if (!cmf_captcha_check($data['captcha'])) {
+//                $this->error('验证码错误');
+//            }
 
             $userModel         = new UserModel();
             $user['user_pass'] = $data['password'];

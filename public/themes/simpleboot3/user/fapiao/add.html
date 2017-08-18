@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_login}  - 发票索取</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li><a href="{:url('user/fapiao/index')}"><i class="fa fa-building-o"></i> 发票管理</a></li>
+						<li class="active"><a href="#" data-toggle="tab">发票索取</a></li>
+					</ul>
+					<form action="{:url('user/fapiao/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered">
+								<tr>
+									<th>发票类型</th>
+									<td><input type="radio" name="type" value="1" checked> 增值税普通发票  <input type="radio" name="type" value="2"> 增值税专用发票 </td>
+								</tr>
+								<tr>
+									<th>发票金额</th>
+									<td><input class="form-control" type="text" name="jine" id="jine" value=""
+											   placeholder="请输入发票金额" required> （可开金额：{:number_format($kekaijine,2)}）</td>
+								</tr>
+								<tr>
+									<th>发票抬头</th>
+									<td>
+										<input class="form-control" type="text" name="fapiaoname" id="fapiaoname" value=""
+											   placeholder="请输入发票抬头" required>
+									</td>
+								</tr>
+								<tr>
+									<th>地址</th>
+									<td>
+										<input class="form-control" type="text" name="dizhi" id="dizhi" value=""
+											   placeholder="请输入邮寄地址" required>
+									</td>
+								</tr>
+								<tr>
+									<th>联系人</th>
+									<td>
+										<input class="form-control" type="text" name="lianxiren" id="lianxiren" value=""
+											   placeholder="请输入邮寄联系人" required>
+									</td>
+								</tr>
+								<tr>
+									<th>电话</th>
+									<td>
+										<input class="form-control" type="text" name="dianhua" id="dianhua" value=""
+											   placeholder="请输入邮寄联系人电话" required>
+									</td>
+								</tr>
+								<tr>
+									<th>邮编</th>
+									<td>
+										<input class="form-control" type="text" name="youbian" id="youbian" value=""
+											   placeholder="请输入邮寄邮编" required>
+									</td>
+								</tr>
+
+							</table>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+							<a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+</body>
+</html>

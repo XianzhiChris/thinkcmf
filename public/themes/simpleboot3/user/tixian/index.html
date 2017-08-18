@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_nickname}  - 提现管理</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 提现管理</a></li>
+						<li><a href="{:url('user/tixian/add')}">申请提现</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th width="70">#</th>
+									<th width="100">提现方式</th>
+									<th>提现帐号</th>
+									<th width="100">提现金额</th>
+									<th width="150">申请时间</th>
+									<th width="100">状态</th>
+								</tr>
+								</thead>
+								<tbody>
+								<foreach name="lists" item="vo">
+									<tr>
+										<td>{$vo.id}</td>
+										<td>
+											<eq name="vo.post_type" value="1">
+												微信
+											</eq>
+											<eq name="vo.post_type" value="2">
+												支付宝
+											</eq>
+											<eq name="vo.post_type" value="3">
+												银行卡
+											</eq>
+										</td>
+										<td>
+											<notempty name="vo.yinhang">
+												({$vo.yinhang})
+											</notempty>
+											{$vo.zhanghao}</td>
+										<td>{$vo.post_jine}</td>
+										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+										<td>
+											<eq name="vo.status" value="1">
+												已审核
+											</eq>
+											<eq name="vo.status" value="0">
+												未审核
+											</eq>
+										</td>
+									</tr>
+								</foreach>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="pagination"><ul>{$page}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+</body>
+</html>

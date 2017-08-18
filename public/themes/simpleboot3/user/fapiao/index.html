@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_login}  - 发票管理</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 发票管理</a></li>
+						<li><a href="{:url('user/fapiao/add')}">发票索取</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+								<foreach name="lists" item="vo">
+									<table class="table table-bordered table-striped table-hover">
+										<tbody><tr>
+											<th align="right" class="pr-10 widthper">发票类型:</th>
+											<td align="left">
+												<eq name="vo.type" value="1">
+													普通发票
+												</eq>
+												<eq name="vo.type" value="2">
+													专用发票
+												</eq>
+											</td>
+											<th align="right" class="pr-10 widthper">发票抬头:</th>
+											<td align="left">{$vo.fapiaoname}</td>
+
+											<th align="right" class="pr-10 widthper">发票金额:</th>
+											<td align="left"><strong class="redColor">{:number_format($vo.jine,2)}</strong></td>
+										</tr>
+										<tr>
+											<th align="right" class="pr-10 widthper">邮寄地址:</th>
+											<td align="left">{$vo.dizhi}</td>
+											<th align="right" class="pr-10 widthper">邮编:</th>
+											<td align="left">{$vo.youbian}</td>
+											<th align="right" class="pr-10 widthper">收件人:</th>                                                                     					<td align="left">{$vo.lianxiren}</td>
+										</tr>
+
+										<tr>
+											<th align="right" class="pr-10 widthper">寄送方式:</th>
+											<td align="left">{$vo.kuaiditype}</td>
+											<th align="right" class="pr-10 widthper">状态:</th>
+											<td align="left">
+												<eq name="vo.status" value="0">
+													未寄出
+												</eq>
+												<eq name="vo.status" value="1">
+													已寄出
+												</eq>
+											</td>
+											<th align="right" class="pr-10 widthper">邮寄日期:</th>
+											<td align="left">{:date('Y-m-d',$vo['update_time'])}</td>
+										</tr>
+										<tr>
+											<th align="right" class="pr-10 widthper">快递邮件号码:</th>
+											<td align="left" colspan="5">{$vo.kuaidihao}</td>
+										</tr>
+										</tbody></table>
+
+								</foreach>
+						</div>
+
+						<div class="pagination"><ul>{$page}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+</body>
+</html>

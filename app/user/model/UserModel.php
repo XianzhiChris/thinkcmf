@@ -183,7 +183,7 @@ class UserModel extends Model
     public function editData($user)
     {
         $userId           = cmf_get_current_user_id();
-        $user['birthday'] = strtotime($user['birthday']);
+//        $user['birthday'] = strtotime($user['birthday']);
         $userQuery        = Db::name("user");
         if ($userQuery->where('id', $userId)->update($user)) {
             $data = $userQuery->where('id', $userId)->find();
@@ -213,6 +213,181 @@ class UserModel extends Model
         $userQuery->where('id', $userId)->update($data);
         return 0;
     }
+    public function tuandui()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userMoneyQuery            = Db::name("user_money_log");
+
+        $userQuery            = Db::name("user");
+        $where['parent_id']     = $userId;
+        $favorites            = $userQuery->where($where)->order('id desc')->paginate(10);
+        $data['page']         = $favorites->render();
+
+        $list=[];
+        foreach($favorites as $v){
+            $je= $userMoneyQuery->field(array('sum(jine)'=>'je'))->where(array('user_id'=>$v['id'],'type'=>2))->find();
+            $v['xiaofei']=$je['je'];
+            $list[]=$v;
+        }
+        $data['lists']        = $list;
+        return $data;
+    }
+    public function tixian()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userTixianQuery            = Db::name("tixian_post");
+
+        $where['user_id']     = $userId;
+        $favorites            = $userTixianQuery->where($where)->order('id desc')->paginate(10);
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function mingxi()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userTixianQuery            = Db::name("user_money_log");
+
+        $where['user_id']     = $userId;
+        $favorites            = $userTixianQuery->where($where)->order('id desc')->paginate(10);
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function guanjianciadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $userGuanjianciQuery            = Db::name("guanjianci_post");
+        $data['user_id']     = $userId;
+        $data['create_time']     = time();
+        $userGuanjianciQuery->insert($data);
+        $renwu_id=$userGuanjianciQuery->getLastInsID();
+
+        //生成任务列表
+        $renwuQuery=Db::name('taskdjdata');
+        $renwudata=[];
+        switch ($data['post_type']){
+            case 1:
+                $sou="baidu";
+                break;
+            case 2:
+                $sou="sogou";
+                break;
+            case 3:
+                $sou="so";
+                break;
+        }
+        $time=time();
+        for($i=0;$i<$data['post_tianshu'];$i++){
+            $rq=strtotime(date('Y-m-d' , strtotime('+'.$i.' day')));
+            for($t=0;$t<24;$t++) {
+                for ($j = 0; $j < $data['txt_time' . $t]; $j++) {
+                    $xs = $t * 3600;
+                    //随机百度cookie
+                    $baidu_cookie = Db::name('baiducookie')->field('baidu_cookie')->order('rand()')->limit(1)->find();
+                    $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($data['post_title']), 'title' => base64_encode($data['post_biaoti']), 'baidu_cookie' => base64_encode($baidu_cookie['baidu_cookie']), 'create_time' => $time];
+                }
+            }
+        }
+        $renwuQuery->insertAll($renwudata);
+
+        //积分减少
+        $userQuery            = Db::name("user");
+        $where=[];
+        $where['id']=$userId;
+        $xiaofei=$data['post_dianjicishu']*$data['post_tianshu'];
+        $coin=$userQuery->where($where)->find();
+        $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
+
+        //增加明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=2;
+        $data2['post_title']='关键词【'.$data['post_title'].'】点击任务';
+        $data2['score']=$xiaofei;
+        $userMoneyQuery->insert($data2);
+
+        return $userGuanjianciQuery;
+    }
+    public function tixianadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $userTixianQuery            = Db::name("tixian_post");
+        $data['user_id']     = $userId;
+        $data['create_time']     = time();
+        $userTixianQuery->insert($data);
+
+        //余额减少
+        $userQuery            = Db::name("user");
+        $where=[];
+        $where['id']=$userId;
+        $coin=$userQuery->where($where)->find();
+        $userQuery->where($where)->update(array('coin'=>$coin['coin']-$data['post_jine']));
+
+        //增加明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=3;
+        $data2['post_title']='申请提现';
+        $data2['jine']=$data['post_jine'];
+        $userMoneyQuery->insert($data2);
+
+        return $userQuery;
+    }
+    public function guanjianci()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userFapiaoQuery            = Db::name("guanjianci_post");
+
+        $where['user_id']     = $userId;
+        $favorites            = $userFapiaoQuery->where($where)->order('id desc')->paginate(10);
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function fapiao()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userFapiaoQuery            = Db::name("user_fapiao_post");
+
+        $where['user_id']     = $userId;
+        $favorites            = $userFapiaoQuery->where($where)->order('id desc')->paginate(10);
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function jiangjin()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userMoneyQuery            = Db::name("user_money_log");
+        $wh =[];
+        $userQuery            = Db::name("user");
+        $where['parent_id']     = $userId;
+        $favorites            = $userQuery->field("id")->where($where)->select();
+        $Y=date('Y');
+        $Y2=date('Y',strtotime('+1 year'));
+        $start=strtotime($Y.'-1-1');
+        $end=strtotime($Y2.'-1-1');
+
+        $list=0;
+        foreach($favorites as $v){
+            $wh['user_id'] = ['=',$v['id']];
+            $wh['type'] = ['=',1];
+            $wh['create_time'] = [['>= time', $start], ['<= time', $end]];
+            $jine = $userMoneyQuery->where($wh)->field('sum(jine) as je')->select();
+            $list+=$jine[0]['je'];
+        }
+
+        return $list;
+    }
 
     public function comments()
     {
@@ -223,6 +398,26 @@ class UserModel extends Model
         $favorites            = $userQuery->where($where)->order('id desc')->paginate(10);
         $data['page']         = $favorites->render();
         $data['lists']        = $favorites->items();
+        return $data;
+    }
+
+    public function fapiaoadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user_fapiao_post");
+        $data['user_id']     = $userId;
+        $data['create_time']     = time();
+        $userQuery->insert($data);
+        return $userQuery;
+    }
+    public function deleteTuandui($id)
+    {
+//        $userId              = cmf_get_current_user_id();
+        $userQuery           = Db::name("user");
+        $where['id']         = $id;
+//        $where['user_id']    = $userId;
+        $data['parent_id'] = 0;
+        $userQuery->where($where)->update($data);
         return $data;
     }
 

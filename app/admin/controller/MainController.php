@@ -27,6 +27,7 @@ class MainController extends AdminBaseController
      */
     public function index()
     {
+
         $dashboardWidgets = [];
         $widgets          = cmf_get_option('admin_dashboard_widgets');
 

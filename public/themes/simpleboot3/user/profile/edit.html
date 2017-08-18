@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$user_login}  - 修改资料</title>
+<title>{$user_nickname}  - 修改资料</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
+
 </head>
 <body class="body-white" id="top">
 	<include file="public@nav" />
@@ -24,33 +25,29 @@
                                    		<br>
                                    		<form class="js-ajax-form" action="{:url('user/profile/editPost')}" method="post">
                                    			<div class="form-group">
-                                   				<label for="input-user_nickname">昵称</label>
-                                   				<input type="text" class="form-control" id="input-user_nickname" placeholder="昵称" name="user_nickname" value="{$user_nickname}">
+                                   				<label for="input-user_nickname">昵称<span style="color:red"> *</span></label>
+                                   				<input type="text" class="form-control" id="input-user_nickname" name="user_nickname" value="{$user_nickname}" required>
                                    			</div>
                                    			<div class="form-group">
-                                   				<label for="input-sex">性别</label>
-                               					<php>
-                                 					$sexs=array("0"=>"保密","1"=>"程序猿","2"=>"程序媛");
-                                 				</php>
-                               					<select class="form-control" id="input-sex" name="sex">
-                               						<foreach name="sexs" item="vo">
-                               						<php>$sexselected=$key==$sex?"selected":"";</php>
-                               							<option value="{$key}" {$sexselected}>{$vo}</option>
-                               						</foreach>
-                               					</select>
+												<label for="input-gongsimingcheng">公司名称<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-gongsimingcheng" name="gongsimingcheng" value="{$gongsimingcheng}" required>
                                    			</div>
                                    			<div class="form-group">
-                                   				<label for="input-birthday">生日</label>
-                                   				<input class="form-control js-bootstrap-date" type="text" id="input-birthday" placeholder="2013-01-04" name="birthday" value="{:date('Y-m-d',$birthday)}">
+                                   				<label for="input-lianxiren">联系人<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-lianxiren" name="lianxiren" value="{$lianxiren}" required>
                                    			</div>
                                    			<div class="form-group">
-                                   				<label for="input-user_url">个人网址</label>
-                                   				<input class="form-control" type="text" id="input-user_url" placeholder="http://thinkcmf.com" name="user_url" value="{$user_url}">
+                                   				<label for="input-dianhua">电话<span style="color:red"> *</span></label>
+                                   				<input class="form-control" type="text" id="input-dianhua" name="dianhua" value="{$dianhua}" required>
                                    			</div>
                                    			<div class="form-group">
-                                   				<label for="input-signature">个性签名</label>
-                                   				<textarea class="form-control" id="input-signature" placeholder="个性签名" name="signature">{$signature}</textarea>
+                                   				<label for="input-dizhi">地址<span style="color:red"> *</span></label>
+												<input class="form-control" type="text" id="input-dizhi" name="dizhi" value="{$dizhi}" required>
                                    			</div>
+											<div class="form-group">
+												<label for="input-wangzhi">官网网址<span style="color:red"> *</span></label>
+												<input class="form-control" type="text" id="input-wangzhi" name="wangzhi" value="{$wangzhi}" required>
+											</div>
                                    			<div class="form-group">
                                    				<button type="submit" class="btn btn-primary js-ajax-submit">保存</button>
                                    			</div>

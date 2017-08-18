@@ -41,13 +41,13 @@
                     </label>
                 </th>
                 <th width="50">ID</th>
-                <th>用户</th>
+                <th width="100">用户</th>
                 <th width="100">方式</th>
+                <th>帐号</th>
                 <th width="100">金额</th>
                 <th width="150">请求时间</th>
-                <th width="90">状态</th>
+                <th width="70">状态</th>
                 <th width="150">操作时间</th>
-                <th width="200">备注</th>
                 <th width="90">操作</th>
             </tr>
             </thead>
@@ -66,14 +66,17 @@
                         </notempty>
                     </td>
                     <td><!--{$vo.post_type}-->
-                        <if $vo.post_type=="1">
+                        <eq name="vo.post_type" value="1">
                             微信
-                            <elseif $vo.post_type=="2">
-                                支付宝
-                            <else/>
+                        </eq>
+                        <eq name="vo.post_type" value="2">
+                            支付宝
+                        </eq>
+                        <eq name="vo.post_type" value="3">
                             银行卡
-                        </if>
+                        </eq>
                     </td>
+                    <td>{$vo.zhanghao}</td>
                     <td>{$vo.post_jine}</td>
                     <td>
                         <notempty name="vo.create_time">
@@ -92,7 +95,6 @@
                             {:date('Y-m-d H:i:s',$vo['update_time'])}
                         </notempty>
                     </td>
-                    <td>{$vo.remark}</td>
                     <td>
                         <a href="{:url('AdminIndex/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a><!-- |
                         <a href="{:url('AdminIndex/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>-->
@@ -107,13 +109,13 @@
                     </label>
                 </th>
                 <th width="50">ID</th>
-                <th>用户</th>
+                <th width="100">用户</th>
                 <th width="100">方式</th>
+                <th>帐号</th>
                 <th width="100">金额</th>
                 <th width="150">请求时间</th>
-                <th width="90">状态</th>
+                <th width="70">状态</th>
                 <th width="150">操作时间</th>
-                <th width="200">备注</th>
                 <th width="90">操作</th>
             </tr>
             </tfoot>
