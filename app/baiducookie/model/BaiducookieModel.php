@@ -79,6 +79,7 @@ class BaiducookieModel extends Model
      */
     public function adminAddIndex($data)
     {
+        $data['baidu_cookie']=base64_encode($data['baidu_cookie']);
         $data['cookie_md5']=md5($data['baidu_cookie']);
         $this->allowField(true)->data($data, true)->isUpdate(false)->save();
 

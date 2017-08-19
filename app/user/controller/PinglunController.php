@@ -22,12 +22,12 @@ class PinglunController extends UserBaseController
         parent::_initialize();
     }
     /**
-     * 个人中心关键词管理
+     * 个人中心评论管理
      */
     public function index()
     {
         $editData = new UserModel();
-        $data = $editData->guanjianci();
+        $data = $editData->pinglun();
         $user = cmf_get_current_user();
         $this->assign($user);
         $this->assign("page", $data['page']);
@@ -36,15 +36,15 @@ class PinglunController extends UserBaseController
     }
 
     /**
-     * 添加关键词
+     * 添加评论
      */
     public function add()
     {
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('coin')->where(array('id'=>$user['id']))->find();
-        $this->assign('mycoin',$coin['coin']);
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
         return $this->fetch();
     }
 
@@ -52,9 +52,32 @@ class PinglunController extends UserBaseController
     {
         $data = $this->request->param();
         $editData = new UserModel();
-        $editData->guanjianciadd($data);
+        $editData->pinglunadd($data);
 
-        $this->success('添加成功！', url('user/guanjianci/index'));
+        $this->success('添加成功！', url('user/pinglun/index'));
+    }
+    /**
+     * 评论内容数量
+     */
+    public function content_count()
+    {
+        $data = $this->request->param();
+        $text_path=$data['text_path'];  //txt文件路径
+
+        $myFile = file('.'.$text_path);
+        $count=count($myFile);
+        $data=[];
+        foreach($myFile as $v){
+            $str = mb_convert_encoding($v, 'utf-8', 'gbk');
+            $str = trim($str);
+            $str = str_replace(array("\r\n", "\r", "\n", "\t", "　","'"), "", $str);//去除换行符
+
+            if ($str) {
+                $data[]=$str;
+            }
+        }
+        $result=['count'=>count($data),'data'=>$data];
+        return json_encode($result);
     }
 
 

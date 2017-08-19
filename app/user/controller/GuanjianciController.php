@@ -43,8 +43,8 @@ class GuanjianciController extends UserBaseController
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('coin')->where(array('id'=>$user['id']))->find();
-        $this->assign('mycoin',$coin['coin']);
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
         return $this->fetch();
     }
 
