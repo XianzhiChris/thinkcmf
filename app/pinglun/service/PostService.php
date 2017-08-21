@@ -12,6 +12,7 @@ namespace app\pinglun\service;
 
 use app\pinglun\model\PinglunPostModel;
 use app\pinglun\model\PinglunJinciPostModel;
+use app\pinglun\model\PinglunTwPostModel;
 
 class PostService
 {
@@ -34,6 +35,27 @@ class PostService
         }
 
         $portalPostModel = new PinglunJinciPostModel();
+        $articles        = $portalPostModel->alias('a')
+            ->where($where)
+            ->order('id', 'DESC')
+            ->paginate(10);
+
+        return $articles;
+    }
+    public function adminTiwenList($filter)
+    {
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0
+        ];
+
+
+        $keyword = empty($filter['keyword']) ? '' : $filter['keyword'];
+        if (!empty($keyword)) {
+            $where['a.post_title'] = ['like', "%$keyword%"];
+        }
+
+        $portalPostModel = new PinglunTwPostModel();
         $articles        = $portalPostModel->alias('a')
             ->where($where)
             ->order('id', 'DESC')

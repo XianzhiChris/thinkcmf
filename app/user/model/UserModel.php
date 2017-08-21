@@ -250,6 +250,7 @@ class UserModel extends Model
         $userPinglunQuery            = Db::name("pinglun_post");
 
         $where['user_id']     = $userId;
+        $where['post_type']     = 1;
         $favorites            = $userPinglunQuery->where($where)->order('id desc')->paginate(10);
         $list=[];
 
@@ -257,7 +258,7 @@ class UserModel extends Model
         foreach($favorites as $v){
             $task_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>0])->select();
             $task_ok_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>1])->select();
-            $task_err_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>['GT',1]])->select();
+            $task_err_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>['neq',1],'return_code'=>['neq','']])->select();
 
             $v['task_ok_count']=$task_ok_count[0]['count'];
             $v['task_err_count']=$task_err_count[0]['count'];
@@ -282,7 +283,7 @@ class UserModel extends Model
 
         $content_num=count($content_data);
 
-        $pinglun_data=['post_title'=>$data['post_title'],'post_url'=>$data['post_url'],'post_content_num'=>$content_num,'user_id'=>$userId,'create_time'=>time()];
+        $pinglun_data=['post_type'=>1,'post_title'=>$data['post_title'],'post_url'=>$data['post_url'],'post_content_num'=>$content_num,'user_id'=>$userId,'create_time'=>time()];
 
 
         $userPinglunQuery->insert($pinglun_data);
@@ -294,6 +295,8 @@ class UserModel extends Model
         $renwuQuery=Db::name('zhidaotaskdata');
         $CookieQuery=Db::name('zhidaobaiducook');
         foreach($content_data as $v) {
+            //todo:内容禁词检测
+
             $content_data = ['post_title'=>$v,'pinglun_id'=>$renwu_id,'create_time'=>$time];
             $contentQuery->insert($content_data);
             $content_id=$contentQuery->getLastInsID();
@@ -319,6 +322,66 @@ class UserModel extends Model
         $data2['create_time']=time();
         $data2['type']=2;
         $data2['post_title']='百度知道【'.$data['post_title'].'】评论任务';
+        $data2['score']=$xiaofei;
+        $userMoneyQuery->insert($data2);
+
+        return $userMoneyQuery;
+    }
+    public function pinglunTiwen()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userPinglunQuery            = Db::name("pinglun_post");
+
+        $where['user_id']     = $userId;
+        $where['post_type']     = 2;
+        $join = [
+            ['zhidaotaskdata u', 'a.id = u.pinglun_id']
+        ];
+        $field = 'a.*,u.return_code';
+
+        $favorites            = $userPinglunQuery->alias('a')->join($join)->field($field)->where($where)->order('id desc')->paginate(10);
+
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function pingluntiwenadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $userPinglunQuery            = Db::name("pinglun_post");
+        //todo:内容禁词检测
+        $post_title=$data['post_title'];
+        $post_content=$data['post_content'];
+
+        $pinglun_data=['post_type'=>2,'post_title'=>$post_title,'post_content'=>base64_encode($post_content),'post_cookie'=>base64_encode($data['post_cookie']),'user_id'=>$userId,'create_time'=>time()];
+
+
+        $userPinglunQuery->insert($pinglun_data);
+        $renwu_id=$userPinglunQuery->getLastInsID();
+
+
+        //生成任务列表
+        $renwuQuery=Db::name('zhidaotaskdata');
+        $renwudata = ['pinglun_id' => $renwu_id, 'zhidao' => 'tw', 'title' => base64_encode($data['post_title']), 'content'=>base64_encode($post_content),'baidu_cookie' => base64_encode($data['post_cookie']), 'create_time' => time()];
+        $renwuQuery->insert($renwudata);
+
+
+        //积分减少
+        $userQuery            = Db::name("user");
+        $where=[];
+        $where['id']=$userId;
+        $xiaofei=1;
+        $coin=$userQuery->where($where)->find();
+        $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
+
+        //增加明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=2;
+        $data2['post_title']='百度知道【'.$data['post_title'].'】提问任务';
         $data2['score']=$xiaofei;
         $userMoneyQuery->insert($data2);
 

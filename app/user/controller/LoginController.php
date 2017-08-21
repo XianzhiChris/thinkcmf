@@ -82,7 +82,7 @@ class LoginController extends HomeBaseController
             switch ($log) {
                 case 0:
                     cmf_user_action('login');
-                    $this->success('登录成功', $redirect);
+                    $this->success('登录成功', '/user/Profile/center');
                     break;
                 case 1:
                     $this->error('登录密码错误');

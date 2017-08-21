@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_nickname}  - 提问任务添加</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li><a href="{:url('user/pinglun/tiwen')}"><i class="fa fa-building-o"></i> 提问任务管理</a></li>
+						<li class="active"><a href="#" data-toggle="tab">添加任务</a></li>
+						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">批量添加任务</a></li>-->
+					</ul>
+					<form action="{:url('user/pinglun/tiwenaddPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered">
+								<tr>
+									<th width="150">知道提问标题</th>
+									<td>
+										<input class="form-control" type="text" name="post_title" id="post_title" value="" placeholder="请输入标题" required>
+									</td>
+								</tr>
+								<tr>
+									<th>知道提问内容</th>
+									<td>
+										<textarea name="post_content" id="post_content" class="form-control" rows="15" required></textarea>
+									</td>
+								</tr>
+								<tr>
+									<th>百度帐号Cookie</th>
+									<td>
+										<input class="form-control" type="text" name="post_cookie" id="post_cookie" value="" placeholder="请输入百度帐号Cookie" required>
+										<a href="">百度帐号Cookie获取方法</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="submit" id="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+							<a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+
+</body>
+</html>

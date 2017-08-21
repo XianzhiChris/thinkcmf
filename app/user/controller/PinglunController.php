@@ -79,6 +79,37 @@ class PinglunController extends UserBaseController
         $result=['count'=>count($data),'data'=>$data];
         return json_encode($result);
     }
+    /**
+     * 个人中心提问管理
+     */
+    public function tiwen()
+    {
+        $editData = new UserModel();
+        $data = $editData->pinglunTiwen();
+        $user = cmf_get_current_user();
+        $this->assign($user);
+        $this->assign("page", $data['page']);
+        $this->assign("lists", $data['lists']);
+        return $this->fetch();
+    }
+    /**
+     * 添加提问
+     */
+    public function tiwenadd()
+    {
+        $user = cmf_get_current_user();
+        $this->assign($user);
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
+        return $this->fetch();
+    }
+    public function tiwenaddPost()
+    {
+        $data = $this->request->param();
+        $editData = new UserModel();
+        $editData->pingluntiwenadd($data);
 
-
+        $this->success('添加成功！', url('user/pinglun/tiwen'));
+    }
 }
