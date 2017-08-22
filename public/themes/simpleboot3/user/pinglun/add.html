@@ -29,7 +29,7 @@
 							<br>
 							<table class="table table-bordered">
 								<tr>
-									<th width="150">知道标题</th>
+									<th width="150">任务名称</th>
 									<td>
 										<input class="form-control" type="text" name="post_title" id="post_title" value="" placeholder="请输入标题" required>
 									</td>
@@ -84,9 +84,15 @@
             $('#post_content_num').val(j);
 		});
         $('#submit').click(function(){
-            var con_arr=$(this).val().split("\n");
-            var post_content_num = con_arr.length;
-
+            var con_arr=$('#pinglun_content').val().split("\n");
+            var j=0;
+            for(var i=0;i<con_arr.length;i++){
+                if(con_arr[i].length>0){
+                    j++;
+                }
+            }
+            var post_content_num=j;
+console.log(j);
             //判断积分是否足够
             var score_my = {$myscore};
 

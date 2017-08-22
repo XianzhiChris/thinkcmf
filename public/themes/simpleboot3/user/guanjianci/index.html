@@ -45,7 +45,7 @@
 									<th width="50">搜索</th>
 									<th width="60">排名(初次)</th>
 									<th width="50">模式</th>
-									<th width="50">实时排名<a href="javascript:void(0)" id="sspm">查询</a></th>
+									<th width="80">实时排名<a href="javascript:void(0)" id="sspm">查询</a></th>
 									<th width="50">日点击</th>
 									<th width="50">持续天数</th>
 									<th width="50">添加时间</th>
@@ -89,7 +89,7 @@
 												<span style="color:red">已停止</span>
 											</eq>
 										</td>
-										<td><a class="js-ajax-dialog-btn" href="{:url('user/guanjianci/xufei',array('id'=>$vo['id']))}" data-msg="您确定要续费吗？" data-ok="" data-cacel="取消">续费</a></td>
+										<td><a class="js-ajax-dialog-btn" href="{:url('user/guanjianci/xufei',array('id'=>$vo['id']))}" data-msg="您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_dianjicishu * $vo.post_tianshu})">续费</a></td>
 									</tr>
 								</foreach>
 								</tbody>
@@ -128,11 +128,11 @@
                     success: function (data) {
                         if (data.indexOf(",") > 0) {
                             var str = data.split(",");
-                            var rank = str[0]
+                            var rank = str[0];
                             var num = str[1];
 
-                            if (data.indexOf("失败") > 0) {
-                                $(trs[num]).find("td").eq(5).html(rank + "<input id=\"bt_dccx\" type=\"button\" value=\"查询\" onclick=\"dccx('" + key_word_return + "','" + domain_return + "','" + num + "')\" />");
+                            if (rank=="未查询到"||data=="") {
+                                $(trs[num]).find("td").eq(5).html(rank + "<input type=\"button\" value=\"查询\" onclick=\"dccx('"+str[2]+"','"+str[3]+"','"+str[4]+"',"+num+")\" />");
                             }
                             else {
                                 $(trs[num]).find("td").eq(5).html(rank);
@@ -145,15 +145,76 @@
 
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert(XMLHttpRequest);
-                        alert(textStatus);
-                        alert(errorThrown);
+//                        alert(XMLHttpRequest);
+//                        alert(textStatus);
+//                        alert(errorThrown);
                     }
                 });
 
             }
 		})
-	})
+	});
+	function xufei(num){
+        //判断积分是否足够
+        var score_my = {$myscore};
+
+        var score_need = num;
+
+        if (parseInt(score_my) < parseInt(score_need)) {
+            alert("对不起，你的积分不足！您的积分：" + score_my + "，所需积分：" + score_need + "");
+            return false;
+        }
+        //
+
+        //提醒是否确认
+        var is_add = confirm("本次任务将扣除" + score_need + "积分");
+        if (!is_add) {
+            return false;
+        }
+        //
+
+        return true;
+	}
+	function dccx(ssyq,key,url,num){
+        var trs = $("#tbody1").find("tr");
+        key = encodeURI(key);
+        $(trs[num]).find("td").eq(5).html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
+        $.ajax({
+            url: "/user/guanjianci/paiming/post_title/" + key + "/post_url/" + url + "/ssyq/" + ssyq + "/num/"+num+"/sj/" + Math.random(),
+            type: "Get",
+            data: "",
+            dataType: "text",
+            beforeSend: function (XMLHttpRequest) {
+
+                $(trs[num]).find("td").eq(5).html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
+
+            },
+            success: function (data) {
+                if (data.indexOf(",") > 0) {
+                    var str = data.split(",");
+                    var rank = str[0];
+                    var num = str[1];
+
+                    if (rank=="未查询到"||data=="") {
+                        $(trs[num]).find("td").eq(5).html(rank + "<input type=\"button\" value=\"查询\" onclick=\"dccx('"+str[2]+"','"+str[3]+"','"+str[4]+"',"+num+")\" />");
+                    }
+                    else {
+                        $(trs[num]).find("td").eq(5).html(rank);
+                    }
+                }
+                else {
+                    //应该不会出现这种情况，肯定会有","
+                }
+
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+//                        alert(XMLHttpRequest);
+//                        alert(textStatus);
+//                        alert(errorThrown);
+            }
+        });
+	}
 </script>
 </body>
 </html>

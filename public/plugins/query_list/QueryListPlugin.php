@@ -38,16 +38,8 @@ class QueryListPlugin extends Plugin
         $page=[];
         if($ssqy==1){
             $page=array(
-                "https://www.baidu.com/s?wd=".$key_word,
-                "https://www.baidu.com/s?wd=".$key_word."&pn=10",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=20",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=30",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=40",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=50",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=60",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=70",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=80",
-                "https://www.baidu.com/s?wd=".$key_word."&pn=90"
+                "https://www.baidu.com/s?rn=50&wd=".$key_word,
+                "https://www.baidu.com/s?rn=50&wd=".$key_word."&pn=50"
             );
             $data=array();
             foreach($page as $p){
@@ -63,16 +55,7 @@ class QueryListPlugin extends Plugin
         }
         if($ssqy==2){
             $page=array(
-                "https://www.sogou.com/web?query=".$key_word,
-                "https://www.sogou.com/web?query=".$key_word."&page=2",
-                "https://www.sogou.com/web?query=".$key_word."&page=3",
-                "https://www.sogou.com/web?query=".$key_word."&page=4",
-                "https://www.sogou.com/web?query=".$key_word."&page=5",
-                "https://www.sogou.com/web?query=".$key_word."&page=6",
-                "https://www.sogou.com/web?query=".$key_word."&page=7",
-                "https://www.sogou.com/web?query=".$key_word."&page=8",
-                "https://www.sogou.com/web?query=".$key_word."&page=9",
-                "https://www.sogou.com/web?query=".$key_word."&page=10"
+                "https://www.sogou.com/web?num=100&query=".$key_word
             );
             $data=array();
             foreach($page as $p){
@@ -125,6 +108,7 @@ class QueryListPlugin extends Plugin
         //curl_setopt($ch, CURLOPT_REFERER,_REFERER_);        //设置 referer
         curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);      //跟踪301
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);   //HTTS请求
         $r = curl_exec($ch);
         curl_close($ch);
         return $r;

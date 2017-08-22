@@ -32,7 +32,7 @@
 							<br>
 							<table class="table table-bordered">
 								<tr>
-									<th>搜索引擎</th>
+									<th width="120">搜索引擎</th>
 									<td>
 										<select name="post_type" id="post_type">
 											<option value="1">百度</option>
@@ -56,34 +56,33 @@
 								</tr>
 								<tr>
 									<th width="100">网址</th>
-									<td><input class="form-control" type="text" name="post_url" id="post_url" value=""
-											   placeholder="请输入网址不需要http://" required></td>
+									<td><input class="form-control" type="text" name="post_url" id="post_url" value="" required readonly></td>
+								</tr>
+								<tr>
+									<th>网站标题</th>
+									<td><input class="form-control" type="text" name="post_biaoti" id="post_biaoti" value="" required readonly></td>
 								</tr>
 								<tr>
 									<th>当前排名</th>
 									<td>
-										<input class="form-control" type="text" name="post_chushipaiming" id="post_chushipaiming" value="" required style="width:50px;" readonly>
+										<input class="form-control" type="text" name="post_chushipaiming" id="post_chushipaiming" value="" required style="width:50px;display:inline;" readonly><a id="bt_paiming" style="border:1px solid blue;width:60px;display:inline;margin-left:10px;color:blue;text-decoration: none;" class="form-control" href="javascript:void(0);">查询</a><span id="paiming"></span>
 									</td>
 								</tr>
 								<tr>
-									<th>日最大点击量：</th>
+									<th>日最大点击量</th>
 									<td>
 										<input class="form-control" type="text" name="post_dianjicishu" id="post_dianjicishu" value="" required style="width:50px;">
 									</td>
 								</tr>
 
-								<tr>
-									<th>网站标题</th>
-									<td><input class="form-control" type="text" name="post_biaoti" id="post_biaoti" value=""
-											   placeholder="请输入网站标题" required></td>
-								</tr>
+
 								<tr>
 									<th>时间模板</th>
-									<td><select id="sel_time_type" class="inputtext" onchange="time_change()">
-										<option value="1">手动分配</option>
-										<option value="2">智能分配—集中白天</option>
+									<td><select id="sel_time_type" class="inputtext">
 										<option value="3">智能分配—平均分配</option>
+										<option value="2">智能分配—集中白天</option>
 										<option value="4">智能分配—集中夜晚</option>
+										<option value="1">手动分配</option>
 									</select></td>
 								</tr>
 								<tr>
@@ -132,9 +131,9 @@
 							<div style="width: 100%; height: 410px; overflow-x: hidden; overflow-y: auto;">
 								<table class="tb">
 									<tr id="tr_head">
-										<th>
-											排名
-										</th>
+										<!--<th>-->
+											<!--排名-->
+										<!--</th>-->
 										<th>
 											标题
 										</th>
@@ -170,12 +169,36 @@
 	$(function(){
 	    $('#bt_zhishu').click(function(){
             var post_title=$('#post_title').val();
-            if(post_title) {
+            if(post_title!='') {
+                $("#zhishu").html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
                 $.get("/user/guanjianci/zhishu/post_title/" + post_title, function (data) {
                     $("#zhishu").html(data);
                 });
-            }
+            }else{
+				alert('请填写关键词');
+				return false;
+			}
 		});
+        $('#bt_paiming').click(function(){
+            var post_title=$('#post_title').val();
+            var post_url=$('#post_url').val();
+            var post_type=$('#post_type').val();
+            if(post_title=='') {
+                alert('请填写关键词');
+                return false;
+            }
+            if(post_url=='') {
+                alert('请填写网址');
+                return false;
+            }
+
+			$("#paiming").html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
+			$.get("/user/guanjianci/paiming/post_title/" + post_title + "/post_url/" + post_url + "/ssyq/" + post_type + "/sj/" + Math.random(), function (data) {
+				$("#post_chushipaiming").val(data);
+                $("#paiming").html('');
+			});
+
+        });
 	    $('#bt_get_list').click(function(){
             var search_type = $("#post_type").val();
             if (search_type == "1" || search_type == "2" || search_type == "3") {
@@ -188,6 +211,10 @@
                 }
 
                 var key_word = $("#post_title").val();
+                if(key_word==''){
+                    alert('请填写关键词');
+                    return false;
+				}
                 key_word = encodeURI(key_word);
                 if ($.trim(key_word) != "") {
                     $("#div_list").css("display", "");
@@ -218,12 +245,14 @@
                                     }else {
                                         url_ok = url_ok_data;
                                     }
-                                	url_so_arr=url_ok.split(">");
+                                    console.log(url_ok);
+                                	url_so_arr=url_ok.split("&gt;");
+
                                     if(url_so_arr.length>1){
                                         url_ok=url_so_arr[0];
 									}
 								}
-                                txt += "<tr class=\"tr_sel\"><td align=\"center\">" + (i + 1) + "</td><td>" + data[i].title + "</td><td>" + url_ok + "</td></tr>";
+                                txt += "<tr class=\"tr_sel\"><!--<td align=\"center\">" + (i + 1) + "</td>--><td>" + data[i].title + "</td><td>" + url_ok + "</td></tr>";
                             }
                             $("#tr_head").after(txt);
                             $(".tr_sel").click(function () {
@@ -231,9 +260,10 @@
                                     $(this).css("background-color", "Gray");
 
                                     var tds = $(this).find("td");
-                                    paiming=$(tds[0]).text();
-                                    title = $(tds[1]).text();
-                                    url = $(tds[2]).text();
+
+//                                    paiming=$(tds[0]).text();
+                                    title = $(tds[0]).text();
+                                    url = $(tds[1]).text();
                                 }
                             );
                         },
@@ -256,7 +286,7 @@
 		});
 	    $('#qd').click(function(){
 			if (title != "") {
-				$("#post_chushipaiming").val(paiming);
+//				$("#post_chushipaiming").val(paiming);
 				$("#post_url").val(url);
 				$("#post_biaoti").val(title);
 				$("#div_list").css("display", "none");
@@ -275,6 +305,32 @@
                 $(this).val("");
             }
         });
+        $("#post_dianjicishu").blur(function(){
+            var all = $("#post_dianjicishu").val();
+
+			if (all == "") {
+				alert("请填写日最大点击量！");
+				$("#sel_time_type").val(1);
+				return false;
+			}
+			if (all <= 24) {
+				for (var i = 0; i < all; i++) {
+					$("#txt_time" + i).val(1);
+				}
+			}
+			else {
+				var pj = parseInt(all / 24);
+				for (var i = 0; i < 24; i++) {
+					$("#txt_time" + i).val(pj);
+				}
+				var shengyu = all - pj * 24;
+				for (var i = 0; i < shengyu; i++) {
+					var current_val = $("#txt_time" + i).val();
+					$("#txt_time" + i).val(parseInt(current_val) + 1);
+				}
+			}
+
+		});
         $('#submit').click(function(){
             var day_click = $("#post_dianjicishu").val();
             var days = $("#post_tianshu").val();

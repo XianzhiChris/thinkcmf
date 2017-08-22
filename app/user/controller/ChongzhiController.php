@@ -94,8 +94,22 @@ class ChongzhiController extends UserBaseController
 
         if($pay_result=='ok') {
 
+            //会员级别调整
+            $coin=$userQuery->field('coin')->where('id',$user_id)->find();
+            $zje=$coin['coin']+$jine;
+            $user_group=1;
+            if($zje>50000){
+                $user_group=4;
+            }elseif($zje>20000){
+                $user_group=3;
+            }elseif($zje>5000){
+                $user_group=2;
+            }
+            $userQuery->where('id',$user_id)->update(['user_group'=>$user_group]);
+
             $userqueryresult=$userQuery->where('id',$user_id)->setInc('score',$jifen);
             $userqueryresult2=$userQuery->where('id',$user_id)->setInc('coin',$jine);
+
             $usermoneyqueryresult=$userMoneyQuery->insert($moneyData);
             if($userqueryresult&&$usermoneyqueryresult&&$userqueryresult2) {
                 return 'ok';

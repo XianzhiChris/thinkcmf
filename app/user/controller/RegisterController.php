@@ -22,6 +22,7 @@ class RegisterController extends HomeBaseController
      */
     public function index()
     {
+        $w = $this->request->param();
         $redirect = $this->request->post("redirect");
         if (empty($redirect)) {
             $redirect = $this->request->server('HTTP_REFERER');
@@ -33,6 +34,7 @@ class RegisterController extends HomeBaseController
         if (cmf_is_user_login()) {
             return redirect($this->request->root() . '/');
         } else {
+            $this->assign('parent_id',$w['user_id']);
             return $this->fetch(":register");
         }
     }
@@ -89,6 +91,8 @@ class RegisterController extends HomeBaseController
                 $log                = $register->registerEmail($user);
             } else if (preg_match('/(^(13\d|15[^4\D]|17[13678]|18\d)\d{8}|170[^346\D]\d{7})$/', $data['username'])) {
                 $user['mobile'] = $data['username'];
+                $user['parent_id'] = $data['parent_id'];
+
                 $log            = $register->registerMobile($user);
             } else {
                 $log = 2;

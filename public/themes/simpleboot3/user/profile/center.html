@@ -32,26 +32,33 @@
 
 								<div class="col-md-9">
 									<div class="form-group">
-										<label class="control-label" for="input-user_nicename">昵称</label>
+										<label class="control-label" for="input-user_nicename">昵称:</label>
 										<div>{$user_nickname|default='未填写'}</div>
 									</div>
 									<div class="form-group">
-										<label class="control-label" for="input-sex">性别</label>
+										<label class="control-label" for="input-sex">积分:</label>
 										<div>
-											<php> $sexs=array("0"=>"保密","1"=>"程序猿","2"=>"程序媛");echo $sexs[$sex]; </php>
+											{$myscore}
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="control-label" for="input-birthday">生日</label>
-										<div>{:date('Y-m-d',$birthday)}</div>
+										<label class="control-label" for="input-birthday">级别:</label>
+										<div>
+											<switch name="user_group">
+												<case value="1">普通会员</case>
+												<case value="2">白银会员</case>
+												<case value="3">黄金会员</case>
+												<case value="4">金钻会员</case>
+											</switch>
+										</div>
 									</div>
 									<div class="form-group">
-										<label class="control-label" for="input-user_url">个人网址</label>
-										<div>{$user_url|default='未填写'}</div>
-									</div>
-									<div class="form-group">
-										<label class="control-label" for="input-signature">个性签名</label>
-										<div>{$signature|default='未填写'}</div>
+										<label class="control-label" for="input-user_url">推广:</label>
+										<div>
+											<input type="text" class="form-control" value="{:url('/user/Register/index',array('user_id'=>$id),'html',true)}" style="width:80%" onmouseover="select();"/>
+											<br/>
+											//todo:bshare 分享代码
+										</div>
 									</div>
 
 								</div>

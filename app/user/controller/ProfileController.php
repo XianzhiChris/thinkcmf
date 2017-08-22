@@ -31,7 +31,12 @@ class ProfileController extends UserBaseController
     public function center()
     {
         $user = cmf_get_current_user();
+        $userId           = cmf_get_current_user_id();
         $this->assign($user);
+        $this->assign('userid',$userId);
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
         return $this->fetch();
     }
 

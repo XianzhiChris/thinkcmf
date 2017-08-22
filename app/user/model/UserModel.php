@@ -132,6 +132,7 @@ class UserModel extends Model
                 'last_login_time' => time(),
                 'user_status'     => $userStatus,
                 "user_type"       => 2,//会员
+                "parent_id"       => $user['parent_id'],//推荐者ID
             ];
             $userId = Db::name("user")->insertGetId($data);
             $data   = Db::name("user")->where('id', $userId)->find();
@@ -280,10 +281,15 @@ class UserModel extends Model
 
         $str = str_replace(array("\r\n", "\r", "\n", "\t"), "###", $data['pinglun_content']);
         $content_data=explode('###',$str);
+        $j=0;
+        foreach($content_data as $v){
+            if(strlen($v)>1){
+                $j++;
+            }
+        }
+        $content_num=$j;
 
-        $content_num=count($content_data);
-
-        $pinglun_data=['post_type'=>1,'post_title'=>$data['post_title'],'post_url'=>$data['post_url'],'post_content_num'=>$content_num,'user_id'=>$userId,'create_time'=>time()];
+        $pinglun_data=['post_type'=>1,'post_title'=>$data['post_title'],'post_content'=>'','post_url'=>$data['post_url'],'post_content_num'=>$content_num,'user_id'=>$userId,'create_time'=>time()];
 
 
         $userPinglunQuery->insert($pinglun_data);
@@ -303,7 +309,7 @@ class UserModel extends Model
             //随机百度cookie
             $baidu_cookie = $CookieQuery->field('baidu_cookie')->order('rand()')->limit(1)->find();
             //生成任务列表
-            $renwudata = ['pinglun_id' => $renwu_id, 'content_id'=>$content_id,'zhidao' => 'hd', 'title' => base64_encode($data['post_title']), 'get_url' => $data['post_url'], 'content'=>base64_encode($v),'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+            $renwudata = ['pinglun_id' => $renwu_id, 'content_id'=>$content_id,'zhidao' => 'hd', 'get_url' => $data['post_url'], 'content'=>base64_encode($v),'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
             $renwuQuery->insert($renwudata);
         }
 
@@ -311,7 +317,7 @@ class UserModel extends Model
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
-        $xiaofei=$data['post_content_num']*1;
+        $xiaofei=$content_num*1;
         $coin=$userQuery->where($where)->find();
         $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
 
@@ -429,7 +435,7 @@ class UserModel extends Model
                 for ($j = 0; $j < $data['txt_time' . $t]; $j++) {
                     $xs = $t * 3600;
                     //随机百度cookie
-                    $baidu_cookie = Db::name('baiducookie')->field('baidu_cookie')->order('rand()')->limit(1)->find();
+                    $baidu_cookie = Db::name('baiducookie')->field('baidu_cookie')->where(['cookie_fail'=>['<',10]])->order('rand()')->limit(1)->find();
                     $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($data['post_title']), 'title' => base64_encode($data['post_biaoti']), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
                 }
             }

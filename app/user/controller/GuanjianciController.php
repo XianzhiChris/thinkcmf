@@ -29,6 +29,9 @@ class GuanjianciController extends UserBaseController
         $editData = new UserModel();
         $data = $editData->guanjianci();
         $user = cmf_get_current_user();
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
         $this->assign($user);
         $this->assign("page", $data['page']);
         $this->assign("lists", $data['lists']);
@@ -60,7 +63,7 @@ class GuanjianciController extends UserBaseController
     public function zhishu()
     {
         $data = $this->request->param();
-        $title=urlencode($data['post_title']);
+        $title=urlencode(strtolower($data['post_title']));
         $key_json=file_get_contents("http://api.91cha.com/index?key=34909fe411a14cbd9f0539cf27fbf6a3&kws=".$title);
         $key=json_decode($key_json,true);
         if($key['state']==1){
@@ -108,7 +111,7 @@ class GuanjianciController extends UserBaseController
         $title=urlencode($data['post_title']);
         $url=$data['post_url'];
         $ssyq_value=$data['ssyq'];
-        $num=$data['num'];
+        $num=isset($data['num'])?$data['num']:"";
         switch ($ssyq_value){
             case 1:
                 $ssyq="baidu";
@@ -135,7 +138,7 @@ $i=0;
             $paiming=json_decode(json_decode($paiming_json),true);
 //            echo $i;
             if($i==3){
-                echo "未查询到,".$num;
+                echo "未查询到,".$num.",".$ssyq_value.",".$title.",".$url;
                 exit;
             }
             $i++;
@@ -144,6 +147,68 @@ $i=0;
 //        var_dump($paiming);
         $str=$paiming['ResponseList'][0]['Rank'];
         $str=str_replace("名","",str_replace("第","",$str));
-        echo $str.",".$num;
+        echo $str;
+        if(isset($num)){
+            echo ",".$num;
+        }
+
+    }
+    
+    //续费
+    public function xufei(){
+        $userId               = cmf_get_current_user_id();
+        $data = $this->request->param();
+        $renwu_id=$data['id'];
+        $guanjianciQuery=Db::name('guanjianci_post');
+        $result=$guanjianciQuery->where('id',$renwu_id)->find();
+        $guanjianciQuery->where('id',$renwu_id)->update(['create_time'=>time()]);
+
+        //生成任务列表
+        $renwuQuery=Db::name('taskdjdata');
+        $renwudata=[];
+        switch ($result['post_type']){
+            case 1:
+                $sou="baidu";
+                break;
+            case 2:
+                $sou="sogou";
+                break;
+            case 3:
+                $sou="so";
+                break;
+        }
+        $time=time();
+        for($i=0;$i<$result['post_tianshu'];$i++){
+            $rq=strtotime(date('Y-m-d' , strtotime('+'.$i.' day')));
+            for($t=0;$t<24;$t++) {
+                for ($j = 0; $j < $result['txt_time' . $t]; $j++) {
+                    $xs = $t * 3600;
+                    //随机百度cookie
+                    $baidu_cookie = Db::name('baiducookie')->field('baidu_cookie')->where(['cookie_fail'=>['<',10]])->order('rand()')->limit(1)->find();
+
+                    $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($result['post_title']), 'title' => base64_encode($result['post_biaoti']), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+                }
+            }
+        }
+        $renwuQuery->insertAll($renwudata);
+
+        //积分减少
+        $userQuery            = Db::name("user");
+        $where=[];
+        $where['id']=$userId;
+        $xiaofei=$result['post_dianjicishu']*$result['post_tianshu'];
+        $coin=$userQuery->where($where)->find();
+        $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
+
+        //增加明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=2;
+        $data2['post_title']='关键词【'.$result['post_title'].'】点击任务续费';
+        $data2['score']=$xiaofei;
+        $userMoneyQuery->insert($data2);
+        $this->success('续费成功！', url('user/guanjianci/index'));
     }
 }
