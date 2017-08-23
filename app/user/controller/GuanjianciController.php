@@ -28,13 +28,21 @@ class GuanjianciController extends UserBaseController
     {
         $editData = new UserModel();
         $data = $editData->guanjianci();
+        //查询任务执行情况
+        $list=[];
+        $taskQuery=Db::name('taskdjdata');
+        foreach($data['lists'] as $v){
+            $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->find();
+            $v['task_ok_num']=$task_ok['count'];
+            $list[]=$v;
+        }
         $user = cmf_get_current_user();
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
         $this->assign($user);
         $this->assign("page", $data['page']);
-        $this->assign("lists", $data['lists']);
+        $this->assign("lists", $list);
         return $this->fetch();
     }
 
@@ -130,9 +138,9 @@ class GuanjianciController extends UserBaseController
         $paiming=json_decode(json_decode($paiming_json),true);
 $i=0;
         while($paiming['IsCompleted']==false){
-            sleep(2);
-            $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
-            $key=json_decode($key_json);
+            sleep(1);
+//            $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
+//            $key=json_decode($key_json);
 
             $paiming_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/100");
             $paiming=json_decode(json_decode($paiming_json),true);
@@ -148,7 +156,7 @@ $i=0;
         $str=$paiming['ResponseList'][0]['Rank'];
         $str=str_replace("名","",str_replace("第","",$str));
         echo $str;
-        if(isset($num)){
+        if($num!=''){
             echo ",".$num;
         }
 

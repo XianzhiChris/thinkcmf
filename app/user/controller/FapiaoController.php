@@ -42,7 +42,7 @@ class FapiaoController extends UserBaseController
     {
         $user = cmf_get_current_user();
         $userMoneyQuery=Db::name('user_money_log');
-        $zxf=$userMoneyQuery->field('sum(jine) as je')->where(array('user_id'=>$user['id'],'type'=>2))->find();
+        $zxf=$userMoneyQuery->field('sum(jine) as je')->where(array('user_id'=>$user['id'],'type'=>1))->find();
         $userFapiaoQuery=Db::name('user_fapiao_post');
         $yikaijine=$userFapiaoQuery->field('sum(jine) as je')->where(array('user_id'=>$user['id']))->find();
 

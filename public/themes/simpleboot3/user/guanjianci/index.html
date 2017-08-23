@@ -49,7 +49,7 @@
 									<th width="50">日点击</th>
 									<th width="50">持续天数</th>
 									<th width="50">添加时间</th>
-									<th width="50">状态</th>
+									<th width="50">进度</th>
 									<th width="50">操作</th>
 								</tr>
 								</thead>
@@ -82,14 +82,16 @@
 										<td>{$vo.post_tianshu}</td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
 										<td>
-											<eq name="vo.is_ok" value="1">
-												<span style="color:green">运行中</span>
-											</eq>
-											<eq name="vo.is_ok" value="0">
-												<span style="color:red">已停止</span>
-											</eq>
+											<php>
+												$zsl=$vo['post_dianjicishu'] * $vo['post_tianshu'];
+											</php>
+											{$vo.task_ok_num}/{$zsl}
 										</td>
-										<td><a class="js-ajax-dialog-btn" href="{:url('user/guanjianci/xufei',array('id'=>$vo['id']))}" data-msg="您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_dianjicishu * $vo.post_tianshu})">续费</a></td>
+										<td>
+											<if condition="$vo['task_ok_num']==$zsl">
+												<a class="js-ajax-dialog-btn" href="{:url('user/guanjianci/xufei',array('id'=>$vo['id']))}" data-msg="您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_dianjicishu * $vo.post_tianshu})">续费</a>
+											</if>
+										</td>
 									</tr>
 								</foreach>
 								</tbody>

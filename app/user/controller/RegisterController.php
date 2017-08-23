@@ -34,7 +34,7 @@ class RegisterController extends HomeBaseController
         if (cmf_is_user_login()) {
             return redirect($this->request->root() . '/');
         } else {
-            $this->assign('parent_id',$w['user_id']);
+            $this->assign('parent_id',isset($w['user_id'])?$w['user_id']:0);
             return $this->fetch(":register");
         }
     }

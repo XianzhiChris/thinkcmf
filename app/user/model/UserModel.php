@@ -257,15 +257,15 @@ class UserModel extends Model
 
         $userPinglunTaskQuery            = Db::name("zhidaotaskdata");
         foreach($favorites as $v){
-            $task_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>0])->select();
+
             $task_ok_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>1])->select();
-            $task_err_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>['neq',1],'return_code'=>['neq','']])->select();
+            $task_err_count=$userPinglunTaskQuery->field(array('count(*)'=>'count'))->where(['pinglun_id'=>$v['id'],'return_code'=>[['neq',1],['neq','']],'delete_time'=>0])->select();
 
             $v['task_ok_count']=$task_ok_count[0]['count'];
             $v['task_err_count']=$task_err_count[0]['count'];
-            $v['task_ok']=1;
-            if($task_count) {//数量相等，任务完成
-                $v['task_ok']=0;
+            $v['task_ok']=0;
+            if($v['post_content_num']==($v['task_ok_count']+$v['task_err_count'])) {//数量相等，任务完成
+                $v['task_ok']=1;
             }
             $list[]=$v;
         }
@@ -307,7 +307,7 @@ class UserModel extends Model
             $contentQuery->insert($content_data);
             $content_id=$contentQuery->getLastInsID();
             //随机百度cookie
-            $baidu_cookie = $CookieQuery->field('baidu_cookie')->order('rand()')->limit(1)->find();
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where('cookie_fail','<',10)->order('rand()')->limit(1)->find();
             //生成任务列表
             $renwudata = ['pinglun_id' => $renwu_id, 'content_id'=>$content_id,'zhidao' => 'hd', 'get_url' => $data['post_url'], 'content'=>base64_encode($v),'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
             $renwuQuery->insert($renwudata);
@@ -333,6 +333,16 @@ class UserModel extends Model
 
         return $userMoneyQuery;
     }
+    public function pinglunzhixing($data){
+        $pinglunTaskQuery            = Db::name("zhidaotaskdata");
+
+        $favorites            = $pinglunTaskQuery->field('content,return_code,return_img')->where(['pinglun_id'=>$data['id'],'delete_time'=>0])->order('id desc')->paginate(10);
+
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
     public function pinglunTiwen()
     {
         $userId               = cmf_get_current_user_id();
@@ -340,6 +350,7 @@ class UserModel extends Model
 
         $where['user_id']     = $userId;
         $where['post_type']     = 2;
+        $where['delete_time']     = 0;
         $join = [
             ['zhidaotaskdata u', 'a.id = u.pinglun_id']
         ];
@@ -495,7 +506,7 @@ class UserModel extends Model
         $userFapiaoQuery            = Db::name("guanjianci_post");
 
         $where['user_id']     = $userId;
-        $favorites            = $userFapiaoQuery->where($where)->order('id desc')->paginate(10);
+        $favorites            = $userFapiaoQuery->where($where)->order('create_time desc')->paginate(10);
         $data['page']         = $favorites->render();
 
         $data['lists']        = $favorites->items();

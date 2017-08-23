@@ -42,6 +42,7 @@ class ChongzhiController extends UserBaseController
     public function chongzhi()
     {
         $user_id = cmf_get_current_user_id();
+        $user = cmf_get_current_user();
         $data = $this->request->param();
         switch ($data['jifen']){
             case 1:
@@ -90,7 +91,6 @@ class ChongzhiController extends UserBaseController
 
         $userQuery = Db::name('user');
         $userMoneyQuery=Db::name('user_money_log');
-        $moneyData=['user_id'=>$user_id,'create_time'=>time(),'type'=>1,'post_title'=>'充值【'.$jifen.'】积分','score'=>$jifen,'jine'=>$jine,'remark'=>$type];
 
         if($pay_result=='ok') {
 
@@ -106,11 +106,37 @@ class ChongzhiController extends UserBaseController
                 $user_group=2;
             }
             $userQuery->where('id',$user_id)->update(['user_group'=>$user_group]);
-
+            //会员积分和金额调整
             $userqueryresult=$userQuery->where('id',$user_id)->setInc('score',$jifen);
             $userqueryresult2=$userQuery->where('id',$user_id)->setInc('coin',$jine);
-
+            //明细增加
+            $moneyData=['user_id'=>$user_id,'create_time'=>time(),'type'=>1,'post_title'=>'充值【'.$jifen.'】积分','score'=>$jifen,'jine'=>$jine,'remark'=>$type];
             $usermoneyqueryresult=$userMoneyQuery->insert($moneyData);
+            //给上级会员返点---返积分
+            $parent_id=$user['parent_id'];
+            if(isset($parent_id)) {
+                $parent_group=$userQuery->field('user_group')->where('id', $parent_id)->find();
+                switch ($parent_group['user_group']){
+                    case 1:
+                        $fandian=0.03;
+                        break;
+                    case 2:
+                        $fandian=0.06;
+                        break;
+                    case 3:
+                        $fandian=0.09;
+                        break;
+                    case 4:
+                        $fandian=0.12;
+                        break;
+                }
+                $userQuery->where('id',$parent_id)->setInc('score',$jifen*$fandian);
+                //明细增加
+                $moneyData2=['user_id'=>$parent_id,'create_time'=>time(),'type'=>1,'post_title'=>'团队成员【'.$user['user_nickname'].'】充值赠送积分','score'=>$jifen*$fandian];
+                $userMoneyQuery->insert($moneyData2);
+            }
+
+
             if($userqueryresult&&$usermoneyqueryresult&&$userqueryresult2) {
                 return 'ok';
             }

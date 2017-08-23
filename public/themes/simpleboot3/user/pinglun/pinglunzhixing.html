@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$user_nickname}  - 评论任务管理</title>
+<title>{$user_nickname}  - 评论任务执行情况</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
@@ -30,9 +30,9 @@
 			<div class="col-md-9">
 				<div class="tabs">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 评论任务管理</a></li>
+						<li><a href="{:url('user/pinglun/index')}"><i class="fa fa-building-o"></i> 评论任务管理</a></li>
 						<li><a href="{:url('user/pinglun/add')}">添加任务</a></li>
-						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">批量添加任务</a></li>-->
+						<li class="active"><a href="javascript:void(0)">【{$title}】任务执行情况</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
@@ -40,38 +40,37 @@
 							<table class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-									<th>任务名称</th>
-									<th width="50">网址</th>
-									<th width="80">评论数量</th>
-									<th width="150">执行情况</th>
-									<th width="50">添加时间</th>
+									<th>评论内容</th>
+									<th width="50">结果</th>
 									<th width="70">状态</th>
-									<th width="100">操作</th>
 								</tr>
 								</thead>
 								<tbody id="tbody1">
 								<foreach name="lists" item="vo">
 									<tr>
-										<td>{$vo.post_title}</td>
-										<td><a href="{$vo.post_url}" target="_blank">查看</a></td>
-										<td>{$vo.post_content_num}</td>
-										<td><a href="{:url('user/pinglun/pinglunzhixing',array('id'=>$vo['id']))}">成功:{$vo.task_ok_count} 失败:{$vo.task_err_count}</a></td>
-										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+										<td>{:base64_decode($vo.content)}</td>
+										<php>
+											$jieguo=2;
+											if($vo['return_code']==''){
+												$jieguo=0;
+											}
+											if($vo['return_code']==1){
+												$jieguo=1;
+											}
+										</php>
 										<td>
-											<eq name="vo.task_ok" value="0">
-												<span style="color:green">运行中</span>
-											</eq>
-											<eq name="vo.task_ok" value="1">
-												<span style="color:red">已停止</span>
+											<eq name="jieguo" value="1">
+												<a href="/get_task/{$vo.return_img}" target="_blank">查看</a>
 											</eq>
 										</td>
 										<td>
-											<eq name="vo.task_ok" value="1">
-											<neq name="vo.task_err_count" value="0">
-											<a class="js-ajax-dialog-btn" href="{:url('user/pinglun/pinglunshibai',array('id'=>$vo['id']))}" data-msg="重新执行失败任务不重复扣费" data-ok="" data-cacel="取消">重新执行失败任务</a>
-											</neq>
-											</eq>
+											<switch name="vo['return_code']">
+												<case value="">排队中</case>
+												<case value="1">成功</case>
+												<default />失败
+											</switch>
 										</td>
+
 									</tr>
 								</foreach>
 								</tbody>

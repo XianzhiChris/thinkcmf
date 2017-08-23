@@ -5,6 +5,18 @@
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
+	<script>
+        var gongsimingcheng="{$gongsimingcheng}";
+        var lianxiren="{$lianxiren}";
+        var dizhi="{$dizhi}";
+        var wangzhi="{$wangzhi}";
+        var dianhua="{$dianhua}";
+
+        if(gongsimingcheng==''||lianxiren==''||dizhi==''||wangzhi==''||dianhua==''){
+            alert('请完善个人资料');
+            self.location.href='/user/profile/edit.html'
+        }
+	</script>
 </head>
 
 <body class="body-white" id="top">
@@ -87,10 +99,55 @@
                         console.log('123');
 //                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
 						alert('充值成功');
+                        self.location.href='/user/chongzhi/index';
 					}
                 }
             })
-		})
+		});
+        $('#wx').click(function(){
+            var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
+            var btn = $(this);
+            if(chongzhijifen==null){
+                alert("请选择充值积分数量!");
+                return false;
+            }
+            $.ajax({
+                url: "/user/chongzhi/chongzhi/",
+                type: "Get",
+                data: "jifen=" + chongzhijifen + "&type=wx&random=" + Math.random(),
+                dataType: "json",
+                success: function (data) {
+                    if(data=='ok'){
+                        console.log('123');
+//                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
+                        alert('充值成功');
+                        self.location.href='/user/chongzhi/index';
+                    }
+                }
+            })
+        });
+        $('#yhk').click(function(){
+            var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
+            var btn = $(this);
+            if(chongzhijifen==null){
+                alert("请选择充值积分数量!");
+                return false;
+            }
+            $.ajax({
+                url: "/user/chongzhi/chongzhi/",
+                type: "Get",
+                data: "jifen=" + chongzhijifen + "&type=yhk&random=" + Math.random(),
+                dataType: "json",
+                success: function (data) {
+                    if(data=='ok'){
+                        console.log('123');
+//                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
+                        alert('充值成功');
+                        self.location.href='/user/chongzhi/index';
+                    }
+                }
+            })
+        });
 	})
 </script>
 </body>
