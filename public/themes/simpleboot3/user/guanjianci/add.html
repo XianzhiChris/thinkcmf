@@ -194,11 +194,23 @@
 
 			$("#paiming").html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
 			$.get("/user/guanjianci/paiming/post_title/" + post_title + "/post_url/" + post_url + "/ssyq/" + post_type + "/sj/" + Math.random(), function (data) {
-				$("#post_chushipaiming").val(data);
-                $("#paiming").html('');
+			    console.log(data.indexOf('未查询到'));
+			    if(data.indexOf('未查询到')>=0){
+                    $("#paiming").html('未查询到');
+				}else if(data.indexOf('查询超时')>=0) {
+                    $("#paiming").html('查询超时');
+                } else {
+                    $("#post_chushipaiming").val(data);
+                    $("#paiming").html('');
+                }
 			});
 
         });
+        $('#post_type').change(function(){
+            $('#post_biaoti').val('');
+            $('#post_url').val('');
+            $('#post_chushipaiming').val('');
+		});
 	    $('#bt_get_list').click(function(){
             var search_type = $("#post_type").val();
             if (search_type == "1" || search_type == "2" || search_type == "3") {

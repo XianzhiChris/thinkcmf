@@ -69,13 +69,21 @@ class AdminIndexController extends AdminBaseController
             $keywordComplex['user_login']    = ['like', "%$keyword%"];
             $keywordComplex['user_nickname'] = ['like', "%$keyword%"];
             $keywordComplex['user_email']    = ['like', "%$keyword%"];
+            $keywordComplex['mobile']    = ['like', "%$keyword%"];
         }
         $usersQuery = Db::name('user');
+        $userGroupQuery = Db::name('user_group');
 
         $list = $usersQuery->where($where)->whereOr($keywordComplex)->order("create_time DESC")->paginate(10);
+        $data=[];
+        foreach($list as $v){
+            $usergroupname=$userGroupQuery->field('post_title')->where('id',$v['user_group'])->find();
+            $v['user_group_name']=$usergroupname['post_title'];
+            $data[]=$v;
+        }
         // 获取分页显示
         $page = $list->render();
-        $this->assign('list', $list);
+        $this->assign('list', $data);
         $this->assign('page', $page);
         // 渲染模板输出
         return $this->fetch();

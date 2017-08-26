@@ -15,101 +15,83 @@ use cmf\controller\AdminBaseController;
 use think\Db;
 
 /**
- * Class AdminIndexController
+ * Class AdminUserActionController
  * @package app\user\controller
- *
- * @adminMenuRoot(
- *     'name'   =>'用户管理',
- *     'action' =>'default',
- *     'parent' =>'',
- *     'display'=> true,
- *     'order'  => 10,
- *     'icon'   =>'group',
- *     'remark' =>'用户管理'
- * )
- *
- * @adminMenuRoot(
- *     'name'   =>'用户组',
- *     'action' =>'default1',
- *     'parent' =>'user/AdminIndex/default',
- *     'display'=> true,
- *     'order'  => 10000,
- *     'icon'   =>'',
- *     'remark' =>'用户组'
- * )
  */
-class AdminMoneyController extends AdminBaseController
+class AdminGroupController extends AdminBaseController
 {
 
     /**
-     * 后台本站用户列表
+     * 用户操作管理
      * @adminMenu(
-     *     'name'   => '本站用户',
-     *     'parent' => 'default1',
+     *     'name'   => '用户操作管理',
+     *     'parent' => 'admin/Setting/default',
      *     'display'=> true,
      *     'hasView'=> true,
      *     'order'  => 10000,
      *     'icon'   => '',
-     *     'remark' => '本站用户',
+     *     'remark' => '用户操作管理',
      *     'param'  => ''
      * )
      */
     public function index()
     {
         $where   = [];
-        $wh=[];
-        $aa=[];
-        $request = input('request.');
-        $param = $this->request->param();
 
-        if (!empty($request['uid'])) {
-            $where['id'] = intval($request['uid']);
-        }
-        if (!empty($param['type'])) {
-            $where['type'] = $param['type'];
-        }
-        $keywordComplex = [];
-        if (!empty($request['keyword'])) {
-            $keyword = $request['keyword'];
+        $usersQuery = Db::name('user_group');
 
-            $keywordComplex['post_title']    = ['like', "%$keyword%"];
-        }
-        $usersMoneyQuery = Db::name('user_money_log');
-        $usersQuery = Db::name('user');
+        $list = $usersQuery->where('delete_time',0)->order("id DESC")->paginate(10);
 
-        $list = $usersMoneyQuery->where($where)->whereOr($keywordComplex)->order("create_time DESC,id desc")->paginate(10);
-        foreach($list as $v){
-            $wh['id']=['=',$v['user_id']];
-            $nickname=$usersQuery->where($wh)->field('user_nickname')->find();
-            $v['user_nickname']=$nickname['user_nickname'];
-            $aa[]=$v;
-        }
         // 获取分页显示
         $page = $list->render();
-        $this->assign('type', isset($param['post_type']) ? $param['post_type'] : '');
-        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
-        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
-        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $aa);
+
+        $this->assign('list', $list->items());
         $this->assign('page', $page);
         // 渲染模板输出
         return $this->fetch();
     }
+
+    public function add()
+    {
+
+        return $this->fetch();
+    }
+    public function addPost()
+    {
+        if ($this->request->isPost()) {
+            $param   = $this->request->param();
+
+            $data=['post_title'=>$param['post_title'],'post_jine'=>$param['post_jine'],'remark'=>$param['remark'],'create_time'=>time()];
+            Db::name('user_group')->insert($data);
+
+            $this->success('添加成功!', url('AdminGroup/index'));
+        }
+
+    }
+
     public function edit()
+    {
+        $id     = $this->request->param('id', 0, 'intval');
+        $action = Db::name('user_group')->where('id', $id)->find();
+        $this->assign('post', $action);
+
+        return $this->fetch();
+    }
+
+    public function editPost()
     {
         $id = $this->request->param('id', 0, 'intval');
 
-        $portalPostModel = Db::name('user_money_log');
-        $post            = $portalPostModel->where('id', $id)->find();
+        $data = $this->request->param();
 
-        $this->assign('post', $post);
+        Db::name('user_group')->where('id', $id)->update($data);
 
-        return $this->fetch();
+        $this->success('保存成功！',url('AdminGroup/index'));
     }
     public function delete()
     {
         $param           = $this->request->param();
-        $portalPostModel = Db::name('user_money_log');
+        $portalPostModel = Db::name('user_group');
 
         if (isset($param['id'])) {
             $id           = $this->request->param('id', 0, 'intval');
@@ -117,7 +99,7 @@ class AdminMoneyController extends AdminBaseController
             $data         = [
                 'object_id'   => $result['id'],
                 'create_time' => time(),
-                'table_name'  => 'user_money_log',
+                'table_name'  => 'user_group',
                 'name'        => $result['post_title']
             ];
             $resultPortal = $portalPostModel
@@ -139,7 +121,7 @@ class AdminMoneyController extends AdminBaseController
                     $data = [
                         'object_id'   => $value['id'],
                         'create_time' => time(),
-                        'table_name'  => 'user_money_log',
+                        'table_name'  => 'user_group',
                         'name'        => $value['post_title']
                     ];
                     Db::name('recycleBin')->insert($data);

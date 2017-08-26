@@ -184,7 +184,7 @@ class AdminIndexController extends AdminBaseController
             $data         = [
                 'object_id'   => $result['id'],
                 'create_time' => time(),
-                'table_name'  => 'baiducookie',
+                'table_name'  => 'zhidaobaiducook',
                 'name'        => $result['baidu_cookie']
             ];
             $resultPortal = $portalPostModel
@@ -206,7 +206,7 @@ class AdminIndexController extends AdminBaseController
                     $data = [
                         'object_id'   => $value['id'],
                         'create_time' => time(),
-                        'table_name'  => 'baiducookie',
+                        'table_name'  => 'zhidaobaiducook',
                         'name'        => $value['baidu_cookie']
                     ];
                     Db::name('recycleBin')->insert($data);

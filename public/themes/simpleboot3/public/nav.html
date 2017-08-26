@@ -1,3 +1,8 @@
+<style>
+    .navbar-nav > li > a{
+        line-height: 42px;
+    }
+</style>
 <nav class="navbar navbar-default navbar-fixed-top active">
     <div class="container active">
         <div class="navbar-header">
@@ -8,7 +13,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="__ROOT__/">{$theme_vars.company_name|default=''}</a>
+            <a class="navbar-brand" style="line-height: 42px;" href="__ROOT__/">{$theme_vars.company_name|default=''}</a>
         </div>
 
         <div class="collapse navbar-collapse active" id="bs-example-navbar-collapse-1">
@@ -64,13 +69,6 @@
                     </ul>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right" method="post" action="{:cmf_url('portal/Search/index')}">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="keyword" placeholder="Search"
-                           value="{:input('param.keyword','')}">
-                </div>
-                <input type="submit" class="btn btn-primary" value="Go" style="margin:0"/>
-            </form>
         </div>
     </div>
 </nav>

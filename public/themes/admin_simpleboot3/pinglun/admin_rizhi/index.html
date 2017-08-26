@@ -1,0 +1,101 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有记录</a></li>
+        <!--<li><a href="{:url('AdminIndex/add')}">添加记录</a></li>-->
+    </ul>
+
+    <form class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="50">ID</th>
+                <th width="50">类型</th>
+                <th>标题|名称</th>
+                <th width="300">内容</th>
+                <th width="50">URL</th>
+                <th width="150">百度Cookie</th>
+                <th width="50">主机</th>
+                <th width="50">截图</th>
+                <th width="80">发布时间</th>
+                <th width="60">状态</th>
+            </tr>
+            </thead>
+            <foreach name="articles" item="vo">
+                <tr>
+                    <td><b>{$vo.id}</b></td>
+                    <td>
+                        <switch name="vo.zhidao">
+                            <case value="tw">提问</case>
+                            <case value="hd">评论</case>
+                        </switch>
+                    </td>
+                    <td>{:base64_decode($vo.title)}</td>
+                    <td>{:base64_decode($vo.content)}</td>
+                    <td>
+                        <switch name="vo.zhidao">
+                            <case value="tw">
+                                <notempty name="vo.return_url">
+                                    <a href="{$vo.return_url}" target="_blank">查看</a>
+                                </notempty>
+                            </case>
+                            <case value="hd"><a href="{$vo.get_url}" target="_blank">查看</a></case>
+                        </switch>
+                    </td>
+                    <td>{:base64_decode($vo.baidu_cookie)}</td>
+                    <td>{$vo.get_host}</td>
+                    <td>
+                        <notempty name="vo.return_img">
+                            <a href="/get_task/{$vo.return_img}" target="_blank">查看</a>
+                        </notempty>
+                    </td>
+                    <td>
+                        <notempty name="vo.create_time">
+                            {:date('Y-m-d H:i:s',$vo['create_time'])}
+                        </notempty>
+                    </td>
+                    <td>
+                        <eq name="vo.return_code" value="">
+                            排队中
+                        </eq>
+                        <eq name="vo.return_code" value="1">
+                            成功
+                        </eq>
+                        <neq name="vo.return_code" value="1">
+                            <neq name="vo.return_code" value="">
+                                失败
+                            </neq>
+                        </neq>
+                    </td>
+                </tr>
+            </foreach>
+            <tfoot>
+
+            </tfoot>
+        </table>
+        <ul class="pagination">{$page|default=''}</ul>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    function refersh_window() {
+        var refersh_time = getCookie('refersh_time');
+        if (refersh_time == 1) {
+        }
+    }
+    setInterval(function () {
+        refersh_window();
+    }, 2000);
+    $(function () {
+        setCookie("refersh_time", 0);
+    })
+
+</script>
+</body>
+</html>

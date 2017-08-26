@@ -91,20 +91,31 @@ class ChongzhiController extends UserBaseController
 
         $userQuery = Db::name('user');
         $userMoneyQuery=Db::name('user_money_log');
+        $userGroupQuery=Db::name('user_group');
 
         if($pay_result=='ok') {
+            //获取会员级别条件
+            $userGroup=$userGroupQuery->field('id,post_jine')->order('post_jine desc')->select();
 
             //会员级别调整
             $coin=$userQuery->field('coin')->where('id',$user_id)->find();
             $zje=$coin['coin']+$jine;
-            $user_group=1;
-            if($zje>50000){
-                $user_group=4;
-            }elseif($zje>20000){
-                $user_group=3;
-            }elseif($zje>5000){
-                $user_group=2;
+//            $user_group=1;
+//            if($zje>50000){
+//                $user_group=4;
+//            }elseif($zje>20000){
+//                $user_group=3;
+//            }elseif($zje>5000){
+//                $user_group=2;
+//            }
+            foreach($userGroup as $v){
+                if($zje>$v['post_jine']){
+                    $user_group=$v['id'];
+                    break;
+                }
             }
+
+
             $userQuery->where('id',$user_id)->update(['user_group'=>$user_group]);
             //会员积分和金额调整
             $userqueryresult=$userQuery->where('id',$user_id)->setInc('score',$jifen);

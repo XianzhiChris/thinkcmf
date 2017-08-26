@@ -3,17 +3,18 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li class="active"><a>发票管理</a></li>
+        <li class="active"><a>会员级别</a></li>
+        <li><a href="{:url('AdminGroup/add')}">添加记录</a></li>
     </ul>
-
+    <br/>
     <form class="js-ajax-form" action="" method="post">
         <div class="table-actions">
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminFapiao/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                    data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
             </button>
         </div>
-        <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered table-list">
             <thead>
             <tr>
                 <th width="15">
@@ -21,11 +22,8 @@
                         <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
                     </label>
                 </th>
-                <th width="50">ID</th>
-                <th width="200">用户</th>
-                <th>发票金额</th>
-                <th>联系电话</th>
-                <th width="100">状态</th>
+                <th>名称</th>
+                <th width="150">金额</th>
                 <th width="150">操作</th>
             </tr>
             </thead>
@@ -35,13 +33,10 @@
                         <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
                                value="{$vo.id}" title="ID:{$vo.id}">
                     </td>
-                    <td><b>{$vo.id}</b></td>
-                    <td>{$vo.user_nickname}</td>
-                    <td>{$vo.jine}</td>
-                    <td>{$vo.dianhua}</td>
-                    <td>{$vo.zt}</td>
-                    <td><a href="{:url('AdminFapiao/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |
-                        <a href="{:url('AdminFapiao/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a></td>
+                    <td>{$vo.post_title}</td>
+                    <td>{$vo.post_jine}</td>
+                    <td><a href="{:url('AdminGroup/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |
+                        <a href="{:url('AdminGroup/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a></td>
                 </tr>
             </foreach>
             <tfoot>
@@ -51,18 +46,15 @@
                         <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
                     </label>
                 </th>
-                <th width="50">ID</th>
-                <th width="200">用户</th>
-                <th>发票金额</th>
-                <th>联系电话</th>
-                <th width="100">状态</th>
+                <th>名称</th>
+                <th width="150">金额</th>
                 <th width="150">操作</th>
             </tr>
             </tfoot>
         </table>
         <div class="table-actions">
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminFapiao/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                    data-action="{:url('AdminIndex/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
             </button>
         </div>
@@ -71,6 +63,7 @@
 </div>
 <script src="__STATIC__/js/admin.js"></script>
 <script>
+
     function reloadPage(win) {
         win.location.reload();
     }
@@ -85,8 +78,7 @@
     }, 2000);
     $(function () {
         setCookie("refersh_time", 0);
-    })
-
+    }
 </script>
 </body>
 </html>

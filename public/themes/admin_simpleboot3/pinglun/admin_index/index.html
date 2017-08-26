@@ -44,10 +44,9 @@
                 <th>标题</th>
                 <th width="100">链接</th>
                 <th width="200">用户</th>
-                <th width="100">评论内容</th>
+                <th width="100">进度</th>
                 <th width="150">发布时间</th>
-                <th width="200">备注</th>
-                <th width="90">操作</th>
+                <th width="150">操作</th>
             </tr>
             </thead>
             <foreach name="articles" item="vo">
@@ -66,15 +65,16 @@
                             {$vo.user_email}
                         </notempty>
                     </td>
-                    <td><a href="javascript:doContentList({$vo.id});">查看内容</a></td>
+                    <td>{$vo.task}/{$vo.post_content_num}</td>
+                    <!--<td><a href="javascript:doContentList({$vo.id});">查看内容</a></td>-->
                     <td>
                         <notempty name="vo.create_time">
                             {:date('Y-m-d H:i:s',$vo['create_time'])}
                         </notempty>
                     </td>
-                    <td>{$vo.remark}</td>
                     <td>
-                        <a href="{:url('AdminIndex/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |
+                        <a href="{:url('AdminRizhi/index',array('pinglun_id'=>$vo['id']))}">任务</a> |
+                        <!--<a href="{:url('AdminIndex/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |-->
                         <a href="{:url('AdminIndex/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>
                     </td>
                 </tr>
@@ -90,19 +90,13 @@
                 <th>标题</th>
                 <th width="100">链接</th>
                 <th width="200">用户</th>
-                <th width="100">评论内容</th>
+                <th width="100">进度</th>
                 <th width="150">发布时间</th>
-                <th width="200">备注</th>
-                <th width="90">操作</th>
+                <th width="150">操作</th>
             </tr>
             </tfoot>
         </table>
         <div class="table-actions">
-            <notempty name="term">
-                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
-                </button>
-            </notempty>
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminIndex/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}

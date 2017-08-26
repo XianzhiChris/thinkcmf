@@ -18,7 +18,7 @@ class AliyunMobileCodePlugin extends Plugin
     public $info = [
         'name'        => 'AliyunMobileCode',
         'title'       => '阿里云云通讯短信验证码',
-        'description' => '阿里云云通讯短信验证码',
+        'description' => 'QQ276906866',
         'status'      => 1,
         'author'      => '云鹏',
         'version'     => '1.0'

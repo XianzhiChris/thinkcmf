@@ -35,8 +35,10 @@ class ProfileController extends UserBaseController
         $this->assign($user);
         $this->assign('userid',$userId);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score,user_group')->where(array('id'=>$user['id']))->find();
+        $user_group_name=Db::name('user_group')->field('post_title')->where('id',$coin['user_group'])->find();
         $this->assign('myscore',$coin['score']);
+        $this->assign('user_group_name',$user_group_name['post_title']);
         return $this->fetch();
     }
 

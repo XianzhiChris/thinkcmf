@@ -12,6 +12,8 @@ namespace app\guanjianci\service;
 
 use app\guanjianci\model\GuanjianciPostModel;
 use app\guanjianci\model\GuanjianciXiangguanciPostModel;
+use app\guanjianci\model\TaskdjdataModel;
+use app\guanjianci\model\TaskdjdataModelModel;
 
 class PostService
 {
@@ -39,7 +41,21 @@ class PostService
 
         return $articles;
     }
+    public function adminRizhiList($filter)
+    {
+        if(!empty($filter['renwu_id'])){
+            $where['renwu_id']=$filter['renwu_id'];
+        }
+        $where['create_time']=['>=', 0];
+        $where['delete_time']=['=', 0];
 
+        $portalPostModel = new TaskdjdataModel();
+        $articles        = $portalPostModel->where($where)
+            ->order('id', 'DESC')
+            ->paginate(10);
+
+        return $articles;
+    }
     public function adminPageList($filter)
     {
         return $this->adminPostList($filter, true);

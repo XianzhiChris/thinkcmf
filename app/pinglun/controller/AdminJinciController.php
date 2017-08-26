@@ -101,7 +101,7 @@ class AdminJinciController extends AdminBaseController
 
 
 
-            $this->success('添加成功!', url('AdminJinci/index', ['id' => $portalPostModel->id]));
+            $this->success('添加成功!', url('AdminJinci/index'));
         }
 
     }
@@ -164,7 +164,7 @@ class AdminJinciController extends AdminBaseController
 
             $portalPostModel->adminEditArticle($data['post']);
 
-            $this->success('保存成功!');
+            $this->success('保存成功!', url('AdminJinci/index'));
 
         }
     }

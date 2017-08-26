@@ -115,6 +115,8 @@ class GuanjianciController extends UserBaseController
 
     public function paiming()
     {
+        //todo:来源判断，网址，防止其他人恶意调用
+
         $data = $this->request->param();
         $title=urlencode($data['post_title']);
         $url=$data['post_url'];
@@ -131,10 +133,28 @@ class GuanjianciController extends UserBaseController
                 $ssyq="so360";
                 break;
         }
-        $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
+        $key_json="";
+        $i=0;
+        while(!$key_json){
+            if($i==3){
+                echo "查询超时,".$num.",".$ssyq_value.",".$title.",".$url;
+                exit;
+            }
+            $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
+            $i++;
+        }
         $key=json_decode($key_json);
 
-        $paiming_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/100");
+        $paiming_json='';
+        $i=0;
+        while(!$paiming_json){
+            if($i==3){
+                echo "查询超时,".$num.",".$ssyq_value.",".$title.",".$url;
+                exit;
+            }
+            $paiming_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/100");
+            $i++;
+        }
         $paiming=json_decode(json_decode($paiming_json),true);
 $i=0;
         while($paiming['IsCompleted']==false){

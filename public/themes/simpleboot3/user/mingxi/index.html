@@ -48,7 +48,9 @@
 										</td>
 										<td>
 											<eq name="vo.type" value="1">
+												<neq name="vo.remark" value="">
 												({$vo.remark})
+												</neq>
 											</eq>
 											{$vo.post_title}
 										</td>
@@ -67,7 +69,7 @@
 							</table>
 						</div>
 
-						<div class="pagination"><ul>{$page}</ul></div>
+						<div><ul class="pagination">{$page}</ul></div>
 					</div>
 				</div>
 			</div>

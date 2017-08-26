@@ -3,27 +3,32 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li><a href="{:url('AdminIndex/index')}">所有记录</a></li>
+        <li><a href="{:url('AdminGroup/index')}">所有记录</a></li>
         <li>
-            <a href="{:url('AdminIndex/add')}">添加记录</a>
+            <a href="{:url('AdminGroup/add')}">添加记录</a>
         </li>
         <li class="active"><a href="#">编辑记录</a></li>
     </ul>
-    <form action="{:url('AdminIndex/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+    <form action="{:url('AdminGroup/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-bordered">
                     <tr>
-                        <th>Cookie<span class="form-required">*</span></th>
+                        <th>名称<span class="form-required">*</span></th>
                         <td>
-                            <input type="hidden" name="post[id]" value="{$post.id}">
-                            <input class="form-control" type="text" name="post[baidu_cookie]"
-                                   required value="{:base64_decode($post.baidu_cookie)}" placeholder="请输入Cookie"/>
+                            <input type="hidden" name="id" value="{$post.id}">
+                            <input class="form-control" type="text" name="post_title"
+                                   required value="{$post.post_title}" placeholder="请输入名称"/>
                         </td>
                     </tr>
                     <tr>
+                        <th>金额<span class="form-required">*</span></th>
+                        <td><input class="form-control" type="text" name="post_jine" id="post_jine" value="{$post.post_jine}"
+                                   placeholder="请输入金额" required></td>
+                    </tr>
+                    <tr>
                         <th>备注</th>
-                        <td><input class="form-control" type="text" name="post[remark]" id="source" value="{$post.remark}"
+                        <td><input class="form-control" type="text" name="remark" id="source" value="{$post.remark}"
                                    placeholder="请输入备注"></td>
                     </tr>
                 </table>

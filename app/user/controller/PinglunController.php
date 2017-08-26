@@ -29,6 +29,7 @@ class PinglunController extends UserBaseController
         $editData = new UserModel();
         $data = $editData->pinglun();
         $user = cmf_get_current_user();
+
         $this->assign($user);
         $this->assign("page", $data['page']);
         $this->assign("lists", $data['lists']);
@@ -63,8 +64,11 @@ class PinglunController extends UserBaseController
     {
         $data = $this->request->param();
         $editData = new UserModel();
-        $editData->pinglunadd($data);
-
+        $res=$editData->pinglunadd($data);
+        if(strpos($res, "err:") !== false){
+            $re=explode(':',$res);
+            $this->error('添加失败！内容包含禁止词语【'.$re[1].'】');
+        }
         $this->success('添加成功！', url('user/pinglun/index'));
     }
 
@@ -136,20 +140,20 @@ class PinglunController extends UserBaseController
     {
         $editData = new UserModel();
         $data = $editData->pinglunTiwen();
-        //获取任务执行情况
-        $taskQuery=Db::name('zhidaotaskdata');
-        $list=[];
-        foreach($data['lists'] as $v){
-            $return_code=$taskQuery->field('return_code,return_url')->where('pinglun_id',$v['id'])->order('id desc')->limit(1)->find();
-            $v['return_code']=$return_code['return_code'];
-            $v['return_url']=$return_code['return_url'];
-            $list[]=$v;
-        }
+//        //获取任务执行情况
+//        $taskQuery=Db::name('zhidaotaskdata');
+//        $list=[];
+//        foreach($data['lists'] as $v){
+//            $return_code=$taskQuery->field('return_code,return_url')->where(['pinglun_id'=>$v['id'],'delete_time'=>0])->order('id desc')->limit(1)->find();
+//            $v['return_code']=$return_code['return_code'];
+//            $v['return_url']=$return_code['return_url'];
+//            $list[]=$v;
+//        }
 
         $user = cmf_get_current_user();
         $this->assign($user);
         $this->assign("page", $data['page']);
-        $this->assign("lists", $list);
+        $this->assign("lists", $data['lists']);
         return $this->fetch();
     }
     /**
@@ -168,8 +172,11 @@ class PinglunController extends UserBaseController
     {
         $data = $this->request->param();
         $editData = new UserModel();
-        $editData->pingluntiwenadd($data);
-
+        $res=$editData->pingluntiwenadd($data);
+        if(strpos($res, "err:") !== false){
+            $re=explode(':',$res);
+            $this->error('添加失败！内容包含禁止词语【'.$re[1].'】');
+        }
         $this->success('添加成功！', url('user/pinglun/tiwen'));
     }
 

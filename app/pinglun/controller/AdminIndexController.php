@@ -34,11 +34,19 @@ class AdminIndexController extends AdminBaseController
 
         $data->appends($param);
 
+        $list=[];
+        $taskQuery=Db::name('zhidaotaskdata');
+        foreach($data->items() as $v){
+            $task=$taskQuery->field(['count(*)'=>'count'])->where(['pinglun_id'=>$v['id'],'return_code'=>['neq','']])->find();
+            $v['task']=$task['count'];
+            $list[]=$v;
+        }
+
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $data->items());
-
+        $this->assign('articles', $list);
+        $this->assign('page', $data->render());
 
         return $this->fetch();
     }
@@ -210,6 +218,8 @@ class AdminIndexController extends AdminBaseController
             if ($resultPortal) {
                 Db::name('recycleBin')->insert($data);
             }
+            //删除任务
+            Db::name('zhidaotaskdata')->where('pinglun_id',$id)->update(['delete_time'=>time()]);
             $this->success("删除成功！", '');
 
         }
@@ -227,6 +237,8 @@ class AdminIndexController extends AdminBaseController
                         'name'        => $value['post_title']
                     ];
                     Db::name('recycleBin')->insert($data);
+                    //删除任务
+                    Db::name('zhidaotaskdata')->where('pinglun_id',$value['id'])->update(['delete_time'=>time()]);
                 }
                 $this->success("删除成功！", '');
             }

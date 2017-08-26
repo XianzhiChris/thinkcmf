@@ -3,7 +3,7 @@ namespace app\pinglun\controller;
 
 use cmf\controller\AdminBaseController;
 
-use app\pinglun\model\PinglunTwPostModel;
+use app\pinglun\model\PinglunPostModel;
 use app\pinglun\service\PostService;
 
 use think\Db;
@@ -84,7 +84,7 @@ class AdminTiwenController extends AdminBaseController
 //                $this->error($result);
 //            }
 
-            $portalPostModel = new PinglunTwPostModel();
+            $portalPostModel = new PinglunPostModel();
 
 
             $portalPostModel->adminAddIndex($data['post']);
@@ -112,7 +112,7 @@ class AdminTiwenController extends AdminBaseController
     {
         $id = $this->request->param('id', 0, 'intval');
 
-        $portalPostModel = new PinglunTwPostModel();
+        $portalPostModel = new PinglunPostModel();
         $post            = $portalPostModel->where('id', $id)->find();
 //        $postCategories  = $post->categories()->alias('a')->column('a.name', 'a.id');
 //        $postCategoryIds = implode(',', array_keys($postCategories));
@@ -150,7 +150,7 @@ class AdminTiwenController extends AdminBaseController
 //                $this->error($result);
 //            }
 
-            $portalPostModel = new PinglunTwPostModel();
+            $portalPostModel = new PinglunPostModel();
 
 //            if (!empty($data['photo_names']) && !empty($data['photo_urls'])) {
 //                $data['post']['more']['photos'] = [];
@@ -192,7 +192,7 @@ class AdminTiwenController extends AdminBaseController
     public function delete()
     {
         $param           = $this->request->param();
-        $portalPostModel = new PinglunTwPostModel();
+        $portalPostModel = new PinglunPostModel();
 
         if (isset($param['id'])) {
             $id           = $this->request->param('id', 0, 'intval');
@@ -209,6 +209,9 @@ class AdminTiwenController extends AdminBaseController
             if ($resultPortal) {
                 Db::name('recycleBin')->insert($data);
             }
+            //删除任务
+            Db::name('zhidaotaskdata')->where('pinglun_id',$id)->update(['delete_time'=>time()]);
+
             $this->success("删除成功！", '');
 
         }
@@ -217,6 +220,9 @@ class AdminTiwenController extends AdminBaseController
             $ids     = $this->request->param('ids/a');
             $recycle = $portalPostModel->where(['id' => ['in', $ids]])->select();
             $result  = $portalPostModel->where(['id' => ['in', $ids]])->update(['delete_time' => time()]);
+
+            //删除任务
+            Db::name('zhidaotaskdata')->where(['pinglun_id' => ['in', $ids]])->update(['delete_time'=>time()]);
             if ($result) {
                 foreach ($recycle as $value) {
                     $data = [
@@ -226,6 +232,7 @@ class AdminTiwenController extends AdminBaseController
                         'name'        => $value['post_title']
                     ];
                     Db::name('recycleBin')->insert($data);
+
                 }
                 $this->success("删除成功！", '');
             }

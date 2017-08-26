@@ -1,10 +1,10 @@
 <?php
-namespace app\guanjianci\controller;
+namespace app\pinglun\controller;
 
 use cmf\controller\AdminBaseController;
 
-use app\guanjianci\model\TaskdjdataModel;
-use app\guanjianci\service\PostService;
+use app\pinglun\model\ZhidaotaskdataModel;
+use app\pinglun\service\PostService;
 
 use think\Db;
 use app\admin\model\ThemeModel;
@@ -36,10 +36,8 @@ class AdminRizhiController extends AdminBaseController
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-
         $this->assign('articles', $data->items());
         $this->assign('page', $data->render());
-
         return $this->fetch();
     }
     /**
@@ -85,7 +83,7 @@ class AdminRizhiController extends AdminBaseController
 //                $this->error($result);
 //            }
 
-            $portalPostModel = new GuanjianciPostModel();
+            $portalPostModel = new PinglunPostModel();
 
 
             $portalPostModel->adminAddIndex($data['post']);
@@ -113,7 +111,7 @@ class AdminRizhiController extends AdminBaseController
     {
         $id = $this->request->param('id', 0, 'intval');
 
-        $portalPostModel = new GuanjianciPostModel();
+        $portalPostModel = new PinglunPostModel();
         $post            = $portalPostModel->where('id', $id)->find();
 //        $postCategories  = $post->categories()->alias('a')->column('a.name', 'a.id');
 //        $postCategoryIds = implode(',', array_keys($postCategories));
@@ -151,7 +149,7 @@ class AdminRizhiController extends AdminBaseController
 //                $this->error($result);
 //            }
 
-            $portalPostModel = new GuanjianciPostModel();
+            $portalPostModel = new PinglunPostModel();
 
 //            if (!empty($data['photo_names']) && !empty($data['photo_urls'])) {
 //                $data['post']['more']['photos'] = [];
@@ -193,7 +191,7 @@ class AdminRizhiController extends AdminBaseController
     public function delete()
     {
         $param           = $this->request->param();
-        $portalPostModel = new GuanjianciPostModel();
+        $portalPostModel = new PinglunPostModel();
 
         if (isset($param['id'])) {
             $id           = $this->request->param('id', 0, 'intval');
@@ -233,62 +231,5 @@ class AdminRizhiController extends AdminBaseController
         }
     }
 
-    public function select()
-    {
-        $param           = $this->request->param();
-        $pinglun_id           = $this->request->param('id', 0, 'intval');
-//        $ids                 = $this->request->param('ids');
-//        $selectedIds         = explode(',', $ids);
-        $portalCategoryModel = new GuanjianciXiangguanciPostModel();
-
-        $tpl = <<<tpl
-<tr class='data-item-tr'>
-    <td>
-        <input type='checkbox' class='js-check' data-yid='js-check-y' data-xid='js-check-x' name='ids[]'
-               value='\$id' data-name='\$name' \$checked>
-    </td>
-    <td>\$id</td>
-    <td>\$spacer <a href='\$url' target='_blank'>\$name</a></td>
-</tr>
-tpl;
-
-//        $categoryTree = $portalCategoryModel->adminCategoryTableTree($pinlun_id, $tpl);
-
-        $where['guanjianci_id']    = ['eq', $pinglun_id];
-        $categories = $portalCategoryModel->where($where)->select();
-//
-        $this->assign('categories', $categories);
-        $this->assign('guanjianci_id', $pinglun_id);
-//        $this->assign('selectedIds', $selectedIds);
-//        $this->assign('categories_tree', $categoryTree);
-        return $this->fetch();
-    }
-
-    public function xgc_delete()
-    {
-        $ids                 = $this->request->param('ids/a');
-        $portalCategoryModel = new GuanjianciXiangguanciPostModel();
-        $result  = $portalCategoryModel->where(['id' => ['in', $ids]])->update(['status' => 1]);
-        if ($result) {
-            $this->success("审核成功！", '');
-        }
-    }
-    public function xgc_add()
-    {
-        if ($this->request->isPost()) {
-            $data   = $this->request->param();
-
-
-            $portalPostModel = new GuanjianciXiangguanciPostModel();
-
-
-            $portalPostModel->adminAddIndex($data['post']);
-
-
-
-            $this->success('添加成功!');
-        }
-
-    }
 }
 

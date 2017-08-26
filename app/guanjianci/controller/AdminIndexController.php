@@ -32,13 +32,23 @@ class AdminIndexController extends AdminBaseController
         $postService = new PostService();
         $data        = $postService->adminArticleList($param);
 
+        //查询任务执行情况
+        $list=[];
+        $taskQuery=Db::name('taskdjdata');
+        foreach($data->items() as $v){
+            $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->find();
+            $v['task_ok_num']=$task_ok['count'];
+            $list[]=$v;
+        }
+
         $data->appends($param);
 
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $data->items());
-
+        $this->assign('articles', $list);
+        $data['page']         = $data->render();
+        $this->assign("page", $data['page']);
 
         return $this->fetch();
     }
@@ -201,7 +211,7 @@ class AdminIndexController extends AdminBaseController
             $data         = [
                 'object_id'   => $result['id'],
                 'create_time' => time(),
-                'table_name'  => 'pinglun_post',
+                'table_name'  => 'guanjianci_post',
                 'name'        => $result['post_title']
             ];
             $resultPortal = $portalPostModel
@@ -210,6 +220,10 @@ class AdminIndexController extends AdminBaseController
             if ($resultPortal) {
                 Db::name('recycleBin')->insert($data);
             }
+
+            //删除任务
+            Db::name('taskdjdata')->where('renwu_id', $id)->update(['delete_time'=>time()]);
+
             $this->success("删除成功！", '');
 
         }
@@ -218,15 +232,19 @@ class AdminIndexController extends AdminBaseController
             $ids     = $this->request->param('ids/a');
             $recycle = $portalPostModel->where(['id' => ['in', $ids]])->select();
             $result  = $portalPostModel->where(['id' => ['in', $ids]])->update(['delete_time' => time()]);
+
+            //删除任务
+            Db::name('taskdjdata')->where(['renwu_id' => ['in', $ids]])->update(['delete_time'=>time()]);
             if ($result) {
                 foreach ($recycle as $value) {
                     $data = [
                         'object_id'   => $value['id'],
                         'create_time' => time(),
-                        'table_name'  => 'pinglun_post',
+                        'table_name'  => 'guanjianci_post',
                         'name'        => $value['post_title']
                     ];
                     Db::name('recycleBin')->insert($data);
+
                 }
                 $this->success("删除成功！", '');
             }

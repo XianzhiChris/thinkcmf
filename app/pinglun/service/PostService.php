@@ -13,6 +13,7 @@ namespace app\pinglun\service;
 use app\pinglun\model\PinglunPostModel;
 use app\pinglun\model\PinglunJinciPostModel;
 use app\pinglun\model\PinglunTwPostModel;
+use app\pinglun\model\ZhidaotaskdataModel;
 
 class PostService
 {
@@ -46,24 +47,43 @@ class PostService
     {
         $where = [
             'a.create_time' => ['>=', 0],
-            'a.delete_time' => 0
+            'a.delete_time' => 0,
+            'a.post_type' => 2
         ];
-
+        $join = [
+            ['__USER__ u', 'a.user_id = u.id'],['__ZHIDAOTASKDATA__ z','z.pinglun_id = a.id']
+        ];
+        $field = 'a.*,u.user_login,u.user_nickname,u.user_email,z.return_code,z.return_url,z.return_img';
 
         $keyword = empty($filter['keyword']) ? '' : $filter['keyword'];
         if (!empty($keyword)) {
             $where['a.post_title'] = ['like', "%$keyword%"];
         }
 
-        $portalPostModel = new PinglunTwPostModel();
-        $articles        = $portalPostModel->alias('a')
+        $portalPostModel = new PinglunPostModel();
+        $articles        = $portalPostModel->alias('a')->field($field)
+            ->join($join)
             ->where($where)
             ->order('id', 'DESC')
             ->paginate(10);
 
         return $articles;
     }
+    public function adminRizhiList($filter)
+    {
+        if(!empty($filter['pinglun_id'])){
+            $where['pinglun_id']=$filter['pinglun_id'];
+        }
+        $where['create_time']=['>=', 0];
+        $where['delete_time']=['=', 0];
 
+        $portalPostModel = new ZhidaotaskdataModel();
+        $articles        = $portalPostModel->where($where)
+            ->order('id', 'DESC')
+            ->paginate(10);
+
+        return $articles;
+    }
     public function adminPageList($filter)
     {
         return $this->adminPostList($filter, true);
@@ -74,7 +94,8 @@ class PostService
 
         $where = [
             'a.create_time' => ['>=', 0],
-            'a.delete_time' => 0
+            'a.delete_time' => 0,
+            'a.post_type' => 1
         ];
         $join = [
             ['__USER__ u', 'a.user_id = u.id']

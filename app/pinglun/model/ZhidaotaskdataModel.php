@@ -8,13 +8,13 @@
 // +----------------------------------------------------------------------
 // | Author: 老猫 <thinkcmf@126.com>
 // +----------------------------------------------------------------------
-namespace app\zhidaobaiducookie\model;
+namespace app\pinglun\model;
 
 use app\admin\model\RouteModel;
 use think\Model;
 use think\Db;
 
-class ZhidaobaiducookModel extends Model
+class ZhidaotaskdataModel extends Model
 {
 
     protected $type = [
@@ -79,8 +79,7 @@ class ZhidaobaiducookModel extends Model
      */
     public function adminAddIndex($data)
     {
-        $data['baidu_cookie']=base64_encode($data['baidu_cookie']);
-        $data['cookie_md5']=md5($data['baidu_cookie']);
+
         $this->allowField(true)->data($data, true)->isUpdate(false)->save();
 
         return $this;
@@ -127,10 +126,31 @@ class ZhidaobaiducookModel extends Model
      */
     public function adminEditArticle($data)
     {
-        $data['baidu_cookie']=base64_encode($data['baidu_cookie']);
-        $data['cookie_md5']=md5($data['baidu_cookie']);
+//        $data['user_id'] = cmf_get_current_admin_id();
+
+//        if (!empty($data['more']['thumbnail'])) {
+//            $data['more']['thumbnail'] = cmf_asset_relative_url($data['more']['thumbnail']);
+//        }
+
+//        $data['post_status'] = empty($data['post_status']) ? 0 : 1;
+//        $data['is_top']      = empty($data['is_top']) ? 0 : 1;
+//        $data['recommended'] = empty($data['recommended']) ? 0 : 1;
 
         $this->allowField(true)->isUpdate(true)->data($data, true)->save();
+
+//        if (is_string($categories)) {
+//            $categories = explode(',', $categories);
+//        }
+
+//        $this->categories()->detach();
+//
+//        $this->categories()->save($categories);
+
+//        $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
+
+//        $keywords = explode(',', $data['post_keywords']);
+
+//        $this->addTags($keywords, $data['id']);
 
         return $this;
 
