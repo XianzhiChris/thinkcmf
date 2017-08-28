@@ -431,7 +431,7 @@ class UserModel extends Model
         $data2['score']=$xiaofei;
         $userMoneyQuery->insert($data2);
 
-        return $userMoneyQuery;
+        return 'ok';
     }
     public function mingxi()
     {

@@ -56,7 +56,7 @@ class PostService
         $portalPostModel = new HostModel();
         $articles        = $portalPostModel->alias('a')->field($field)
             ->where($where)
-            ->order('id', 'DESC')
+            ->order('out_time', 'DESC')
             ->paginate(10);
 
         return $articles;

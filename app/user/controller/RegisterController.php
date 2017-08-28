@@ -69,13 +69,14 @@ class RegisterController extends HomeBaseController
 
             $data = $this->request->post();
 
-            //todo:临时关掉验证码
-//            if (!$validate->check($data)) {
-//                $this->error($validate->getError());
-//            }
-//            if (!cmf_captcha_check($data['captcha'])) {
-//                $this->error('验证码错误');
-//            }
+            //临时关掉验证码
+            if (!$validate->check($data)) {
+                $this->error($validate->getError());
+            }
+            if (!cmf_captcha_check($data['captcha'])) {
+                $this->error('验证码错误');
+            }
+            //
 
             if(!$isOpenRegistration){
                 $errMsg = cmf_check_verification_code($data['username'], $data['code']);

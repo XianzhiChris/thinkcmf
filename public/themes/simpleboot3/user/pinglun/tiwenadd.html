@@ -43,8 +43,8 @@
 								<tr>
 									<th>百度帐号Cookie</th>
 									<td>
-										<input class="form-control" type="text" name="post_cookie" id="post_cookie" value="" placeholder="请输入百度帐号Cookie" required>
-										<a href="">百度帐号Cookie获取方法</a>
+										<input class="form-control" type="text" name="post_cookie" id="post_cookie" value="{:base64_decode($post_cookie)}" required />
+										<input type="checkbox" id="shangci" checked />使用上次任务Cookie<a href="" style="float:right">百度帐号Cookie获取方法</a>
 									</td>
 								</tr>
 							</table>
@@ -64,6 +64,34 @@
 	</div>
 <!-- /container -->
 <include file="public@scripts" />
+<script>
+	$(function(){
+        $('#submit').click(function(){
 
+            //判断积分是否足够
+            var score_my = {$myscore};
+
+            var score_need =  1;
+
+            if (parseInt(score_my) < parseInt(score_need)) {
+                alert("对不起，你的积分不足！您的积分：" + score_my + "，所需积分：" + score_need + "");
+                return false;
+            }
+            //
+
+            //提醒是否确认
+            var is_add = confirm("本次任务将扣除" + score_need + "积分，是否确认添加？");
+            if (!is_add) {
+                return false;
+            }
+            //
+
+            return true;
+        });
+	    $('#shangci').click(function(){
+			$('#post_cookie').val('');
+		})
+	})
+</script>
 </body>
 </html>

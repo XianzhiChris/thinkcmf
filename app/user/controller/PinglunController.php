@@ -166,6 +166,15 @@ class PinglunController extends UserBaseController
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
+
+        //获取上次的百度Cookie
+        $tiwenQuery=Db::name('pinglun_post');
+        $post_cookie='';
+        $baidu_cookie=$tiwenQuery->field('post_cookie')->where(['user_id'=>$user['id'],'post_type'=>2])->order('id desc')->limit(1)->find();
+        if($baidu_cookie['post_cookie']){
+            $post_cookie=$baidu_cookie['post_cookie'];
+        }
+        $this->assign('post_cookie',$post_cookie);
         return $this->fetch();
     }
     public function tiwenaddPost()
