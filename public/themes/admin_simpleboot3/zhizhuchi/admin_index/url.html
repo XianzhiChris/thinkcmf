@@ -1,0 +1,53 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:url('AdminIndex/index')}">所有记录</a></li>
+		<!--<li><a href="{:url('AdminIndex/add')}">添加记录</a></li>-->
+		<li class="active"><a href="{:url('AdminIndex/add')}">【{$title}】任务URL</a></li>
+	</ul>
+
+	<form class="js-ajax-form" action="" method="post">
+		<table class="table table-hover table-bordered table-list">
+			<thead>
+			<tr>
+				<th>网址</th>
+				<th width="300">查看</th>
+			</tr>
+			</thead>
+			<foreach name="articles" item="vo">
+				<tr>
+					<td>{$vo.post_title}</td>
+					<td>
+						<a href="https://www.baidu.com/s?wd={$vo.post_title}" target="_blank">百度</a>&nbsp;&nbsp;
+						<a href="https://www.sogou.com/web?query={$vo.post_title}" target="_blank">搜狗</a>&nbsp;&nbsp;
+						<a href="https://www.so.com/s?q={$vo.post_title}" target="_blank">360</a>
+					</td>
+				</tr>
+			</foreach>
+		</table>
+		<ul class="pagination">{$page|default=''}</ul>
+	</form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    function refersh_window() {
+        var refersh_time = getCookie('refersh_time');
+        if (refersh_time == 1) {
+        }
+    }
+    setInterval(function () {
+        refersh_window();
+    }, 2000);
+    $(function () {
+        setCookie("refersh_time", 0);
+    }
+</script>
+</body>
+</html>

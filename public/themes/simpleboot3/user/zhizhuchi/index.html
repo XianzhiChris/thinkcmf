@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_nickname}  - 蜘蛛池任务管理</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+	<script>
+        var gongsimingcheng="{$gongsimingcheng}";
+        var lianxiren="{$lianxiren}";
+        var dizhi="{$dizhi}";
+        var wangzhi="{$wangzhi}";
+        var dianhua="{$dianhua}";
+
+        if(gongsimingcheng==''||lianxiren==''||dizhi==''||wangzhi==''||dianhua==''){
+            alert('请完善个人资料');
+            self.location.href='/user/profile/edit.html'
+        }
+	</script>
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 蜘蛛池任务管理</a></li>
+						<li><a href="{:url('user/zhizhuchi/add')}">添加任务</a></li>
+						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">批量添加任务</a></li>-->
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th>任务名称</th>
+									<th width="120">网址</th>
+									<th width="120">持续天数</th>
+									<th width="120">添加时间</th>
+									<th width="100">状态</th>
+									<th width="100">操作</th>
+								</tr>
+								</thead>
+								<tbody id="tbody1">
+								<foreach name="lists" item="vo">
+									<tr>
+										<td>{$vo.post_title}</td>
+										<td><a href="{:url('user/zhizhuchi/url',array('id'=>$vo['id']))}">查看</a></td>
+										<td>{$vo.post_tianshu}</td>
+										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+										<td>
+											<php>
+												$time=time();
+												$end_time=$vo['create_time']+$vo['post_tianshu']*24*3600;
+											</php>
+											<if condition="$time gt $end_time">
+												<span style="color:green">已停止</span>
+												<else/>
+												<span style="color:red">运行中</span>
+											</if>
+										</td>
+										<td>
+											<if condition="$time gt $end_time">
+												<a class="js-ajax-dialog-btn" href="{:url('user/zhizhuchi/xufei',array('id'=>$vo['id']))}" data-msg="扣除{$vo.post_url_num * $vo.post_tianshu}个积分，您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_url_num * $vo.post_tianshu})">续费</a>
+											</if>
+										</td>
+									</tr>
+								</foreach>
+								</tbody>
+							</table>
+						</div>
+
+						<div><ul class="pagination">{$page}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_nickname}  - 蜘蛛池URL</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+	<script>
+        var gongsimingcheng="{$gongsimingcheng}";
+        var lianxiren="{$lianxiren}";
+        var dizhi="{$dizhi}";
+        var wangzhi="{$wangzhi}";
+        var dianhua="{$dianhua}";
+
+        if(gongsimingcheng==''||lianxiren==''||dizhi==''||wangzhi==''||dianhua==''){
+            alert('请完善个人资料');
+            self.location.href='/user/profile/edit.html'
+        }
+	</script>
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li><a href="{:url('user/zhizhuchi/index')}"><i class="fa fa-building-o"></i> 蜘蛛池任务管理</a></li>
+						<li><a href="{:url('user/zhizhuchi/add')}">添加任务</a></li>
+						<li class="active"><a href="javascript:void(0)">【{$title}】任务URL</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th>网址</th>
+									<th width="300">查看</th>
+								</tr>
+								</thead>
+								<tbody id="tbody1">
+								<foreach name="lists" item="vo">
+									<tr>
+										<td>{$vo.post_title}</td>
+										<td>
+											<a href="https://www.baidu.com/s?wd={$vo.post_title}" target="_blank">百度</a>&nbsp;&nbsp;
+											<a href="https://www.sogou.com/web?query={$vo.post_title}" target="_blank">搜狗</a>&nbsp;&nbsp;
+											<a href="https://www.so.com/s?q={$vo.post_title}" target="_blank">360</a>
+										</td>
+									</tr>
+								</foreach>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="pagination"><ul>{$page}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+
+</body>
+</html>

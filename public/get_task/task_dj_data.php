@@ -48,7 +48,7 @@ if (mysql_query($sql)){
 function link_sqlx($beng,$end) {  //获取数据
 global $time_sjc,$host,$client_ip;
   //select * from cmf_taskdjdata where get_host='' and task_time>'20' and task_time<'35' order by rand() limit 2
-$sql_ip="select * from cmf_taskdjdata where get_host='' and task_time>'$beng' and task_time<'$end' order by rand() limit 10";  //"SELECT * FROM cmf_taskdjdata";//
+$sql_ip="select * from cmf_taskdjdata where get_host='' and delete_time='' and task_time>'$beng' and task_time<'$end' order by rand() limit 10";  //"SELECT * FROM cmf_taskdjdata";//
 //print_r($sql_ip);
 $result1=mysql_query($sql_ip);  //->fetchAll(PDO::FETCH_ASSOC);
 $r_data="";

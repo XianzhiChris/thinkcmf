@@ -505,6 +505,99 @@ class UserModel extends Model
 
         return $userGuanjianciQuery;
     }
+    public function zhizhuchi()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userPinglunQuery            = Db::name("zhizhuchi_post");
+
+        $where['user_id']     = $userId;
+        $where['delete_time']     = 0;
+
+        $favorites            = $userPinglunQuery->where($where)->order('id desc')->paginate(10);
+
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
+    public function zhizhuchiadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $time=time();
+        $str = str_replace(array("\r\n", "\r", "\n", "\t"), "###", $data['url']);
+        $content_data=explode('###',$str);
+        $j=0;
+        foreach($content_data as $v) {
+            $v=trim($v);
+            if (strlen($v) > 1) {
+                $j++;
+            }
+        }
+        $url_num=$j;
+
+        //积分减少
+        $userQuery            = Db::name("user");
+        $where=[];
+        $where['id']=$userId;
+        $xiaofei=$data['post_tianshu']*$url_num*1;
+        $coin=$userQuery->where($where)->find();
+        $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
+
+        if($userQuery) {
+            //增加明细记录
+            $userMoneyQuery = Db::name("user_money_log");
+            $data2 = [];
+            $data2['user_id'] = $userId;
+            $data2['create_time'] = $time;
+            $data2['type'] = 2;
+            $data2['post_title'] = '蜘蛛池【' . $data['post_title'] . '】任务';
+            $data2['score'] = $xiaofei;
+            $userMoneyQuery->insert($data2);
+
+            if($userMoneyQuery) {
+                $userZhizhuchiQuery = Db::name("zhizhuchi_post");
+                $zhizhuchi_data['user_id'] = $userId;
+                $zhizhuchi_data['post_title'] = $data['post_title'];
+                $zhizhuchi_data['post_tianshu'] = $data['post_tianshu'];
+                $zhizhuchi_data['post_url_num'] = $url_num;
+                $zhizhuchi_data['create_time'] = $time;
+                $userZhizhuchiQuery->insert($zhizhuchi_data);
+                $renwu_id = $userZhizhuchiQuery->getLastInsID();
+
+                if($renwu_id) {
+                    //插入url表
+                    $urlQuery = Db::name('zhizhuchi_url');
+
+                    foreach($content_data as $v){
+                        $v=trim($v);
+                        if(strlen($v)>1){
+                            if(strpos($v, 'http')!==false){
+                                $v=str_replace('http://','',$v);
+                            }
+                            $url_data = ['post_title'=>$v,'renwu_id'=>$renwu_id,'create_time'=>$time];
+                            $urlQuery->insert($url_data);
+
+                            //todo:提交到蜘蛛池
+                        }
+                    }
+                    return "ok";
+                }
+                return "添加失败";
+            }
+            return "明细添加失败";
+        }
+        return "费用扣除失败";
+    }
+    public function zhizhuchiurl($data){
+        $urlQuery            = Db::name("zhizhuchi_url");
+
+        $favorites            = $urlQuery->field('post_title')->where(['renwu_id'=>$data['id'],'delete_time'=>0])->order('id desc')->paginate(10);
+
+        $data['page']         = $favorites->render();
+
+        $data['lists']        = $favorites->items();
+        return $data;
+    }
     public function tixianadd($data)
     {
         $userId               = cmf_get_current_user_id();

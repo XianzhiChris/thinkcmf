@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$user_nickname}  - 蜘蛛池任务添加</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li><a href="{:url('user/zhizhuchi/index')}"><i class="fa fa-building-o"></i> 蜘蛛池任务管理</a></li>
+						<li class="active"><a href="#" data-toggle="tab">添加任务</a></li>
+						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">批量添加任务</a></li>-->
+					</ul>
+					<form action="{:url('user/zhizhuchi/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered">
+								<tr>
+									<th>任务名称</th>
+									<td>
+										<input class="form-control" type="text" name="post_title" id="post_title" placeholder="请输入任务名称" required>
+									</td>
+								</tr>
+								<tr>
+									<th width="150">网址</th>
+									<td>
+										<textarea name="url" id="url" class="form-control" rows="15" required></textarea>每行一个网页地址，http://开头
+									</td>
+								</tr>
+								<tr>
+									<th>持续天数</th>
+									<td>
+										<input class="form-control" type="text" name="post_tianshu" id="post_tianshu" placeholder="请输入持续天数" required>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="submit" id="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+							<a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+<script type="text/javascript">
+	$(function(){
+        $("#post_tianshu").keyup(function () {
+            var v = $(this).val();
+            if (!isNumber(v)) {
+                $(this).val("");
+            }
+        });
+        $('#submit').click(function(){
+            var con_arr=$('#url').val().split("\n");
+            var j=0;
+            for(var i=0;i<con_arr.length;i++){
+                if(con_arr[i].length>0){
+                    j++;
+                }
+            }
+            var post_content_num=j;
+			var post_tianshu=$('#post_tianshu').val();
+console.log(j);
+            //判断积分是否足够
+            var score_my = {$myscore};
+
+            var score_need = post_content_num * post_tianshu * 1;
+
+            if (parseInt(score_my) < parseInt(score_need)) {
+                alert("对不起，你的积分不足！您的积分：" + score_my + "，所需积分：" + score_need + "");
+                return false;
+            }
+            //
+
+            //提醒是否确认
+            var is_add = confirm("本次任务将扣除" + score_need + "积分，是否确认添加？");
+            if (!is_add) {
+                return false;
+            }
+            //
+
+            return true;
+        });
+	});
+    function isNumber(s) {
+        var type = "^[0-9]*[1-9][0-9]*$";
+        var re = new RegExp(type);
+        if (s.match(re) == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+</body>
+</html>

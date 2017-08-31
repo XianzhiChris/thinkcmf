@@ -27,7 +27,7 @@ if (mysql_query($sql)){
 //==========================
 //获取任务队列
 //select * from cmf_zhidaotaskdata where get_host='' order by rand() limit 30          SELECT * FROM cmf_zhidaotaskdata
-$sql_ip="select * from cmf_zhidaotaskdata where get_host='' order by rand() limit 30";//
+$sql_ip="select * from cmf_zhidaotaskdata where get_host=''and delete_time='' order by rand() limit 30";//
 $result1=mysql_query($sql_ip);  //->fetchAll(PDO::FETCH_ASSOC);
 $r_data="";
 //$link_int=0;
