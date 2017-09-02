@@ -33,7 +33,7 @@
                     </td>
                     <td>{:base64_decode($vo.key)}</td>
                     <td>{:base64_decode($vo.title)}</td>
-                    <td>{:base64_decode($vo.baidu_cookie)}</td>
+                    <td style="word-wrap: break-word;word-break: break-all;"><span data="{:base64_decode($vo.baidu_cookie),0,10}" class="cookie">{:substr(base64_decode($vo.baidu_cookie),0,8)}...<a href="javascript:void(0)">完整</a></span></td>
                     <td>{$vo.get_host}</td>
                     <td>
                         <notempty name="vo.create_time">
@@ -78,6 +78,11 @@
     }, 2000);
     $(function () {
         setCookie("refersh_time", 0);
+    });
+    $(function(){
+        $('.cookie').click(function(){
+            $(this).html($(this).attr('data'));
+        })
     })
 
 </script>

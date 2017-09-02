@@ -82,9 +82,10 @@ class ZhidaobaiducookModel extends Model
         $renwudata=[];
         $str = str_replace(array("\r\n", "\r", "\n", "\t"), "###", $data['baidu_cookie']);
         $content_data=explode('###',$str);
+        $create_time=time();
         foreach($content_data as $v){
             if(strlen($v)>1){
-                $renwudata[] = ['baidu_cookie'=>base64_encode($v),'cookie_md5'=>md5($v)];
+                $renwudata[] = ['baidu_cookie'=>base64_encode($v),'cookie_md5'=>md5($v),'create_time'=>$create_time];
 
             }
         }
