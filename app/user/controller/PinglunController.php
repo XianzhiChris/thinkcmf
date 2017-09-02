@@ -101,7 +101,7 @@ class PinglunController extends UserBaseController
             //标记失败任务
            $renwuQuery->where('id', $v['id'])->update(['delete_time'=>time()]);
             //随机百度cookie
-            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where('cookie_fail','<',10)->order('rand()')->limit(1)->find();
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
 
             //生成任务列表
             $renwudata = ['pinglun_id' => $v['pinglun_id'], 'content_id' => $v['content_id'], 'zhidao' => 'hd', 'get_url' => $v['get_url'], 'content' => $v['content'], 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => time()];

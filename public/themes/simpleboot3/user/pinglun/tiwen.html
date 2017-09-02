@@ -52,9 +52,16 @@
 								<foreach name="lists" item="vo">
 									<tr>
 										<td>{$vo.post_title}</td>
-										<td><a href="{$vo.return_url}" target="_blank">查看</a></td>
-										<td><a href="/get_task/{$vo.return_img}" target="_blank">查看</a></td>
-
+										<td>
+											<eq name="vo.return_code" value="1">
+												<a href="{$vo.return_url}" target="_blank">查看</a>
+											</eq>
+										</td>
+										<td>
+											<eq name="vo.return_code" value="1">
+												<a href="/get_task/{$vo.return_img}" target="_blank">查看</a>
+											</eq>
+										</td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
 										<td>
 											<eq name="vo.return_code" value="">

@@ -36,13 +36,8 @@
     </form>
     <form class="js-ajax-form" action="" method="post">
         <div class="table-actions">
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
-                </button>
-            </notempty>
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                    data-action="{:url('AdminIndex/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
             </button>
         </div>
@@ -129,11 +124,6 @@
             </tfoot>
         </table>
         <div class="table-actions">
-            <notempty name="term">
-                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
-                </button>
-            </notempty>
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminIndex/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
