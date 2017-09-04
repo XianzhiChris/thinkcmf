@@ -5,7 +5,9 @@
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
-
+<style>
+	#mycookie {display:none}
+</style>
 </head>
 
 <body class="body-white" id="top">
@@ -43,8 +45,17 @@
 								<tr>
 									<th>百度帐号Cookie</th>
 									<td>
-										<input class="form-control" type="text" name="post_cookie" id="post_cookie" value="{:base64_decode($post_cookie)}" required />
-										<input type="checkbox" id="shangci" checked />使用上次任务Cookie<a href="" style="float:right">百度帐号Cookie获取方法</a>
+										<select name="select_cookie" id="selectCookie">
+											<option value="1">系统随机抽取</option>
+											<option value="2">使用自有帐号</option>
+										</select>
+									</td>
+								</tr>
+								<tr id="mycookie">
+									<th>我的百度Cookie</th>
+									<td>
+										<input class="form-control" type="text" name="post_cookie" id="post_cookie" />
+										<input type="checkbox" id="shangci"/>使用上次任务Cookie<a href="" style="float:right">百度帐号Cookie获取方法</a>
 									</td>
 								</tr>
 							</table>
@@ -89,7 +100,27 @@
             return true;
         });
 	    $('#shangci').click(function(){
-			$('#post_cookie').val('');
+	        console.log($(this).attr("checked"));
+	        if($(this).attr("checked")=="checked"){
+                $('#post_cookie').val('{:base64_decode($post_cookie)}');
+			}else {
+                $('#post_cookie').val('');
+            }
+		});
+	    $('#post_cookie').blur(function(){
+	        var va=$(this).val();
+	        if(va.length<150){
+                alert("Cookie输入错误");
+                $('#post_cookie').val('');
+			}
+		});
+	    $('#selectCookie').change(function(){
+	        if($(this).val()==2){
+	            $('#mycookie').show();
+			}else{
+                $('#mycookie').hide();
+                $('#post_cookie').val('');
+			}
 		})
 	})
 </script>

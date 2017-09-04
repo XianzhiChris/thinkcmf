@@ -93,9 +93,12 @@ class PinglunController extends UserBaseController
 
     public function pinglunshibai(){
         $data = $this->request->param();
+        $tiwenQuery=Db::name('pinglun_post');
+        $tiwenQuery->where('id',$data['id'])->update(['create_time'=>time()]);
         //获取失败评论信息
         $renwuQuery=Db::name('zhidaotaskdata');
         $pinglun=$renwuQuery->field('id,pinglun_id,content_id,get_url,content')->where(['pinglun_id'=>$data['id'],'delete_time'=>0,'return_code'=>[['neq',1],['neq','']]])->select();
+
         $CookieQuery=Db::name('zhidaobaiducook');
         foreach($pinglun as $v) {
             //标记失败任务
@@ -191,15 +194,17 @@ class PinglunController extends UserBaseController
 
     public function tiwenshibai(){
         $data = $this->request->param();
-        //获取评论信息
+        //获取提问信息
         $renwuQuery=Db::name('pinglun_post');
         $pinglun=$renwuQuery->field('post_title,post_content,post_cookie')->where('id',$data['id'])->find();
+        $renwuQuery->where('id',$data['id'])->update(['create_time'=>time()]);
         //失败任务标记
-        $renwuQuery=Db::name('zhidaotaskdata');
-        $renwuQuery->where('pinglun_id',$data['id'])->update(['delete_time',time()]);
-        //插入新评论任务
-        $renwudata = ['pinglun_id' => $data['id'], 'zhidao' => 'tw', 'title' => base64_encode($pinglun['post_title']), 'content'=>base64_encode($pinglun['post_content']),'baidu_cookie' => base64_encode($pinglun['post_cookie']), 'create_time' => time()];
-        $renwuQuery->insert($renwudata);
+        $taskQuery=Db::name('zhidaotaskdata');
+        $taskQuery->where('pinglun_id',$data['id'])->update(['delete_time'=>time()]);
+        //插入新提问任务
+        $taskData = ['pinglun_id' => $data['id'], 'zhidao' => 'tw', 'title' => base64_encode($pinglun['post_title']), 'content'=>$pinglun['post_content'],'baidu_cookie' => $pinglun['post_cookie'], 'create_time' => time()];
+
+        $taskQuery->insert($taskData);
 
         $this->success('添加成功！', url('user/pinglun/tiwen'));
     }

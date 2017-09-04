@@ -402,8 +402,17 @@ class UserModel extends Model
 
         $post_title=$data['post_title'];
         $post_content=$data['post_content'];
+        $select_cookie=$data['select_cookie'];
 
-        $pinglun_data=['post_type'=>2,'post_title'=>$post_title,'post_content'=>base64_encode($post_content),'post_cookie'=>base64_encode($data['post_cookie']),'user_id'=>$userId,'create_time'=>time()];
+        $post_cookie=base64_encode($data['post_cookie']);
+        if($select_cookie=='1'){
+            //随机百度cookie
+            $CookieQuery = Db::name('zhidaobaiducook');
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+            $post_cookie =$baidu_cookie['baidu_cookie'];
+        }
+
+        $pinglun_data=['post_type'=>2,'post_title'=>$post_title,'post_content'=>base64_encode($post_content),'post_cookie'=>$post_cookie,'user_id'=>$userId,'create_time'=>time()];
 
 
         $userPinglunQuery->insert($pinglun_data);
