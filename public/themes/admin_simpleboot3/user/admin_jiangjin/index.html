@@ -20,9 +20,11 @@
             <thead>
             <tr>
                 <th>队长</th>
-                <th>团队人数</th>
-                <th>消费总额</th>
-                <th>团队奖金</th>
+                <th width="130">团队人数</th>
+                <th width="150">去年消费总额</th>
+                <th width="150">去年团队奖金</th>
+                <th width="150">今年消费总额</th>
+                <th width="150">今年团队奖金</th>
             </tr>
             </thead>
             <tbody>
@@ -30,6 +32,8 @@
                 <tr>
                     <td>{$vo.user_nickname}</td>
                     <td>{$vo.tuandui_renshu}</td>
+                    <td>{$vo.tuandui_jine2}</td>
+                    <td>{$vo.tuandui_jiangjin2}</td>
                     <td>{$vo.tuandui_jine}</td>
                     <td>{$vo.tuandui_jiangjin}</td>
                 </tr>

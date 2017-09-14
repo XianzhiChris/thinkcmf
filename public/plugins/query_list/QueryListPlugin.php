@@ -34,9 +34,9 @@ class QueryListPlugin extends Plugin
     public function sousuoyinqing($parm)
     {
         $key_word=$parm['key'];
-        $ssqy=$parm['ssyq'];
+        $ssyq=$parm['ssyq'];
         $page=[];
-        if($ssqy==1){
+        if($ssyq==1){ //百度
             $page=array(
                 "https://www.baidu.com/s?rn=50&wd=".$key_word,
                 "https://www.baidu.com/s?rn=50&wd=".$key_word."&pn=50"
@@ -53,7 +53,7 @@ class QueryListPlugin extends Plugin
                 $data = array_merge($data,$ql->getData());
             }
         }
-        if($ssqy==2){
+        if($ssyq==2){ //搜狗
             $page=array(
                 "https://www.sogou.com/web?num=100&query=".$key_word
             );
@@ -69,7 +69,7 @@ class QueryListPlugin extends Plugin
                 $data = array_merge($data,$ql->getData());
             }
         }
-        if($ssqy==3){
+        if($ssyq==3){ //360
             $page=array(
                 "https://www.so.com/s?q=".$key_word,
                 "https://www.so.com/s?q=".$key_word."&pn=2",
@@ -91,6 +91,26 @@ class QueryListPlugin extends Plugin
                 );
                 $rang = '#main .res-list';
                 $ql = QueryList::Query($html,$reg,$rang);
+                $data = array_merge($data,$ql->getData());
+            }
+        }
+        if($ssyq==4){//百度知道
+            $page=array(
+                "https://zhidao.baidu.com/search?pn=0&word=".$key_word,
+                "https://zhidao.baidu.com/search?pn=10&word=".$key_word,
+                "https://zhidao.baidu.com/search?pn=20&word=".$key_word,
+                "https://zhidao.baidu.com/search?pn=30&word=".$key_word,
+                "https://zhidao.baidu.com/search?pn=40&word=".$key_word
+            );
+            $data=array();
+            foreach($page as $p){
+                $html=$this->curl_get_contents($p);
+                $reg = array(
+                    'title' => array('dt a','text'),
+                    'url'=>array('.dt a','href')
+                );
+                $rang = '#wgt-list .dl';
+                $ql = QueryList::Query($html,$reg,$rang,'UTF-8','GBK');
                 $data = array_merge($data,$ql->getData());
             }
         }

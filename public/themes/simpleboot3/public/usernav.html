@@ -35,7 +35,7 @@
         <li>
             <a href="#" class="dropdown-toggle">
                 <i class="fa fa-rocket normal"></i>
-                <span class="menu-text normal"> 任务管理 </span>
+                <span class="menu-text normal"> 关键词快速排名管理 </span>
                 <b class="arrow fa fa-angle-right normal"></b>
                 <i class="fa fa-reply back"></i>
                 <span class="menu-text back">返回</span>
@@ -44,34 +44,101 @@
 
             <ul class="submenu">
                 <li>
-                    <a class="list-group-item" href="{:cmf_url('user/Guanjianci/index')}">
+                    <a class="list-group-item" href="{:cmf_url('user/guanjianci/piliangadd')}">
                         <i class="fa fa-caret-right"></i>
                         <span class="menu-text">
-									关键词点击								</span>
+									关键词排名查询								</span>
                     </a>
 
                 </li>
                 <li>
-                    <a class="list-group-item" href="{:cmf_url('user/Pinglun/tiwen')}">
+                    <a class="list-group-item" href="{:cmf_url('user/guanjianci/index')}">
                         <i class="fa fa-caret-right"></i>
                         <span class="menu-text">
-									知道提问								</span>
+									关键词排名任务								</span>
                     </a>
 
                 </li>
                 <li>
-                    <a class="list-group-item" href="{:cmf_url('user/Pinglun/index')}">
+                    <a class="list-group-item" href="{:cmf_url('user/guanjianci/add')}">
                         <i class="fa fa-caret-right"></i>
                         <span class="menu-text">
-									知道评论								</span>
+									关键词任务添加								</span>
+                    </a>
+
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-paint-brush normal"></i>
+                <span class="menu-text normal"> 知道问答管理 </span>
+                <b class="arrow fa fa-angle-right normal"></b>
+                <i class="fa fa-reply back"></i>
+                <span class="menu-text back">返回</span>
+
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/pinglun/tiwen')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									百度知道提问								</span>
                     </a>
 
                 </li>
                 <li>
-                    <a class="list-group-item" href="{:cmf_url('user/Zhizhuchi/index')}">
+                    <a class="list-group-item" href="{:cmf_url('user/pinglun/index')}">
                         <i class="fa fa-caret-right"></i>
                         <span class="menu-text">
-									入驻蜘蛛池								</span>
+									百度知道回答								</span>
+                    </a>
+
+                </li>
+                <!--<li>-->
+                    <!--<a class="list-group-item" href="{:cmf_url('user/pinglun/index')}">-->
+                        <!--<i class="fa fa-caret-right"></i>-->
+                        <!--<span class="menu-text">-->
+									<!--百度知道点赞								</span>-->
+                    <!--</a>-->
+
+                <!--</li>-->
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/pinglun/pinglunzhixing')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									知道任务管理								</span>
+                    </a>
+
+                </li>
+
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="fa fa-line-chart normal"></i>
+                <span class="menu-text normal"> 快速收录任务管理 </span>
+                <b class="arrow fa fa-angle-right normal"></b>
+                <i class="fa fa-reply back"></i>
+                <span class="menu-text back">返回</span>
+
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/zhizhuchi/add')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									快速收录添加								</span>
+                    </a>
+
+                </li>
+                <li>
+                    <a class="list-group-item" href="{:cmf_url('user/zhizhuchi/index')}">
+                        <i class="fa fa-caret-right"></i>
+                        <span class="menu-text">
+									快速收录管理								</span>
                     </a>
 
                 </li>
@@ -107,14 +174,14 @@
 
                 </li>
 
-                <li>
-                    <a class="list-group-item" href="{:cmf_url('user/Fapiao/index')}">
-                        <i class="fa fa-caret-right"></i>
-                        <span class="menu-text">
-									发票索取								</span>
-                    </a>
+                <!--<li>-->
+                    <!--<a class="list-group-item" href="{:cmf_url('user/Fapiao/index')}">-->
+                        <!--<i class="fa fa-caret-right"></i>-->
+                        <!--<span class="menu-text">-->
+									<!--发票索取								</span>-->
+                    <!--</a>-->
 
-                </li>
+                <!--</li>-->
                 <!--<li>-->
                     <!--<a href="{:cmf_url('user/Tixian/index')}">-->
                         <!--<i class="fa fa-caret-right"></i>-->
@@ -180,14 +247,7 @@
                 </li>
             </ul></li>
     </ul>
-    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/edit')}"><i class="fa fa-list-alt fa-fw"></i> 修改资料</a>-->
-    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/password')}"><i class="fa fa-lock fa-fw"></i> 修改密码</a>-->
-    <!--<a class="list-group-item" href="{:cmf_url('user/Profile/avatar')}"><i class="fa fa-user fa-fw"></i> 编辑头像</a>-->
     <!--<a class="list-group-item" href="{:cmf_url('user/Profile/binding')}"><i class="fa fa-exchange fa-fw"></i> 绑定账号</a>-->
-    <!--<a class="list-group-item" href="{:cmf_url('user/favorite/index')}"><i class="fa fa-star-o fa-fw"></i> 我的收藏</a>-->
-    <!--&lt;!&ndash;<a class="list-group-item" href="{:url('portal/article/myIndex')}"><i class="fa fa-file-text fa-fw"></i> 我的文章</a>&ndash;&gt;-->
-    <!--&lt;!&ndash;<a class="list-group-item" href="{:url('chem/order/index')}"><i class="fa fa-list fa-fw"></i> 我的订单</a>&ndash;&gt;-->
-    <!--<a class="list-group-item" href="{:cmf_url('user/comment/index')}"><i class="fa fa-comments-o fa-fw"></i> 我的评论</a>-->
 </div>
 <script src="__TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
 <script src="__STATIC__/js/wind.js"></script>

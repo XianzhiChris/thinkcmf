@@ -26,10 +26,17 @@ class MingxiController extends UserBaseController
      */
     public function index()
     {
+        $param = $this->request->param();
         $editData = new UserModel();
-        $data = $editData->mingxi();
+        $data = $editData->mingxi($param);
         $user = cmf_get_current_user();
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score,coin')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
+        $this->assign('mycoin',$coin['coin']);
         $this->assign($user);
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign("page", $data['page']);
         $this->assign("lists", $data['lists']);
         return $this->fetch();

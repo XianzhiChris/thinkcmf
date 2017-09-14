@@ -1,0 +1,55 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#">消费价格</a></li>
+    </ul>
+    <form action="{:url('AdminJiage/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="150">关键词点击</th>
+                        <td>
+                            <input class="form-control" type="text" name="guanjianci" required value="{$post.guanjianci}" placeholder="请输入整数"/> 米币
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>知道提问(新号)</th>
+                        <td><input class="form-control" type="text" name="tiwen" required value="{$post.tiwen}" placeholder="请输入整数"> 米币</td>
+                    </tr>
+                    <tr>
+                        <th>知道提问(老号)</th>
+                        <td><input class="form-control" type="text" name="tiwen2" required value="{$post.tiwen2}" placeholder="请输入整数"> 米币</td>
+                    </tr>
+                    <tr>
+                        <th>知道回答(新号)</th>
+                        <td><input class="form-control" type="text" name="huida" value="{$post.huida}" placeholder="请输入整数"> 米币</td>
+                    </tr>
+                    <tr>
+                        <th>知道回答(老号)</th>
+                        <td><input class="form-control" type="text" name="huida2" value="{$post.huida2}" placeholder="请输入整数"> 米币</td>
+                    </tr>
+                    <!--<tr>-->
+                        <!--<th>知道点赞</th>-->
+                        <!--<td><input class="form-control" type="text" name="dianzan" value="{$post.dianzan}" placeholder="请输入整数"> 米币</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <th>快速收录</th>
+                        <td><input class="form-control" type="text" name="shoulu" value="{$post.shoulu}" placeholder="请输入整数"> 米币</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

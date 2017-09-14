@@ -30,9 +30,9 @@
 			<div class="col-md-9">
 				<div class="tabs">
 					<ul class="nav nav-tabs">
-						<li><a href="{:url('user/pinglun/index')}"><i class="fa fa-building-o"></i> 评论任务管理</a></li>
-						<li><a href="{:url('user/pinglun/add')}">添加任务</a></li>
-						<li class="active"><a href="javascript:void(0)">【{$title}】任务执行情况</a></li>
+						<!--<li><a href="{:url('user/pinglun/index')}"><i class="fa fa-building-o"></i> 评论任务管理</a></li>-->
+						<!--<li><a href="{:url('user/pinglun/add')}">添加任务</a></li>-->
+						<li class="active"><a href="javascript:void(0)">{$title|default=''} 任务执行情况</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
@@ -40,7 +40,9 @@
 							<table class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-									<th>评论内容</th>
+									<th width="70">类型</th>
+									<th>内容</th>
+									<th width="50">URL</th>
 									<th width="50">结果</th>
 									<th width="70">状态</th>
 								</tr>
@@ -48,7 +50,23 @@
 								<tbody id="tbody1">
 								<foreach name="lists" item="vo">
 									<tr>
+										<td>
+											<eq name="vo.zhidao" value="hd">
+												回答
+												<else/>
+												提问
+											</eq>
+										</td>
 										<td>{:base64_decode($vo.content)}</td>
+										<td>
+											<eq name="vo.zhidao" value="hd">
+												<a href="{$vo.get_url}" target="_blank">查看</a>
+												<else/>
+												<notempty name="vo.return_url">
+													<a href="{$vo.return_url}" target="_blank">查看</a>
+												</notempty>
+											</eq>
+										</td>
 										<php>
 											$jieguo=2;
 											if($vo['return_code']==''){
@@ -57,17 +75,23 @@
 											if($vo['return_code']==1){
 												$jieguo=1;
 											}
+											if($vo['return_code']==3){
+												$jieguo=3;
+											}
 										</php>
 										<td>
 											<eq name="jieguo" value="1">
 												<a href="/get_task/{$vo.return_img}" target="_blank">查看</a>
+											</eq>
+											<eq name="jieguo" value="3|2|0">
+												失败
 											</eq>
 										</td>
 										<td>
 											<switch name="vo['return_code']">
 												<case value="">排队中</case>
 												<case value="1">成功</case>
-												<default />失败
+												<default /><span data-msg="{:base64_decode($vo.return_err)}">提示</span>
 											</switch>
 										</td>
 
@@ -77,7 +101,7 @@
 							</table>
 						</div>
 
-						<div class="pagination"><ul>{$page}</ul></div>
+						<div><ul class="pagination">{$page}</ul></div>
 					</div>
 				</div>
 			</div>
@@ -86,6 +110,15 @@
 	</div>
 <!-- /container -->
 <include file="public@scripts" />
-
+<script>
+	$(function(){
+	    $('#tbody1 tr').hover(function(){
+	        var s=$(this).find('span');
+	        s.html(s.attr('data-msg'));
+		},function(){
+            $(this).find('span').html('提示');
+		})
+	})
+</script>
 </body>
 </html>

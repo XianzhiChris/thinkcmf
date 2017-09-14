@@ -45,9 +45,10 @@
 								<tr>
 									<th>百度帐号Cookie</th>
 									<td>
-										<select name="select_cookie" id="selectCookie">
-											<option value="1">系统随机抽取</option>
-											<option value="2">使用自有帐号</option>
+										<select name="type" id="selectCookie" class="form-control">
+											<option value="1">百度新号</option>
+											<option value="2">优质老号</option>
+											<option value="3">使用自有帐号</option>
 										</select>
 									</td>
 								</tr>
@@ -78,20 +79,43 @@
 <script>
 	$(function(){
         $('#submit').click(function(){
-
+            if($('#post_title').val().length<1){
+                alert("请输入标题");
+                return false;
+			}
+            if($('#post_content').val().length<1){
+                alert("请输入内容");
+                return false;
+            }
             //判断积分是否足够
             var score_my = {$myscore};
+            var type=$('#selectCookie').val();
 
-            var score_need =  1;
+            var score_need = '';
+            if(type==2){
+                score_need = {$jiage2};
+			}
+            if(type==1){
+                score_need = {$jiage};
+            }
+            if(type==3){
+                var cookie=$('#post_cookie').val();
+                if(cookie.length<150){
+                    alert("Cookie输入错误");
+                    $('#post_cookie').val('');
+                    return false;
+				}
+                score_need = {$jiage};
+            }
 
             if (parseInt(score_my) < parseInt(score_need)) {
-                alert("对不起，你的积分不足！您的积分：" + score_my + "，所需积分：" + score_need + "");
+                alert("对不起，你的米币不足！您的米币：" + score_my + "，所需米币：" + score_need + "");
                 return false;
             }
             //
 
             //提醒是否确认
-            var is_add = confirm("本次任务将扣除" + score_need + "积分，是否确认添加？");
+            var is_add = confirm("本次任务将扣除" + score_need + "米币，是否确认添加？");
             if (!is_add) {
                 return false;
             }
@@ -115,7 +139,7 @@
 			}
 		});
 	    $('#selectCookie').change(function(){
-	        if($(this).val()==2){
+	        if($(this).val()==3){
 	            $('#mycookie').show();
 			}else{
                 $('#mycookie').hide();

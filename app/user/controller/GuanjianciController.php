@@ -43,6 +43,8 @@ class GuanjianciController extends UserBaseController
         $this->assign($user);
         $this->assign("page", $data['page']);
         $this->assign("lists", $list);
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['guanjianci']);
         return $this->fetch();
     }
 
@@ -56,6 +58,28 @@ class GuanjianciController extends UserBaseController
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['guanjianci']);
+        return $this->fetch();
+    }
+
+    public function piliangadd()
+    {
+        $user = cmf_get_current_user();
+        $this->assign($user);
+
+        return $this->fetch();
+    }
+    public function piliangadd2()
+    {
+        $data = $this->request->param();
+        $user = cmf_get_current_user();
+        $this->assign($user);
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
+        $this->assign('url',$data['url']);
+        $this->assign('guanjianci',$data['guanjianci']);
         return $this->fetch();
     }
 
@@ -135,12 +159,19 @@ class GuanjianciController extends UserBaseController
         }
         $key_json="";
         $i=0;
+        $headers = array(
+            'User-Agent: Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language: zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3',
+            'Accept-Encoding: gzip, deflate'
+        );
         while(!$key_json){
             if($i==3){
                 echo "查询超时,".$num.",".$ssyq_value.",".$title.",".$url;
                 exit;
             }
-            $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
+
+            $key_json=$this->curl_get_contents_get("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10",$headers);
             $i++;
         }
         $key=json_decode($key_json);
@@ -152,17 +183,23 @@ class GuanjianciController extends UserBaseController
                 echo "查询超时,".$num.",".$ssyq_value.",".$title.",".$url;
                 exit;
             }
-            $paiming_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/100");
+            $paiming_json=$this->curl_get_contents_get("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/0",$headers);
             $i++;
         }
         $paiming=json_decode(json_decode($paiming_json),true);
 $i=0;
+        $headers = array(
+            'User-Agent: Mozilla/5.0 (Windows NT 6.1;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2398.0 Safari/537.36',
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language: zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3',
+            'Accept-Encoding: gzip, deflate'
+        );
         while($paiming['IsCompleted']==false){
-            sleep(1);
+//            sleep(1);
 //            $key_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_request/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/10");
 //            $key=json_decode($key_json);
 
-            $paiming_json=file_get_contents("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/100");
+            $paiming_json=$this->curl_get_contents_get("http://if.aizhan.com:9010/AizhanSEO/keywordrank_response/".$key."/%E5%B9%BF%E4%B8%9C/%E6%B7%B1%E5%9C%B3/".$ssyq."/".$title."/".$url."/0",$headers);
             $paiming=json_decode(json_decode($paiming_json),true);
 //            echo $i;
             if($i==3){
@@ -221,10 +258,12 @@ $i=0;
         $renwuQuery->insertAll($renwudata);
 
         //积分减少
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $jiage=$jiageQuery['guanjianci'];
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
-        $xiaofei=$result['post_dianjicishu']*$result['post_tianshu'];
+        $xiaofei=$result['post_dianjicishu']*$result['post_tianshu']*$jiage;
         $coin=$userQuery->where($where)->find();
         $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
 
@@ -238,5 +277,21 @@ $i=0;
         $data2['score']=$xiaofei;
         $userMoneyQuery->insert($data2);
         $this->success('续费成功！', url('user/guanjianci/index'));
+    }
+
+    function curl_get_contents_get($url,$headers)
+    {
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
+        curl_setopt($ch,CURLOPT_HEADER,0);            //是否显示头部信息
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);           //设置超时
+        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);      //跟踪301
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
+//        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);   //HTTS请求
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $r = curl_exec($ch);
+        curl_close($ch);
+        return $r;
     }
 }

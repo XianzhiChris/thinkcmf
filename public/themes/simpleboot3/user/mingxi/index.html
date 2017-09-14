@@ -22,13 +22,34 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
+
+								<form class="well form-inline margin-top-20" method="post" action="{:url('user/mingxi/index')}">
+									<div style="font-size:16px;margin-bottom:10px;">{$user_nickname}，您当前剩余米币为：<span style="color:red">{$myscore}</span>，累计充值金额为：<span style="color:red">{$mycoin}</span> 元</div>
+									分类：
+									<select name="type" class="form-control">
+										<option value="0">全部</option>
+										<option value="1">充值</option>
+										<option value="2">消费</option>
+									</select>
+									起始时间:
+									<input type="text" class="form-control js-bootstrap-date" name="start_time"
+										   value="{$start_time|default=''}"
+										   style="width: 140px;" autocomplete="off">
+									结束时间:
+									<input type="text" class="form-control js-bootstrap-date" name="end_time"
+										   value="{$end_time|default=''}"
+										   style="width: 140px;" autocomplete="off"> &nbsp; &nbsp;
+									<input type="submit" class="btn btn-primary" value="查询"/>
+									<a class="btn btn-danger" href="{:url('user/mingxi/index')}">清空</a>
+								</form>
+
 							<br>
 							<table class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
 									<th width="70">类型</th>
 									<th>标题</th>
-									<th width="100">积分</th>
+									<th width="100">米币</th>
 									<th width="150">时间</th>
 								</tr>
 								</thead>

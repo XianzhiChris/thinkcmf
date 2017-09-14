@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$user_nickname}  - 评论任务管理</title>
+<title>{$user_nickname}  - 回答任务管理</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
@@ -30,9 +30,9 @@
 			<div class="col-md-9">
 				<div class="tabs">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 评论任务管理</a></li>
+						<li class="active"><a href="#one" data-toggle="tab"><i class="fa fa-building-o"></i> 回答任务管理</a></li>
 						<li><a href="{:url('user/pinglun/add')}">添加任务</a></li>
-						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">批量添加任务</a></li>-->
+						<li><a href="{:url('user/pinglun/piliangadd')}">批量添加任务</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
@@ -41,9 +41,9 @@
 								<thead>
 								<tr>
 									<th>任务名称</th>
-									<th width="50">网址</th>
-									<th width="80">评论数量</th>
+									<th width="80">回答数量</th>
 									<th width="150">执行情况</th>
+									<th width="100">任务</th>
 									<th width="100">添加时间</th>
 									<th width="70">状态</th>
 									<th width="100">操作</th>
@@ -53,9 +53,9 @@
 								<foreach name="lists" item="vo">
 									<tr>
 										<td>{$vo.post_title}</td>
-										<td><a href="{$vo.post_url}" target="_blank">查看</a></td>
 										<td>{$vo.post_content_num}</td>
-										<td><a href="{:url('user/pinglun/pinglunzhixing',array('id'=>$vo['id']))}">成功:{$vo.task_ok_count} 失败:{$vo.task_err_count}</a></td>
+										<td>成功:<span style="color:green">{$vo.task_ok_count}</span> 失败:<span style="color:red">{$vo.task_err_count}</span></td>
+										<td><a href="{:url('user/pinglun/pinglunzhixing',array('id'=>$vo['id']))}">查看</a></td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
 										<td>
 											<eq name="vo.task_ok" value="0">

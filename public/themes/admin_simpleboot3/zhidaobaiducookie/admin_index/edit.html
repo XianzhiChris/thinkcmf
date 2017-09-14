@@ -14,6 +14,18 @@
             <div class="col-md-12">
                 <table class="table table-bordered">
                     <tr>
+                        <th width="100">类型</th>
+                        <td>
+                            <php>
+                                $selected=$post['type']==2?"selected":"";
+                            </php>
+                            <select class="form-control" name="post[type]">
+                                <option value="1">百度新号</option>
+                                <option value="2" {$selected}>优质老号</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>Cookie<span class="form-required">*</span></th>
                         <td>
                             <input type="hidden" name="post[id]" value="{$post.id}">

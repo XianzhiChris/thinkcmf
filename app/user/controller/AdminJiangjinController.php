@@ -57,16 +57,37 @@ class AdminJiangjinController extends AdminBaseController
         foreach($list as $k=>$pid){
 
             $where['parent_id'] = ['=',$pid['id']];
-            $tdid = $usersQuery->where($where)->field('id')->select();
-            $zjine='';
+            $tdid = $usersQuery->where($where)->whereOr('id',$pid['id'])->field('id')->select();
+            $wh=[];
+            $zjine=0;
+            //时间区间：今年
+            $s=mktime(0,0,0,1,1,date('Y',time()));  //年初
+            $e=mktime(23,59,59,12,31,date('Y',time()));   //年末
+            $wh['create_time'] = ['between',[$s,$e]];
             foreach($tdid as $ida){
                 $wh['user_id'] = ['=',$ida['id']];
-                $wh['type'] = ['=',2];
+                $wh['type'] = ['=',1];
+
                 $jine = $users_moneyQuery->where($wh)->field('sum(jine) as je')->select();
                 $zjine+=$jine[0]['je'];
             }
+
+            $wh=[];
+            $zjine2=0;
+            //时间区间：去年
+            $ss=mktime(0,0,0,1,1,date('Y',time())-1);  //年初
+            $ee=mktime(23,59,59,12,31,date('Y',time())-1);   //年末
+            $wh['create_time'] = ['between',[$ss,$ee]];
+            foreach($tdid as $ida){
+                $wh['user_id'] = ['=',$ida['id']];
+                $wh['type'] = ['=',1];
+
+                $jine = $users_moneyQuery->where($wh)->field('sum(jine) as je')->select();
+                $zjine2+=$jine[0]['je'];
+            }
 //            $list[0]['tuandui_jine']=$zjine;
             $pid['tuandui_jine']=$zjine;
+            $pid['tuandui_jine2']=$zjine2;
             $pid['tuandui_renshu']=count($tdid);
             if($zjine>3000000) {
                 $pid['tuandui_jiangjin']=$zjine*0.15;
@@ -76,6 +97,15 @@ class AdminJiangjinController extends AdminBaseController
                 $pid['tuandui_jiangjin']=$zjine*0.06;
             }else{
                 $pid['tuandui_jiangjin']=0;
+            }
+            if($zjine2>3000000) {
+                $pid['tuandui_jiangjin2']=$zjine2*0.15;
+            }elseif($zjine2>1000000) {
+                $pid['tuandui_jiangjin2']=$zjine2*0.10;
+            }elseif($zjine2>500000) {
+                $pid['tuandui_jiangjin2']=$zjine2*0.06;
+            }else{
+                $pid['tuandui_jiangjin2']=0;
             }
             $aa[]=$pid;
 //            var_dump($pid);

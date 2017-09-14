@@ -68,7 +68,7 @@
 										</td>
 										<td>
 											<if condition="$time gt $end_time">
-												<a class="js-ajax-dialog-btn" href="{:url('user/zhizhuchi/xufei',array('id'=>$vo['id']))}" data-msg="扣除{$vo.post_url_num * $vo.post_tianshu}个积分，您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_url_num * $vo.post_tianshu})">续费</a>
+												<a class="js-ajax-dialog-btn" href="{:url('user/zhizhuchi/xufei',array('id'=>$vo['id']))}" data-msg="扣除{$vo.post_url_num * $vo.post_tianshu}个米币，您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_url_num * $vo.post_tianshu})">续费</a>
 											</if>
 										</td>
 									</tr>
@@ -86,6 +86,20 @@
 	</div>
 <!-- /container -->
 <include file="public@scripts" />
+<script>
+    function xufei(num){
+        //判断积分是否足够
+        var score_my = {$myscore};
 
+        var score_need = num * {$jiage};
+
+        if (parseInt(score_my) < parseInt(score_need)) {
+            alert("对不起，你的米币不足！您的米币：" + score_my + "，所需米币：" + score_need + "");
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>

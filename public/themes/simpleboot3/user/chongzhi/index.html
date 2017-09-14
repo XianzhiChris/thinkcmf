@@ -39,7 +39,7 @@
 
 								<tr>
 									<td width="100">
-										当前积分：
+										当前米币：
 									</td>
 									<td>
 										{$score}
@@ -47,14 +47,14 @@
 								</tr>
 								<tr>
 									<td>
-										充值积分：
+										充值米币：
 									</td>
 									<td>
 										<table width="100%">
 											<tbody><tr>
-												<td><input id="rbl_sel_0" name="rbl_sel" value="1" type="radio"><label for="rbl_sel_0">2200积分（200元）</label></td><td><input id="rbl_sel_1" name="rbl_sel" value="2" type="radio"><label for="rbl_sel_1">6000积分（500元）</label></td><td><input id="rbl_sel_2" name="rbl_sel" value="3" type="radio"><label for="rbl_sel_2">12000积分（1000元）</label></td>
+												<td><input id="rbl_sel_0" name="rbl_sel" value="1" type="radio"><label for="rbl_sel_0">2200米币（200元）</label></td><td><input id="rbl_sel_1" name="rbl_sel" value="2" type="radio"><label for="rbl_sel_1">6000米币（500元）</label></td><td><input id="rbl_sel_2" name="rbl_sel" value="3" type="radio"><label for="rbl_sel_2">12000米币（1000元）</label></td>
 											</tr><tr>
-												<td><input id="rbl_sel_3" name="rbl_sel" value="4" type="radio"><label for="rbl_sel_3">25000积分（2000元）</label></td><td><input id="rbl_sel_4" name="rbl_sel" value="5" type="radio"><label for="rbl_sel_4">70000积分（5000元）</label></td><td><input id="rbl_sel_5" name="rbl_sel" value="6" type="radio"><label for="rbl_sel_5">160000积分（10000元）</label></td>
+												<td><input id="rbl_sel_3" name="rbl_sel" value="4" type="radio"><label for="rbl_sel_3">25000米币（2000元）</label></td><td><input id="rbl_sel_4" name="rbl_sel" value="5" type="radio"><label for="rbl_sel_4">70000米币（5000元）</label></td><td><input id="rbl_sel_5" name="rbl_sel" value="6" type="radio"><label for="rbl_sel_5">160000米币（10000元）</label></td>
 											</tr>
 											</tbody></table>
 									</td>
@@ -86,7 +86,7 @@
             var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
             var btn = $(this);
             if(chongzhijifen==null){
-                alert("请选择充值积分数量!");
+                alert("请选择充值米币数量!");
                 return false;
 			}
             $.ajax({
@@ -108,7 +108,7 @@
             var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
             var btn = $(this);
             if(chongzhijifen==null){
-                alert("请选择充值积分数量!");
+                alert("请选择充值米币数量!");
                 return false;
             }
             $.ajax({
@@ -130,7 +130,7 @@
             var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
             var btn = $(this);
             if(chongzhijifen==null){
-                alert("请选择充值积分数量!");
+                alert("请选择充值米币数量!");
                 return false;
             }
             $.ajax({

@@ -137,6 +137,8 @@ class UserModel extends Model
             $userId = Db::name("user")->insertGetId($data);
             $data   = Db::name("user")->where('id', $userId)->find();
             cmf_update_current_user($data);
+            //将上级提升为队长
+            Db::name("user")->where('id', $user['parent_id'])->update(['is_duizhang'=>1]);
             return 0;
         }
         return 1;
@@ -221,13 +223,18 @@ class UserModel extends Model
 
         $userQuery            = Db::name("user");
         $where['parent_id']     = $userId;
-        $favorites            = $userQuery->where($where)->order('id desc')->paginate(10);
+        $favorites            = $userQuery->where($where)->whereOr('id',$userId)->order('id desc')->paginate(10);
         $data['page']         = $favorites->render();
 
         $list=[];
+        //时间区间：今年
+        $s=mktime(0,0,0,1,1,date('Y',time()));  //年初
+        $e=mktime(23,59,59,12,31,date('Y',time()));   //年末
         foreach($favorites as $v){
-            $je= $userMoneyQuery->field(array('sum(jine)'=>'je'))->where(array('user_id'=>$v['id'],'type'=>1))->find();
+            $user_group_name=Db::name('user_group')->field('post_title')->where('id',$v['user_group'])->find();
+            $je= $userMoneyQuery->field(array('sum(jine)'=>'je'))->where(array('user_id'=>$v['id'],'type'=>1,'create_time'=>['between',[$s,$e]]))->find();
             $v['xiaofei']=$je['je'];
+            $v['user_group_name']=$user_group_name['post_title'];
             $list[]=$v;
         }
         $data['lists']        = $list;
@@ -267,6 +274,7 @@ class UserModel extends Model
             if($v['post_content_num']==($v['task_ok_count']+$v['task_err_count'])) {//数量相等，任务完成
                 $v['task_ok']=1;
             }
+            $v['url_num']=count(explode("@@",$v['post_url']));
             $list[]=$v;
         }
         $data['page']         = $favorites->render();
@@ -282,7 +290,7 @@ class UserModel extends Model
 
         $j=0;
         $jinciQuery=Db::name('pinglun_jinci_post');
-        $jinci = $jinciQuery->field('post_title')->select();
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
 
         foreach ($content_data as $v) {
             if (strlen($v) > 1) {
@@ -301,10 +309,18 @@ class UserModel extends Model
             $content_num = $j;
 
             //积分减少
+            $jiage=1;
+            $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+            if($data['type']==1){
+                $jiage=$jiageQuery['huida'];
+            }
+            if($data['type']==2){
+                $jiage=$jiageQuery['huida2'];
+            }
             $userQuery = Db::name("user");
             $where = [];
             $where['id'] = $userId;
-            $xiaofei = $content_num * 1;
+            $xiaofei = $content_num * $jiage;
             $coin = $userQuery->where($where)->find();
             $userQuery->where($where)->update(array('score' => $coin['score'] - $xiaofei));
 
@@ -337,9 +353,9 @@ class UserModel extends Model
                     $contentQuery->insert($content_data);
                     $content_id = $contentQuery->getLastInsID();
                     //随机百度cookie
-                    $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+                    $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
                     //生成任务列表
-                    $renwudata = ['pinglun_id' => $renwu_id, 'title' => $data['post_title'], 'content_id' => $content_id, 'zhidao' => 'hd', 'get_url' => $data['post_url'], 'content' => base64_encode($v), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+                    $renwudata = ['pinglun_id' => $renwu_id, 'title' => base64_encode($data['post_title']), 'content_id' => $content_id, 'zhidao' => 'hd', 'get_url' => $data['post_url'], 'content' => base64_encode($v), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
                     $renwuQuery->insert($renwudata);
                 }
             }
@@ -349,10 +365,113 @@ class UserModel extends Model
             return "err:评论内容不能为空";
         }
     }
-    public function pinglunzhixing($data){
-        $pinglunTaskQuery            = Db::name("zhidaotaskdata");
+    public function pinglunPiliangadd($data)
+    {
+        $userId               = cmf_get_current_user_id();
+        $str = str_replace(array("\r\n", "\r", "\n", "\t"), "###", $data['pinglun_content']);
+        $content_data=explode('###',$str);
 
-        $favorites            = $pinglunTaskQuery->field('content,return_code,return_img')->where(['pinglun_id'=>$data['id'],'delete_time'=>0])->order('id desc')->paginate(10);
+        $j=0;
+        $jinciQuery=Db::name('pinglun_jinci_post');
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
+
+        foreach ($content_data as $v) {
+            if (strlen($v) > 1) {
+                //内容禁词检测
+                if ($jinci) {
+                    foreach ($jinci as $val) {
+                        if (strpos($v, $val['post_title']) !== false) {
+                            return "err:" . $val['post_title'];
+                        }
+                    }
+                }
+                $j++;
+            }
+        }
+        if($j>0) {
+            //title数量
+            $title_num=count($data['post_title']);
+            $content_num = $j;
+
+            //积分减少
+            $jiage=1;
+            $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+            if($data['type']==1){
+                $jiage=$jiageQuery['huida'];
+            }
+            if($data['type']==2){
+                $jiage=$jiageQuery['huida2'];
+            }
+            $userQuery = Db::name("user");
+            $where = [];
+            $where['id'] = $userId;
+            $xiaofei = $content_num * $title_num * $jiage * 1;
+            $coin = $userQuery->where($where)->find();
+            $userQuery->where($where)->update(array('score' => $coin['score'] - $xiaofei));
+
+            //增加明细记录
+            $userMoneyQuery = Db::name("user_money_log");
+            $data2 = [];
+            $data2['user_id'] = $userId;
+            $data2['create_time'] = time();
+            $data2['type'] = 2;
+            $data2['post_title'] = '百度知道【批量】评论任务';
+            $data2['score'] = $xiaofei;
+            $userMoneyQuery->insert($data2);
+
+            //增加评论
+            $post_url=implode('@@',$data['post_url']);
+            $userPinglunQuery = Db::name("pinglun_post");
+            $pinglun_data = ['post_type' => 1, 'post_title' => "批量评论任务", 'post_content' => '', 'post_url' => $post_url, 'post_content_num' => $content_num, 'user_id' => $userId, 'create_time' => time()];
+            $userPinglunQuery->insert($pinglun_data);
+            $renwu_id = $userPinglunQuery->getLastInsID();
+
+            //存入内容表
+            $time = time();
+            $contentQuery = Db::name('pinglun_content_post');
+            $renwuQuery = Db::name('zhidaotaskdata');
+            $CookieQuery = Db::name('zhidaobaiducook');
+
+
+            foreach ($content_data as $v) {
+                if (strlen($v) > 1) {
+                    $content_data = ['post_title' => $v, 'pinglun_id' => $renwu_id, 'create_time' => $time];
+                    $contentQuery->insert($content_data);
+                    $content_id = $contentQuery->getLastInsID();
+                    $renwudata=[];
+                    //循环url
+                    foreach($data['post_url'] as $key=>$va) {
+                        //随机百度cookie
+                        $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail' => ['lt', 10], 'delete_time' => 0])->order('rand()')->limit(1)->find();
+                        //生成任务列表
+                        $renwudata[] = ['pinglun_id' => $renwu_id, 'title' => base64_encode($data['post_title'][$key]), 'content_id' => $content_id, 'zhidao' => 'hd', 'get_url' => $va, 'content' => base64_encode($v), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+                    }
+                    $renwuQuery->insertAll($renwudata);
+                }
+            }
+            return "ok";
+
+        }else{
+            return "err:评论内容不能为空";
+        }
+    }
+    public function pinglunzhixing($data){
+        $userId               = cmf_get_current_user_id();
+        $pinglunQuery=Db::name("pinglun_post");
+        $taskQuery=$pinglunQuery->field("id")->where('user_id',$userId)->select();
+        $ids='';
+        foreach($taskQuery as $v){
+            $ids.=','.$v['id'];
+        }
+        $pinglunTaskQuery            = Db::name("zhidaotaskdata");
+        if(isset($data['id'])) {
+            $where['pinglun_id'] = $data['id'];
+        }else{
+            $where['pinglun_id']=['in',$ids];
+        }
+        $where['delete_time']=0;
+
+        $favorites            = $pinglunTaskQuery->field('zhidao,content,get_url,return_code,return_err,return_img')->where($where)->order('id desc')->paginate(20);
 
         $data['page']         = $favorites->render();
 
@@ -387,7 +506,7 @@ class UserModel extends Model
 
         //内容禁词检测
         $jinciQuery=Db::name('pinglun_jinci_post');
-        $jinci = $jinciQuery->field('post_title')->select();
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
         if ($jinci) {
             foreach ($jinci as $val) {
                 if (strpos($data['post_title'], $val['post_title']) !== false) {
@@ -402,13 +521,13 @@ class UserModel extends Model
 
         $post_title=$data['post_title'];
         $post_content=$data['post_content'];
-        $select_cookie=$data['select_cookie'];
+        $type=$data['type'];
 
         $post_cookie=base64_encode($data['post_cookie']);
-        if($select_cookie=='1'){
+        if($type=='1'||$type=='2'){
             //随机百度cookie
             $CookieQuery = Db::name('zhidaobaiducook');
-            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$type,'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
             $post_cookie =$baidu_cookie['baidu_cookie'];
         }
 
@@ -421,15 +540,26 @@ class UserModel extends Model
 
         //生成任务列表
         $renwuQuery=Db::name('zhidaotaskdata');
-        $renwudata = ['pinglun_id' => $renwu_id, 'zhidao' => 'tw', 'title' => base64_encode($data['post_title']), 'content'=>base64_encode($post_content),'baidu_cookie' => base64_encode($data['post_cookie']), 'create_time' => time()];
+        $renwudata = ['pinglun_id' => $renwu_id, 'zhidao' => 'tw', 'title' => base64_encode($data['post_title']), 'content'=>base64_encode($post_content),'baidu_cookie' => $post_cookie, 'create_time' => time()];
         $renwuQuery->insert($renwudata);
 
 
         //积分减少
+        $jiage=1;
+        $jiageQuery=Db::name('user_jiage')->field('tiwen,tiwen2')->where('id',1)->find();
+        if($data['type']==1){
+            $jiage=$jiageQuery['tiwen'];
+        }
+        if($data['type']==2){
+            $jiage=$jiageQuery['tiwen2'];
+        }
+        if($data['type']==3){
+            $jiage=$jiageQuery['tiwen'];
+        }
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
-        $xiaofei=1;
+        $xiaofei=$jiage;
         $coin=$userQuery->where($where)->find();
         $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
 
@@ -445,12 +575,30 @@ class UserModel extends Model
 
         return 'ok';
     }
-    public function mingxi()
+    public function mingxi($filter)
     {
         $userId               = cmf_get_current_user_id();
         $userTixianQuery            = Db::name("user_money_log");
 
         $where['user_id']     = $userId;
+
+        $startTime = empty($filter['start_time']) ? 0 : strtotime($filter['start_time']);
+        $endTime   = empty($filter['end_time']) ? 0 : strtotime($filter['end_time']);
+        if (!empty($startTime) && !empty($endTime)) {
+            $where['create_time'] = [['>= time', $startTime], ['<= time', $endTime]];
+        } else {
+            if (!empty($startTime)) {
+                $where['create_time'] = ['>= time', $startTime];
+            }
+            if (!empty($endTime)) {
+                $where['create_time'] = ['<= time', $endTime];
+            }
+        }
+        $type = empty($filter['type']) ? '' : $filter['type'];
+        if ($type) {
+            $where['type'] = ['eq', $type];
+        }
+
         $favorites            = $userTixianQuery->where($where)->order('id desc')->paginate(10);
         $data['page']         = $favorites->render();
 
@@ -498,10 +646,12 @@ class UserModel extends Model
 
 
         //积分减少
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
-        $xiaofei=$data['post_dianjicishu']*$data['post_tianshu'];
+        $xiaofei=$data['post_dianjicishu']*$data['post_tianshu']*$jiageQuery['guanjianci'];
         $coin=$userQuery->where($where)->find();
         $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
 
@@ -548,10 +698,12 @@ class UserModel extends Model
         $url_num=$j;
 
         //积分减少
+        $jiageQuery=Db::name('user_jiage')->field('shoulu')->where('id',1)->find();
+        $jiage=$jiageQuery['shoulu'];
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
-        $xiaofei=$data['post_tianshu']*$url_num*1;
+        $xiaofei=$data['post_tianshu']*$url_num*$jiage;
         $coin=$userQuery->where($where)->find();
         $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
 
@@ -668,20 +820,57 @@ class UserModel extends Model
         $wh =[];
         $userQuery            = Db::name("user");
         $where['parent_id']     = $userId;
-        $favorites            = $userQuery->field("id")->where($where)->select();
-        $Y=date('Y');
-        $Y2=date('Y',strtotime('+1 year'));
-        $start=strtotime($Y.'-1-1');
-        $end=strtotime($Y2.'-1-1');
-
-        $list=0;
-        foreach($favorites as $v){
-            $wh['user_id'] = ['=',$v['id']];
+        $favorites            = $userQuery->field("id")->where($where)->whereOr('id',$userId)->select();
+        $wh=[];
+        //时间区间：今年
+        $s=mktime(0,0,0,1,1,date('Y',time()));  //年初
+        $e=mktime(23,59,59,12,31,date('Y',time()));   //年末
+        $wh['create_time'] = ['between',[$s,$e]];
+        $zjine=0;
+        foreach($favorites as $ida){
+            $wh['user_id'] = ['=',$ida['id']];
             $wh['type'] = ['=',1];
-            $wh['create_time'] = [['>= time', $start], ['<= time', $end]];
+
+            $wh['create_time'] = ['between',[$s,$e]];
             $jine = $userMoneyQuery->where($wh)->field('sum(jine) as je')->select();
-            $list+=$jine[0]['je'];
+            $zjine+=$jine[0]['je'];
         }
+        $zjine2=0;
+
+        $wh=[];
+        //时间区间：去年
+        $ss=mktime(0,0,0,1,1,date('Y',time())-1);  //年初
+        $ee=mktime(23,59,59,12,31,date('Y',time())-1);   //年末
+        $wh['create_time'] = ['between',[$ss,$ee]];
+        foreach($favorites as $ida){
+            $wh['user_id'] = ['=',$ida['id']];
+            $wh['type'] = ['=',1];
+
+            $jine = $userMoneyQuery->where($wh)->field('sum(jine) as je')->select();
+            $zjine2+=$jine[0]['je'];
+        }
+        if($zjine>3000000) {
+            $jiangjin=$zjine*0.15;
+        }elseif($zjine>1000000) {
+            $jiangjin=$zjine*0.10;
+        }elseif($zjine>500000) {
+            $jiangjin=$zjine*0.06;
+        }else{
+            $jiangjin=0;
+        }
+        if($zjine2>3000000) {
+            $jiangjin2=$zjine2*0.15;
+        }elseif($zjine>1000000) {
+            $jiangjin2=$zjine2*0.10;
+        }elseif($zjine>500000) {
+            $jiangjin2=$zjine2*0.06;
+        }else{
+            $jiangjin2=0;
+        }
+        $list=[
+            ['nian'=>date("Y", strtotime("-1 year")),'zonge'=>$zjine2,'jiangjin'=>$jiangjin2],
+            ['nian'=>date("Y", time()),'zonge'=>$zjine,'jiangjin'=>$jiangjin]
+        ];
 
         return $list;
     }

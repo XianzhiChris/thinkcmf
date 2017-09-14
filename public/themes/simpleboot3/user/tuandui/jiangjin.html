@@ -26,16 +26,19 @@
 							<table class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
+									<th width="100">年份</th>
 									<th>团队总消费额</th>
 									<th width="150">奖金</th>
 								</tr>
 								</thead>
 								<tbody>
-
+								<foreach name="lists" item="vo">
 									<tr>
-										<td>{$lists}</td>
-										<td>{$jiangjin}</td>
+										<td>{$vo.nian}</td>
+										<td>{$vo.zonge}</td>
+										<td>{$vo.jiangjin}</td>
 									</tr>
+								</foreach>
 								</tbody>
 							</table>
 						</div>

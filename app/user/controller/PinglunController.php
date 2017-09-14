@@ -42,13 +42,15 @@ class PinglunController extends UserBaseController
     public function add()
     {
         $tiwen_url='';
+        $tiwen_title='';
         //从提问转过来
         $data = $this->request->param();
         if(isset($data['tiwen_id'])) {
             $tiwen_id = $data['tiwen_id'];
             $taskQuery = Db::name('zhidaotaskdata');
-            $task = $taskQuery->field('return_url')->where('pinglun_id', $tiwen_id)->find();
+            $task = $taskQuery->field('title,return_url')->where('pinglun_id', $tiwen_id)->find();
             $tiwen_url=$task['return_url'];
+            $tiwen_title=base64_decode($task['title']);
         }
 
         $user = cmf_get_current_user();
@@ -57,7 +59,35 @@ class PinglunController extends UserBaseController
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
         $this->assign('tiwen_url',$tiwen_url);
+        $this->assign('tiwen_title',$tiwen_title);
+        $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['huida']);
+        $this->assign("jiage2", $jiageQuery['huida2']);
         return $this->fetch();
+    }
+    /**
+     * 批量添加评论
+     */
+    public function piliangadd()
+    {
+        $user = cmf_get_current_user();
+        $this->assign($user);
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
+        $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['huida']);
+        $this->assign("jiage2", $jiageQuery['huida2']);
+        return $this->fetch();
+    }
+
+    public function pilianglist(){
+        $data = $this->request->param();
+        $key=urlencode($data['post_title']);
+        $pram=['key'=>$key,'ssyq'=>4];
+        $result = hook("sousuoyinqing",$pram);
+//        var_dump($result);
+        echo $result[0];
     }
 
     public function addPost()
@@ -72,15 +102,29 @@ class PinglunController extends UserBaseController
         $this->success('添加成功！', url('user/pinglun/index'));
     }
 
+    public function piliangaddPost(){
+        $data = $this->request->param();
+        $editData = new UserModel();
+        $res=$editData->pinglunPiliangadd($data);
+        if(strpos($res, "err:") !== false){
+            $re=explode(':',$res);
+            $this->error('添加失败！内容包含禁止词语【'.$re[1].'】');
+        }
+        $this->success('添加成功！', url('user/pinglun/index'));
+    }
+
+
     public function pinglunzhixing()
     {
         $user = cmf_get_current_user();
         $this->assign($user);
         $data = $this->request->param();
-        //当前任务名称
-        $PinglunQuery            = Db::name("pinglun_post");
-        $title=$PinglunQuery->field('post_title')->where('id',$data['id'])->find();
-        $this->assign('title',$title['post_title']);
+        if(isset($data['id'])) {
+            //当前任务名称
+            $PinglunQuery = Db::name("pinglun_post");
+            $title = $PinglunQuery->field('post_title')->where('id', $data['id'])->find();
+            $this->assign('title',$title['post_title']);
+        }
 
         $editData = new UserModel();
         $data = $editData->pinglunzhixing($data);
@@ -178,6 +222,9 @@ class PinglunController extends UserBaseController
             $post_cookie=$baidu_cookie['post_cookie'];
         }
         $this->assign('post_cookie',$post_cookie);
+        $jiageQuery=Db::name('user_jiage')->field('tiwen,tiwen2')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['tiwen']);
+        $this->assign("jiage2", $jiageQuery['tiwen2']);
         return $this->fetch();
     }
     public function tiwenaddPost()

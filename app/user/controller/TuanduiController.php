@@ -24,7 +24,9 @@ class TuanduiController extends UserBaseController
         $editData = new UserModel();
         $data = $editData->tuandui();
         $user = cmf_get_current_user();
+        $userId               = cmf_get_current_user_id();
         $this->assign($user);
+        $this->assign("user_id", $userId);
         $this->assign("page", $data['page']);
         $this->assign("lists", $data['lists']);
         return $this->fetch();
@@ -50,19 +52,8 @@ class TuanduiController extends UserBaseController
         $data = $editData->jiangjin();
         $user = cmf_get_current_user();
 
-        if($data>3000000) {
-            $jiangjin=$data*0.15;
-        }elseif($data>1000000) {
-            $jiangjin=$data*0.10;
-        }elseif($data>500000) {
-            $jiangjin=$data*0.06;
-        }else{
-            $jiangjin=0;
-        }
-
         $this->assign($user);
         $this->assign("lists", $data);
-        $this->assign("jiangjin", $jiangjin);
         return $this->fetch();
     }
 }

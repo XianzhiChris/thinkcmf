@@ -20,24 +20,34 @@
 				<div class="tabs">
 					<ul class="nav nav-tabs">
 						<li><a href="{:url('user/pinglun/index')}"><i class="fa fa-building-o"></i> 回答任务管理</a></li>
-						<li class="active"><a href="#" data-toggle="tab">添加任务</a></li>
-						<li><a href="{:url('user/pinglun/piliangadd')}">批量添加任务</a></li>
+						<li><a href="{:url('user/pinglun/add')}">添加任务</a></li>
+						<li class="active"><a href="#" data-toggle="tab">批量添加任务</a></li>
 					</ul>
-					<form action="{:url('user/pinglun/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+					<form action="{:url('user/pinglun/piliangaddPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
 							<br>
 							<table class="table table-bordered">
 								<tr>
-									<th width="150">任务名称</th>
+									<th width="150">关键词</th>
 									<td>
-										<input class="form-control" type="text" name="post_title" id="post_title" value="{$tiwen_title}" placeholder="请输入任务名称" required>
+										<input class="form-control" style="width:300px;display:inline;" type="text" name="post_title" id="post_title" value="" placeholder="请输入标题" required><button id="bt_get_list" style="border:1px solid blue;width:60px;display:inline;margin-left:10px;color:blue;" class="form-control">列表</button><span id="paiming"></span>
 									</td>
 								</tr>
 								<tr>
-									<th>知道URL</th>
+									<th>知道列表</th>
 									<td>
-										<input class="form-control" type="text" name="post_url" id="post_url" value="{$tiwen_url}" placeholder="请输入url" required>
+										<table id="zhidaolist" class="table table-bordered">
+											<thead>
+											<tr>
+												<th>知道标题</th>
+												<th width="70">操作</th>
+											</tr>
+											</thead>
+											<tbody>
+
+											</tbody>
+										</table>
 									</td>
 								</tr>
 								<tr>
@@ -86,14 +96,45 @@
             var con_arr=$(this).val().split("\n");
             var j=0;
             for(var i=0;i<con_arr.length;i++){
-                console.log(con_arr[i].length);
                 if(con_arr[i].length>0){
                     j++;
 				}
 			}
             $('#post_content_num').val(j);
 		});
+        $('#bt_get_list').click(function(){
+
+            $("#zhidaolist tbody").html('');
+            var key_word = $("#post_title").val();
+            if(key_word==''){
+                alert('请填写关键词');
+                return false;
+            }
+            $("#paiming").html("<img src='__STATIC__/images/loading.gif' width='20' height='20' />");
+            key_word = encodeURI(key_word);
+            if ($.trim(key_word) != "") {
+                $.ajax({
+                    url: "/user/pinglun/pilianglist/",
+                    type: "Get",
+                    data: "post_title=" + key_word + "&random=" + Math.random(),
+                    dataType: "json",
+                    success: function (data) {
+                        var html="";
+                        for (var i = 0; i < data.length; i++) {
+                            html+= '<tr><td><a href="'+data[i].url+'" target="_blank">'+data[i].title+'</a></td><td><a href="javascript:;" data-handle="delete">删除</a><input type="hidden" name="post_url[]" value="'+data[i].url+'"><input type="hidden" name="post_title[]" value="'+data[i].title+'"></td></tr>';
+
+                        }
+                        $("#zhidaolist tbody").append(html);
+                        $("#paiming").html("");
+                    }
+                });
+            }
+		});
+        $("body").delegate('a[data-handle=delete]', 'click', function() {
+            $(this).parent().parent().remove();
+        });
         $('#submit').click(function(){
+
             var con_arr=$('#pinglun_content').val().split("\n");
             var j=0;
             for(var i=0;i<con_arr.length;i++){
@@ -104,15 +145,17 @@
             var post_content_num=j;
 console.log(j);
             //判断积分是否足够
-            var score_my = {$myscore};
             var type=$('#selectCookie').val();
 
-            var score_need =  '';
+            var score_my = {$myscore};
+			var title_num=$("input[name='post_url[]']").length;
+            console.log($("input[name='post_url[]']").length);
+            var score_need = '';
             if(type==2){
-                score_need = post_content_num * {$jiage2};
+                score_need =post_content_num * title_num * {$jiage2};
             }
             if(type==1){
-                score_need = post_content_num * {$jiage};
+                score_need =post_content_num * title_num * {$jiage};
             }
 
             if (parseInt(score_my) < parseInt(score_need)) {
@@ -122,7 +165,7 @@ console.log(j);
             //
 
             //提醒是否确认
-            var is_add = confirm("本次任务将扣除 " + score_need + " 米币，是否确认添加？");
+            var is_add = confirm("本次任务将扣除" + score_need + "米币，是否确认添加？");
             if (!is_add) {
                 return false;
             }

@@ -85,16 +85,16 @@ console.log(j);
             //判断积分是否足够
             var score_my = {$myscore};
 
-            var score_need = post_content_num * post_tianshu * 1;
+            var score_need = post_content_num * post_tianshu * {$jiage};
 
             if (parseInt(score_my) < parseInt(score_need)) {
-                alert("对不起，你的积分不足！您的积分：" + score_my + "，所需积分：" + score_need + "");
+                alert("对不起，你的米币不足！您的米币：" + score_my + "，所需米币：" + score_need + "");
                 return false;
             }
             //
 
             //提醒是否确认
-            var is_add = confirm("本次任务将扣除" + score_need + "积分，是否确认添加？");
+            var is_add = confirm("本次任务将扣除" + score_need + "米币，是否确认添加？");
             if (!is_add) {
                 return false;
             }

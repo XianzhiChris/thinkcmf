@@ -37,7 +37,7 @@ class AdminIndexController extends AdminBaseController
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
         $this->assign('articles', $data->items());
-
+        $this->assign("page", $data->render());
 
         return $this->fetch();
     }

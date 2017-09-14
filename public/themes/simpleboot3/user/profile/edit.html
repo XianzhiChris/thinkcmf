@@ -61,5 +61,16 @@
 		</div>
 	<!-- /container -->
 	<include file="public@scripts" />
+<script>
+	$(function(){
+	    $('#input-dianhua').blur(function(){
+            if (!$(this).val().match(/^((1[34578])+\d{9})$/)) {
+                alert("手机号码格式不正确！");
+                $(this).val('');
+                return false;
+            }
+        })
+	})
+</script>
 </body>
 </html>

@@ -44,7 +44,7 @@
                             <case value="hd"><a href="{$vo.get_url}" target="_blank">查看</a></case>
                         </switch>
                     </td>
-                    <td style="word-wrap: break-word;word-break: break-all;"><span data="{:base64_decode($vo.baidu_cookie),0,10}" class="cookie">{:substr(base64_decode($vo.baidu_cookie),0,8)}...<a href="javascript:void(0)">完整</a></span></td>
+                    <td style="word-wrap: break-word;word-break: break-all;"><span data="{:base64_decode($vo.baidu_cookie)}" class="cookie">{:substr(base64_decode($vo.baidu_cookie),0,8)}...<a href="javascript:void(0)">完整</a></span></td>
                     <td>{$vo.get_host}</td>
                     <td>
                         <notempty name="vo.return_img">
@@ -63,11 +63,12 @@
                         <eq name="vo.return_code" value="1">
                             成功
                         </eq>
-                        <neq name="vo.return_code" value="1">
-                            <neq name="vo.return_code" value="">
-                                失败
-                            </neq>
-                        </neq>
+                        <eq name="vo.return_code" value="2">
+                            失败(Cookie错误)
+                        </eq>
+                        <eq name="vo.return_code" value="3">
+                            失败({:base64_decode($vo.return_err)})
+                        </eq>
                     </td>
                 </tr>
             </foreach>

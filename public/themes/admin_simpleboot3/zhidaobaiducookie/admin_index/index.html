@@ -36,6 +36,7 @@
                     </label>
                 </th>
                 <th width="50">ID</th>
+                <th width="100">类型</th>
                 <th>Cookie</th>
                 <th width="150">失败次数</th>
                 <th width="150">发布时间</th>
@@ -50,6 +51,12 @@
                                value="{$vo.id}" title="ID:{$vo.id}">
                     </td>
                     <td><b>{$vo.id}</b></td>
+                    <td>
+                        <switch name="vo.type">
+                            <case value="1">百度新号</case>
+                            <case value="2">优质老号</case>
+                        </switch>
+                    </td>
                     <td style="word-wrap: break-word;word-break: break-all;">{:base64_decode($vo['baidu_cookie'])}</td>
                     <td>{$vo.cookie_fail}</td>
                     <td>

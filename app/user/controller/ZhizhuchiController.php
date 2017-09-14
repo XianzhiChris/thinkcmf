@@ -31,8 +31,13 @@ class ZhizhuchiController extends UserBaseController
         $user = cmf_get_current_user();
 
         $this->assign($user);
+        $userQuery=Db::name('user');
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $this->assign('myscore',$coin['score']);
         $this->assign("page", $data['page']);
         $this->assign("lists", $data['lists']);
+        $jiageQuery=Db::name('user_jiage')->field('shoulu')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['shoulu']);
         return $this->fetch();
     }
 
@@ -47,6 +52,8 @@ class ZhizhuchiController extends UserBaseController
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
+        $jiageQuery=Db::name('user_jiage')->field('shoulu')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['shoulu']);
         return $this->fetch();
     }
 
