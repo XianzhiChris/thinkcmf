@@ -68,7 +68,7 @@
 										<td>
 											<eq name="vo.task_ok" value="1">
 											<neq name="vo.task_err_count" value="0">
-											<a class="js-ajax-dialog-btn" href="{:url('user/pinglun/pinglunshibai',array('id'=>$vo['id']))}" data-msg="重新执行失败任务不重复扣费" data-ok="" data-cacel="取消">重新执行失败任务</a>
+											<a href="{:url('user/pinglun/edit',array('id'=>$vo['id']))}">重新执行失败任务</a>
 											</neq>
 											</eq>
 										</td>

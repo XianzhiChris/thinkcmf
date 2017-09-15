@@ -81,7 +81,7 @@
 										<td>
 											<neq name="vo.return_code" value="1">
 												<neq name="vo.return_code" value="">
-													<a class="js-ajax-dialog-btn" href="{:url('user/pinglun/tiwenshibai',array('id'=>$vo['id']))}" data-msg="重新执行失败任务不重复扣费" data-ok="" data-cacel="取消">重新执行</a>
+													<a href="{:url('user/pinglun/tiwenedit',array('id'=>$vo['id']))}">重新执行</a>
 												</neq>
 											</neq>
 											<eq name="vo.return_code" value="1">

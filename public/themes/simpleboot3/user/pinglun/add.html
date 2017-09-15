@@ -63,6 +63,13 @@
 										</select>
 									</td>
 								</tr>
+								<tr>
+									<th>最佳答案</th>
+									<td>
+										<input type="checkbox" name="is_ok" value="1"/>
+										<span id="is_ok" style="padding-left:10px;"></span>
+									</td>
+								</tr>
 							</table>
 						</div>
 					</div>
@@ -85,12 +92,17 @@
 	    $('#pinglun_content').blur(function(){
             var con_arr=$(this).val().split("\n");
             var j=0;
+            var str='<select name="is_ok_str" class="form-control" style="width:95%;display:inline;">';
             for(var i=0;i<con_arr.length;i++){
                 console.log(con_arr[i].length);
                 if(con_arr[i].length>0){
+                    str+='<option value="'+con_arr[i]+'">'+con_arr[i]+'</option>';
                     j++;
 				}
 			}
+			str+='</select>';
+
+			$('#is_ok').html(str);
             $('#post_content_num').val(j);
 		});
         $('#submit').click(function(){

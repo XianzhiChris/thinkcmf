@@ -19,35 +19,26 @@
 			<div class="col-md-9">
 				<div class="tabs">
 					<ul class="nav nav-tabs">
-						<li><a href="{:url('user/pinglun/index')}"><i class="fa fa-building-o"></i> 回答任务管理</a></li>
-						<li><a href="{:url('user/pinglun/add')}" data-toggle="tab">添加任务</a></li>
-						<li><a href="{:url('user/pinglun/piliangadd')}">批量添加任务</a></li>
+						<li><a href="{:url('user/pinglun/tiwen')}"><i class="fa fa-building-o"></i> 提问任务管理</a></li>
+						<li><a href="{:url('user/pinglun/tiwenadd')}" data-toggle="tab">添加任务</a></li>
 						<li class="active"><a href="#">失败任务</a></li>
 					</ul>
-					<form action="{:url('user/pinglun/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+					<form action="{:url('user/pinglun/tiweneditPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
 							<br>
 							<table class="table table-bordered">
+								<input type="hidden" name="id" value="{$post.id}" />
 								<tr>
 									<th width="150">任务名称</th>
 									<td>
-										{$title}
+										<input type="text" name="post_title" value="{:base64_decode($post.title)}" class="form-control" required/>
 									</td>
 								</tr>
 								<tr>
-									<th width="150">知道URL</th>
+									<th>提问内容</th>
 									<td>
-										{$get_url}
-									</td>
-								</tr>
-								<tr>
-									<th>回答内容</th>
-									<td>
-										<foreach name="lists" item="vo">
-											<input type="hidden" name="id[]" value="{$vo.id}"/>
-											<input style="margin-bottom:5px;" type="text" name="content[]" value="{:base64_decode($vo.content)}" class="form-control" required/>
-										</foreach>
+										<textarea name="post_content" id="post_content" class="form-control" rows="15" required>{:base64_decode($post.content)}</textarea>
 									</td>
 								</tr>
 							</table>

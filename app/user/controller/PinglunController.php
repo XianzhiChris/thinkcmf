@@ -65,6 +65,44 @@ class PinglunController extends UserBaseController
         $this->assign("jiage2", $jiageQuery['huida2']);
         return $this->fetch();
     }
+
+    public function edit()
+    {
+        $data = $this->request->param();
+        $user = cmf_get_current_user();
+
+        $taskQuery=Db::name('zhidaotaskdata');
+        $pinglunQuery=Db::name('pinglun_post');
+        $where['pinglun_id']=$data['id'];
+        $where['return_code']=['in','0,2,3'];
+        $pinglun=$pinglunQuery->field('post_url,post_title')->where('id',$data['id'])->find();
+        $data=$taskQuery->field('id,content')->where($where)->select();
+
+        $this->assign($user);
+        $this->assign('get_url',$pinglun['post_url']);
+        $this->assign('title',$pinglun['post_title']);
+        $this->assign("lists", $data);
+
+        return $this->fetch();
+    }
+
+    public function tiwenedit()
+    {
+        $data = $this->request->param();
+        $user = cmf_get_current_user();
+
+        $taskQuery=Db::name('zhidaotaskdata');
+        $pinglunQuery=Db::name('pinglun_post');
+        $where['pinglun_id']=$data['id'];
+        $where['return_code']=['in','0,2,3'];
+
+        $data=$taskQuery->field('id,title,content')->where($where)->find();
+
+        $this->assign($user);
+        $this->assign('post',$data);
+
+        return $this->fetch();
+    }
     /**
      * 批量添加评论
      */
@@ -99,6 +137,43 @@ class PinglunController extends UserBaseController
             $re=explode(':',$res);
             $this->error('添加失败！内容包含禁止词语【'.$re[1].'】');
         }
+        $this->success('添加成功！', url('user/pinglun/index'));
+    }
+
+    public function editPost()
+    {
+        $data = $this->request->param();
+        $taskQuery=Db::name('zhidaotaskdata');
+        $pinglunQuery=Db::name('pinglun_post');
+        $CookieQuery=Db::name('zhidaobaiducook');
+        //禁词验证
+        $jinciQuery=Db::name('pinglun_jinci_post');
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
+        foreach($data['content'] as $v){
+            //内容禁词检测
+            foreach ($jinci as $val) {
+                if (strpos($v, $val['post_title']) !== false) {
+                    $this->error('添加失败！内容包含禁止词语【'.$val['post_title'].'】');
+                }
+            }
+        }
+
+        foreach($data['id'] as $k=>$v) {
+            //读取任务信息
+            $task = $taskQuery->field('user_id,content_id,is_ok,zhidao,pinglun_id,get_url,title,content')->where('id', $v)->find();
+            //标记失败任务
+            $taskQuery->where('id', $v)->update(['delete_time'=>time()]);
+            //更新任务时间
+            $pinglunQuery->where('id',$task['pinglun_id'])->update(['create_time'=>time()]);
+            //任务cookie类型
+            $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->find();
+            //随机百度cookie
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'type'=>$cookie_type['cookie_type'],'delete_time'=>0])->order('rand()')->limit(1)->find();
+            //生成任务列表
+            $renwudata = ['user_id'=>$task['user_id'],'is_ok'=>$task['is_ok'],'title'=>$task['title'],'pinglun_id' => $task['pinglun_id'], 'content_id' => $task['content_id'], 'zhidao' => $task['zhidao'], 'get_url' => $task['get_url'], 'content' => base64_encode($data['content'][$k]), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => time()];
+            $taskQuery->insert($renwudata);
+        }
+
         $this->success('添加成功！', url('user/pinglun/index'));
     }
 
@@ -236,6 +311,40 @@ class PinglunController extends UserBaseController
             $re=explode(':',$res);
             $this->error('添加失败！内容包含禁止词语【'.$re[1].'】');
         }
+        $this->success('添加成功！', url('user/pinglun/tiwen'));
+    }
+    public function tiweneditPost()
+    {
+        $data = $this->request->param();
+        $taskQuery=Db::name('zhidaotaskdata');
+        $pinglunQuery=Db::name('pinglun_post');
+        $CookieQuery=Db::name('zhidaobaiducook');
+        //禁词验证
+        $jinciQuery=Db::name('pinglun_jinci_post');
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
+        foreach ($jinci as $val) {
+            if (strpos($data['post_title'], $val['post_title']) !== false) {
+                $this->error('添加失败！内容包含禁止词语【'.$val['post_title'].'】');
+            }
+            if (strpos($data['post_content'], $val['post_title']) !== false) {
+                $this->error('添加失败！内容包含禁止词语【'.$val['post_title'].'】');
+            }
+        }
+
+        //读取任务信息
+        $task = $taskQuery->field('user_id,content_id,zhidao,pinglun_id')->where('id', $data['id'])->find();
+        //标记失败任务
+        $taskQuery->where('id', $data['id'])->update(['delete_time'=>time()]);
+        //更新任务时间
+        $pinglunQuery->where('id',$task['pinglun_id'])->update(['create_time'=>time()]);
+        //任务cookie类型
+        $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->find();
+        //随机百度cookie
+        $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'type'=>$cookie_type['cookie_type'],'delete_time'=>0])->order('rand()')->limit(1)->find();
+        //生成任务列表
+        $renwudata = ['user_id'=>$task['user_id'],'title'=>base64_encode($data['post_title']),'pinglun_id' => $task['pinglun_id'], 'zhidao' => $task['zhidao'], 'content' => base64_encode($data['post_content']), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => time()];
+        $taskQuery->insert($renwudata);
+
         $this->success('添加成功！', url('user/pinglun/tiwen'));
     }
 
