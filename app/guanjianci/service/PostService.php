@@ -49,6 +49,30 @@ class PostService
         $where['create_time']=['>=', 0];
         $where['delete_time']=['=', 0];
 
+        $startTime = empty($filter['start_time']) ? 0 : strtotime($filter['start_time']);
+        $endTime   = empty($filter['end_time']) ? 0 : strtotime($filter['end_time']);
+        if (!empty($startTime) && !empty($endTime)) {
+            $where['create_time'] = [['>= time', $startTime], ['<= time', $endTime]];
+        } else {
+            if (!empty($startTime)) {
+                $where['create_time'] = ['>= time', $startTime];
+            }
+            if (!empty($endTime)) {
+                $where['create_time'] = ['<= time', $endTime];
+            }
+        }
+
+        $status=isset($filter['status'])?$filter['status']:'';
+        if($status==1){
+            $where['return_click'] = 1;
+        }
+        if($status==2){
+            $where['return_click'] = ['in','0,2,3,4'];
+        }
+        if($status==3){
+            $where['return_click'] = '';
+        }
+
         $portalPostModel = new TaskdjdataModel();
         $articles        = $portalPostModel->where($where)
             ->order('id', 'DESC')

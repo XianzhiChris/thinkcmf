@@ -1,4 +1,5 @@
 ﻿<?php
+
 //获取任务队列
 @$host=$_GET["host"];  //服务器名称
 @$time_sjc=time();  //获取时间戳
@@ -13,9 +14,11 @@ include("get_ip.php");
 @$client_ip=get_request_ip();  //获取客户端ip
 
 include("conn.php");
+
 //==========================
 //host 更新主机信息
 mysql_query("SET AUTOCOMMIT=1"); //设置mysql不自动提交，需自行用commit语句提交 
+
 $sql="insert into cmf_host(name,out_time,client_ip) VALUES('$host','$time_sjc','$client_ip')";  //添加数据
 
 if (mysql_query($sql)){
@@ -38,8 +41,10 @@ while($row = mysql_fetch_assoc($result1)){
     $get_url=$row['get_url'];  //回答URL
     $content=$row['content'];  //回答   提问   内容
     $baidu_cookie=$row['baidu_cookie'];  //baidu_cookie
-    $r_data=sprintf("%s{\"uid\":\"%s\",\"zhidao\":\"%s\",\"title\":\"%s\",\"get_url\":\"%s\",\"content\":\"%s\",\"baidu_cookie\":\"%s\"},"
-    ,$r_data,$uid ,$zhidao,$title,$get_url,$content,$baidu_cookie);
+    $is_ok=$row['is_ok'];  //is_ok  1是最佳答案
+    $user_id=$row['user_id'];  //user_id  用户ID
+    $r_data=sprintf("%s{\"uid\":\"%s\",\"zhidao\":\"%s\",\"title\":\"%s\",\"get_url\":\"%s\",\"content\":\"%s\",\"baidu_cookie\":\"%s\",\"is_ok\":\"%s\",\"user_id\":\"%s\"},"
+    ,$r_data,$uid ,$zhidao,$title,$get_url,$content,$baidu_cookie,$is_ok,$user_id);
 
     $sql="update cmf_zhidaotaskdata set get_host='$host',get_host_ip='$client_ip',get_host_time='$time_sjc' where id='$uid'";  //修改数据
     mysql_query($sql);

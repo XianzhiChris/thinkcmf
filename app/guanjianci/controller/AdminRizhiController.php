@@ -35,7 +35,7 @@ class AdminRizhiController extends AdminBaseController
 
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
-        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('status', isset($param['status']) ? $param['status'] : 1);
 
         $this->assign('articles', $data->items());
         $this->assign('page', $data->render());
