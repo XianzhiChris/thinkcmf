@@ -5,7 +5,7 @@ body {
 }
 
 body.body-white {
-    background: #fff;
+    background: #282d2f;
 }
 
 .navbar-fixed-top, .navbar-fixed-bottom {
@@ -631,6 +631,14 @@ ul.tc-photos {
     -o-transition: all 0.4s ease-in-out;
     transition: all 0.4s ease-in-out;
 }
-
+.btn.btn-transparent.btn-transparent-primary {
+    border-color: #22b2e1;
+}
+.btn.btn-transparent {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0);
+    border-color: #fff;
+    font-weight: 500;
+}
 
 		
