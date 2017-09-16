@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$user_nickname}  - 提问任务添加</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="">
+    <include file="public@head"/>
+    <style>
+        li{list-style: none;}
+        .tab {width:700px;height:358px;margin:0 auto;}
+        .tab ol{float:left;width:700px;height:50px;background:#ccc;}
+        .tab ol li{float:left;width:100px;height:50px;text-align:center;line-height:50px; color:#999;}
+        .tab ol li.active{background:#333;}
+
+        .tab ul{float:left;width:700px;height:300px;}
+        .tab ul li{float:left;width:700px;height:300px;background:#ddd;display:none;text-align:center;line-height:100px;font-size:40px;}
+        .tab ul li.cur{display:block;}
+        body{padding-top:0;}
+    </style>
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+
+    <div id="tab" class="tab">
+        <ol>
+            <li class="active">Chrome</li>
+            <li>Firefox</li>
+            <li>QQ浏览器</li>
+        </ol>
+        <ul>
+            <li class="cur">
+                ①登陆百度<br>
+                <img src="__STATIC__/images/g1.jpg" width="700"><br>
+                ②F12打开软件调试器<br>
+                <img src="__STATIC__/images/g2.jpg" width="700"><br>
+                ③BDUSS对应的Value为Cookie值
+            </li>
+            <li>
+                ①登陆百度<br>
+                <img src="__STATIC__/images/g1.jpg" width="700"><br>
+                ②F12打开软件调试器<br>
+                <img src="__STATIC__/images/h2.jpg" width="700"><br>
+                ③BDUSS后边的字符为Cookie值
+            </li>
+            <li>
+                ①登陆百度<br>
+                <img src="__STATIC__/images/g1.jpg" width="700"><br>
+                ②F12打开软件调试器<br>
+                <img src="__STATIC__/images/q2.jpg" width="700"><br>
+                ③BDUSS对应的Value为Cookie值
+            </li>
+        </ul>
+    </div>
+
+</div>
+<include file="public@scripts" />
+<script>
+    $(function(){
+        $("#tab ol li").click(function(){
+            now=$(this).index();
+            tab();
+        });
+        function tab(){
+            $("#tab ol li").eq(now).addClass('active').siblings().removeClass('active');
+            $("#tab ul li").eq(now).addClass('cur').siblings().removeClass('cur');
+        }
+    })
+</script>
+</body>
+</html>

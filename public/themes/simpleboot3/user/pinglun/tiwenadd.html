@@ -56,7 +56,7 @@
 									<th>我的百度Cookie</th>
 									<td>
 										<input class="form-control" type="text" name="post_cookie" id="post_cookie" />
-										<input type="checkbox" id="shangci"/>使用上次任务Cookie<a href="" style="float:right">百度帐号Cookie获取方法</a>
+										<input type="checkbox" id="shangci"/>使用上次任务Cookie<a href="javascript:void(0)" style="float:right" onclick="doSelect();">百度帐号Cookie获取方法</a>
 									</td>
 								</tr>
 							</table>
@@ -146,7 +146,27 @@
                 $('#post_cookie').val('');
 			}
 		})
-	})
+	});
+    function doSelect() {
+        openIframeLayer("{:url('user/pinglun/select')}", '百度帐号Cookie获取方法', {
+            area: ['700px', '400px']
+//            btn: ['确定', '取消'],
+//            yes: function (index, layero) {
+//                //do something
+//
+//                var iframeWin          = window[layero.find('iframe')[0]['name']];
+//                var selectedCategories = iframeWin.confirm();
+//                if (selectedCategories.selectedCategoriesId.length == 0) {
+//                    layer.msg('请选择分类');
+//                    return;
+//                }
+//                $('#js-categories-id-input').val(selectedCategories.selectedCategoriesId.join(','));
+//                $('#js-categories-name-input').val(selectedCategories.selectedCategoriesName.join(' '));
+//                //console.log(layer.getFrameIndex(index));
+//                layer.close(index); //如果设定了yes回调，需进行手工关闭
+//            }
+        });
+    }
 </script>
 </body>
 </html>

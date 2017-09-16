@@ -35,6 +35,12 @@ class PinglunController extends UserBaseController
         $this->assign("lists", $data['lists']);
         return $this->fetch();
     }
+    public function select()
+    {
+        $user = cmf_get_current_user();
+        $this->assign($user);
+        return $this->fetch();
+    }
 
     /**
      * 添加评论
