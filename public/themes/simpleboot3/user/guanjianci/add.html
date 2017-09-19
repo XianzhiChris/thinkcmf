@@ -34,7 +34,7 @@
 								<tr>
 									<th width="120">搜索引擎</th>
 									<td>
-										<select name="post_type" id="post_type">
+										<select name="post_type" id="post_type" class="form-control">
 											<option value="1">百度</option>
 											<option value="2">搜狗</option>
 											<option value="3">360</option>
@@ -45,13 +45,13 @@
 								<tr>
 									<th>关键词</th>
 									<td>
-										<input class="form-control" style="width:300px;display:inline;" type="text" name="post_title" id="post_title" value="" placeholder="请输入关键词" required><button id="bt_get_list" style="border:1px solid blue;width:60px;display:inline;margin-left:10px;color:blue;" class="form-control">列表</button>
+										<input class="form-control" style="width:300px;display:inline;" type="text" name="post_title" id="post_title" value="" placeholder="请输入关键词" required><button id="bt_get_list" style="width:60px;display:inline;margin-left:10px;" class="form-control">列表</button>
 									</td>
 								</tr>
 								<tr>
 									<th>指数</th>
 									<td>
-										<a id="bt_zhishu" style="border:1px solid blue;width:60px;display:inline;margin-left:10px;color:blue;text-decoration: none;" class="form-control" href="javascript:void(0);">查询</a><span id="zhishu"></span>
+										<a id="bt_zhishu" style="width:60px;display:inline;margin-left:10px;text-decoration: none;" class="form-control" href="javascript:void(0);">查询</a><span id="zhishu"></span>
 									</td>
 								</tr>
 								<tr>
@@ -65,7 +65,7 @@
 								<tr>
 									<th>当前排名</th>
 									<td>
-										<input class="form-control" type="text" name="post_chushipaiming" id="post_chushipaiming" value="" required style="width:50px;display:inline;" readonly><a id="bt_paiming" style="border:1px solid blue;width:60px;display:inline;margin-left:10px;color:blue;text-decoration: none;" class="form-control" href="javascript:void(0);">查询</a><span id="paiming"></span>
+										<input class="form-control" type="text" name="post_chushipaiming" id="post_chushipaiming" value="" required style="width:50px;display:inline;" readonly><a id="bt_paiming" style="width:60px;display:inline;margin-left:10px;text-decoration: none;" class="form-control" href="javascript:void(0);">查询</a><span id="paiming"></span>
 									</td>
 								</tr>
 								<tr>
@@ -78,7 +78,7 @@
 
 								<tr>
 									<th>时间模板</th>
-									<td><select id="sel_time_type" class="inputtext">
+									<td><select id="sel_time_type" class="inputtext form-control">
 										<option value="3">智能分配—平均分配</option>
 										<option value="2">智能分配—集中白天</option>
 										<option value="4">智能分配—集中夜晚</option>

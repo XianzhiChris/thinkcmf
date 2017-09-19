@@ -9,7 +9,7 @@
             "company_name": {
                 "title": "公司名称",
                 "name": "company_name",
-                "value": "玉米社自动推广系统",
+                "value": "推广系统",
                 "type": "text",
                 "tip": "",
                 "rule": []
