@@ -39,6 +39,9 @@ body.body-white{color: #e6e6e6;background: #282d2f;}
     border-radius: 0;
     border: 1px solid #33393c;
 }
+.tab-content{
+    padding:20px;
+}
 .nav-tabs{
     background: #42494c;
     border-color: #33393c;
@@ -63,7 +66,7 @@ body.body-white{color: #e6e6e6;background: #282d2f;}
     padding-left:0;
 }
 .tabs .row {
-    padding:15px;
+    /*padding:15px;*/
 }
 .bshare-custom .bshare-more{
     display: none !important;
@@ -98,6 +101,9 @@ body.body-white{color: #e6e6e6;background: #282d2f;}
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
+.form-control option{
+    color:#000;
+}
 .form-control:focus {
     border: 1px solid rgba(255, 255, 255, 0.65);
     outline: 0;
@@ -114,4 +120,27 @@ body.body-white{color: #e6e6e6;background: #282d2f;}
 }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{
     border:0;
+}
+.nav > li > a:hover, .nav > li > a:focus{
+    background:#333;
+}
+.nav-tabs > li > a{
+    border:0;
+}
+.table-striped > tbody > tr:nth-of-type(2n+1){
+    background:none;
+}
+.table-hover > tbody > tr:hover{
+    background:none;
+}
+.table-hover > tbody > tr{
+    border-bottom:1px dashed #666;
+}
+.table .table{
+    background-color: #282d2f;
+}
+.well{
+    background-color: #2f3030;
+    margin-bottom: 0;
+    border: 0;
 }
