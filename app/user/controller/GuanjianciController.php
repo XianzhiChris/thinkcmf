@@ -218,7 +218,19 @@ $i=0;
         }
 
     }
-    
+    //5118
+    public function paiming2()
+    {
+        //todo:来源判断，网址，防止其他人恶意调用
+        $data = $this->request->param();
+        $key=$data['post_url'];
+        $pram=['key'=>$key,'ssyq'=>5];
+        $result = hook("sousuoyinqing",$pram);
+//        var_dump($result);exit;
+        $jieguo=json_decode($result[0],true);
+        array_shift($jieguo);
+        echo json_encode($jieguo);
+    }
     //续费
     public function xufei(){
         $userId               = cmf_get_current_user_id();

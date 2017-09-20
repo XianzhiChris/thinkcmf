@@ -114,6 +114,22 @@ class QueryListPlugin extends Plugin
                 $data = array_merge($data,$ql->getData());
             }
         }
+        if($ssyq==5){//5118
+            $page=array(
+                "http://www.5118.com/seo/baidurank/".$key_word
+            );
+            $data=array();
+            foreach($page as $p){
+                $html=$this->curl_get_contents($p);
+                $reg = array(
+                    'key' => array('.hoverToHide a','text'),
+                    'num'=>array('.rank a','text')
+                );
+                $rang = '#waci-wrap .dig-list dl';
+                $ql = QueryList::Query($html,$reg,$rang);
+                $data = array_merge($data,$ql->getData());
+            }
+        }
 
         return json_encode($data);
     }

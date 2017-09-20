@@ -38,9 +38,9 @@
 									</td>
 								</tr>
 								<tr>
-									<th>关键词</th>
+									<th></th>
 									<td id="jieguo">
-										<textarea name="guanjianci" id="guanjianci" class="form-control" rows="15" required wrap="off"></textarea><p class="help-block">一行一个词</p><!--<a id="chaxun" class="btn btn-primary js-ajax-submit">{:lang('查询')}</a>-->
+
 									</td>
 								</tr>
 							</table>
@@ -64,67 +64,31 @@
 <script type="text/javascript" src="__STATIC__/js/admin.js"></script>
 <script>
 	$(function(){
-	    $('#chaxun').click(function(){
-	        var url=$('#url').val();
-	        if(url.length==0){
+	    $('#chaxun').click(function() {
+            var url = $('#url').val();
+            if (url.length == 0) {
                 alert('请填写域名');
                 return false;
-			}
-			var guanjianci=$('#guanjianci').val();
-            if(guanjianci.length==0){
-                alert('请填写关键词');
-                return false;
             }
-
-	        var str='<table id="list" class="table table-bordered"><thead><tr><th>关键词</th><th width="150">百度排名</th><th width="150">搜狗排名</th><th width="150">360排名</th><!--<th width="100">操作</th>--></tr></thead><tbody>';
-            var con_arr=guanjianci.split("\n");
-            for(var i=0;i<con_arr.length;i++){
-                console.log(con_arr[i].length);
-                if(con_arr[i].length>0){
-                	str+='<tr><td>'+con_arr[i]+'</td><td><img src="__STATIC__/images/loading.gif" width="20" height="20" />';
-                    str+='</td><td><img src="__STATIC__/images/loading.gif" width="20" height="20" /></td><td><img src="__STATIC__/images/loading.gif" width="20" height="20" /></td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
+            var str = "<img src='__STATIC__/images/loading.gif' width='20' height='20' />";
+            $('#jieguo').html(str);
+            $.get("/user/guanjianci/paiming2/post_url/" + url + "/sj/" + Math.random(), function (data) {
+                var json=JSON.parse(data);
+                if(json.length==0){
+                    $("#jieguo").html('无排名关键词');
+                    return false;
                 }
-            }
-            str+='</tbody></table>';
-			$('#jieguo').html(str);
-            for(var j=0;j<con_arr.length;j++) {
+                str = '<table id="list" class="table table-bordered"><thead><tr><th>关键词</th><th width="150">百度排名</th><!--<th width="100">操作</th>--></tr></thead><tbody>';
 
-                if(con_arr[j].length>0) {
-                    console.log(j);
-                    $.get("/user/guanjianci/paiming/post_title/" + con_arr[j] + "/post_url/" + url + "/ssyq/1/num/"+j+"/sj/" + Math.random(), function (data) {
-                        console.log(data);
-                        var str = data.split(",");
-                        var rank = str[0];
-                        var num = str[1];
-
-
-                            $('#list>tbody').find("tr:eq("+num+")").find("td:eq(1)").html(rank);
-
-                    });
-                    $.get("/user/guanjianci/paiming/post_title/" + con_arr[j] + "/post_url/" + url + "/ssyq/2/num/"+j+"/sj/" + Math.random(), function (data) {
-                        console.log(data);
-                        var str = data.split(",");
-                        var rank = str[0];
-                        var num = str[1];
-
-
-                        $('#list>tbody').find("tr:eq("+num+")").find("td:eq(2)").html(rank);
-
-                    });
-                    $.get("/user/guanjianci/paiming/post_title/" + con_arr[j] + "/post_url/" + url + "/ssyq/3/num/"+j+"/sj/" + Math.random(), function (data) {
-                        console.log(data);
-                        var str = data.split(",");
-                        var rank = str[0];
-                        var num = str[1];
-
-
-                        $('#list>tbody').find("tr:eq("+num+")").find("td:eq(3)").html(rank);
-
-                    });
+                console.log(json);
+                for (var i = 0; i < json.length; i++) {
+                    str += '<tr><td>' + json[i]['key'] + '</td><td>' + json[i]['num'] + '</td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
                 }
-            }
-			return false;
-		});
+                str += '</tbody></table>';
+                $('#jieguo').html(str);
+            });
+            return false;
+        });
         $("body").delegate('a[data-handle=delete]', 'click', function() {
             $(this).parent().parent().remove();
         });
