@@ -142,8 +142,8 @@ class ChongzhiController extends UserBaseController
                         break;
                 }
                 $userQuery->where('id',$parent_id)->setInc('score',$jifen*$fandian);
-                //明细增加
-                $moneyData2=['user_id'=>$parent_id,'create_time'=>time(),'type'=>1,'post_title'=>'团队成员【'.$user['user_nickname'].'】充值赠送米币','score'=>$jifen*$fandian];
+                //明细增加,赠送为4
+                $moneyData2=['user_id'=>$parent_id,'create_time'=>time(),'type'=>4,'post_title'=>'团队成员【'.$user['user_nickname'].'】充值赠送米币','score'=>$jifen*$fandian];
                 $userMoneyQuery->insert($moneyData2);
             }
 

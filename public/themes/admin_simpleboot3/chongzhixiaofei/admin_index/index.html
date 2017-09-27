@@ -20,6 +20,16 @@
                 <else/>
                 <option value='2'>消费</option>
             </if>
+            <if $post_type==3>
+                <option value='3' selected>提现</option>
+                <else/>
+                <option value='3'>提现</option>
+            </if>
+            <if $post_type==4>
+                <option value='4' selected>赠送</option>
+                <else/>
+                <option value='4'>赠送</option>
+            </if>
         </select> &nbsp;&nbsp;
         时间:
         <input type="text" class="form-control js-bootstrap-datetime" name="start_time"
@@ -80,6 +90,9 @@
                         <eq name="vo.type" value="3">
                             提现
                         </eq>
+                        <eq name="vo.type" value="4">
+                            赠送
+                        </eq>
                     </b>
                     </td>
                     <td>{$vo.post_title}</td>
@@ -99,7 +112,7 @@
                     </td>
                     <td>{$vo.remark}</td>
                     <td>
-                        <!--<a href="{:url('AdminIndex/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |-->
+                        <!--<a href="{:url('AdminIndex/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>  |-->
                         <a href="{:url('AdminIndex/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>
                     </td>
                 </tr>

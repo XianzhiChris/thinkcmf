@@ -37,23 +37,66 @@ class TixianController extends UserBaseController
     public function add()
     {
         $user = cmf_get_current_user();
+        $tixian_score=0;
+        $tixian=0;
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('coin')->where(array('id'=>$user['id']))->find();
-        $this->assign('mycoin',$coin['coin']);
+        $score=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        //$score['score']   剩余积分
+        $userMoneyQuery=Db::name('user_money_log');
+        $zscore=$userMoneyQuery->field('score')->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        //$zscore['score']  赠送积分
+        //如果赠送积分大于剩余积分
+        if($zscore['score']>=$score['score']){
+            $tixian_score=$score['score'];
+        }
+        //如果赠送积分小于剩余积分
+        if($zscore['score']<$score['score']){
+            $tixian_score=$zscore['score'];
+        }
+        if($tixian_score>=1000){
+            $tixian=$tixian_score / 10;
+        }
+
+        $this->assign('tixian',$tixian);
         return $this->fetch();
     }
 
     public function addPost()
     {
         $data = $this->request->param();
+        $tixian_score=0;
+        $tixian=0;
         $user = cmf_get_current_user();
 //        $this->assign($user);
         if(intval($data['post_jine'])==0){
-            $this->success('添加失败，提现金额不能为0！', url('user/tixian/index'));
+            $this->error('添加失败，提现金额不能为0！', url('user/tixian/index'));
         }
-        if($data['post_jine']>$user['coin']){
-            $this->success('添加失败，提现金额大于余额！', url('user/tixian/index'));
+        $userQuery=Db::name('user');
+        $score=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        //$score['score']   剩余积分
+        $userMoneyQuery=Db::name('user_money_log');
+        $zscore=$userMoneyQuery->field('score')->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        //$zscore['score']  赠送积分
+        //如果赠送积分大于剩余积分
+        if($zscore['score']>=$score['score']){
+            $tixian_score=$score['score'];
+        }
+        //如果赠送积分小于剩余积分
+        if($zscore['score']<$score['score']){
+            $tixian_score=$zscore['score'];
+        }
+        if($tixian_score>=1000){
+            $tixian=$tixian_score / 10;
+        }
+        if($data['post_jine']>$tixian){
+            $this->error('添加失败，提现金额错误！', url('user/tixian/index'));
+        }
+        //判断提现次数
+        $yuetime=mktime(0,0,0,date('m'),1,date('Y'));//本月0点时间戳
+        $cishu=$userMoneyQuery->field(['count(*)'=>'count'])->where(array('user_id'=>$user['id'],'type'=>4,'create_time'=>['>',$yuetime]))->find();
+        if($cishu>=2){
+            $this->error('添加失败，已超过本月提现次数，请下个月进行提现！', url('user/tixian/index'));
         }
 
         $editData = new UserModel();

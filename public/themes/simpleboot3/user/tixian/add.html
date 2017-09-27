@@ -27,13 +27,13 @@
 							<br>
 							<table class="table table-bordered">
 								<tr>
-									<th>提现方式</th>
+									<th width="150">提现方式</th>
 									<td><input type="radio" name="post_type" value="1" checked class="tx"> 微信  <input type="radio" name="post_type" value="2" class="tx"> 支付宝  <input type="radio" name="post_type" value="3" id="yhk"> 银行卡 </td>
 								</tr>
 								<tr>
 									<th>提现金额</th>
 									<td><input class="form-control" type="text" name="post_jine" id="jine" value=""
-											   placeholder="请输入提现金额" required> （可提现金额：{:number_format($mycoin,2)}）</td>
+											   placeholder="请输入提现金额" required> （可提现金额：{:number_format($tixian,2)}）</td>
 								</tr>
 								<tr id="ssyh" style="display: none">
 									<th>所属银行</th>
@@ -62,7 +62,7 @@
 		</div>
 		<include file="public@footer" />
 	</div>
-<!-- /container -->
+<!-- /container  -->
 <include file="public@scripts" />
 <script type="text/javascript">
 	$(function(){

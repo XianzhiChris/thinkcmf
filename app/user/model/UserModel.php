@@ -776,12 +776,12 @@ class UserModel extends Model
         $data['create_time']     = time();
         $userTixianQuery->insert($data);
 
-        //余额减少
+        //积分减少
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;
         $coin=$userQuery->where($where)->find();
-        $userQuery->where($where)->update(array('coin'=>$coin['coin']-$data['post_jine']));
+        $userQuery->where($where)->update(array('score'=>$coin['score']-$data['post_jine']*10));
 
         //增加明细记录
         $userMoneyQuery            = Db::name("user_money_log");
