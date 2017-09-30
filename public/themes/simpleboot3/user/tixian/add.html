@@ -28,7 +28,7 @@
 							<table class="table table-bordered">
 								<tr>
 									<th width="150">提现方式</th>
-									<td><input type="radio" name="post_type" value="1" checked class="tx"> 微信  <input type="radio" name="post_type" value="2" class="tx"> 支付宝  <input type="radio" name="post_type" value="3" id="yhk"> 银行卡 </td>
+									<td><input type="radio" name="post_type" value="1" checked id="wx"> 微信  <input type="radio" name="post_type" value="2" id="zfb"> 支付宝  <input type="radio" name="post_type" value="3" id="yhk"> 银行卡 </td>
 								</tr>
 								<tr>
 									<th>提现金额</th>
@@ -40,11 +40,28 @@
 									<td><input class="form-control" type="text" name="yinhang" id="yinhang" value=""
 											   placeholder="请输入所属银行"></td>
 								</tr>
+								<tr id="ewm">
+									<th>微信二维码</th>
+									<td><input type="hidden" name="erweima" id="erweima" value="">
+										<a href="javascript:uploadOneImage('图片上传','#erweima');">
+											<img src="__TMPL__/public/assets/images/default-thumbnail.png"
+												 id="erweima-preview"
+												 width="135" style="cursor: pointer"/>
+										</a>
+									</td>
+								</tr>
 								<tr>
 									<th>提现帐号</th>
 									<td>
 										<input class="form-control" type="text" name="zhanghao" id="zhanghao" value=""
 											   placeholder="请输入提现帐号" required>
+									</td>
+								</tr>
+								<tr>
+									<th>帐号真实姓名</th>
+									<td>
+										<input class="form-control" type="text" name="xingming" id="xingming" value=""
+											   placeholder="请输入帐号真实姓名" required>
 									</td>
 								</tr>
 							</table>
@@ -68,11 +85,17 @@
 	$(function(){
 	    $('#yhk').click(function(){
 	        $('#ssyh').show();
-	        $('#ssyh input').attr('required','required')
+	        $('#ssyh input').attr('required','required');
+            $('#ewm').hide();
 		});
-	    $('.tx').click(function(){
+	    $('#wx').click(function(){
             $('#ssyh').hide();
-		})
+            $('#ewm').show();
+		});
+        $('#zfb').click(function(){
+            $('#ssyh').hide();
+            $('#ewm').hide();
+        });
 	})
 </script>
 </body>

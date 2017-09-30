@@ -123,7 +123,10 @@ class QueryListPlugin extends Plugin
                 $html=$this->curl_get_contents($p);
                 $reg = array(
                     'key' => array('.hoverToHide a','text'),
-                    'num'=>array('.rank a','text')
+                    'num'=>array('.rank a','text'),
+                    'zhishu'=>array('dd:eq(3)','text'),
+                    'jingjia'=>array('dd:eq(5) a','text'),
+                    'biaoti'=>array('dd:eq(6) a','text')
                 );
                 $rang = '#waci-wrap .dig-list dl';
                 $ql = QueryList::Query($html,$reg,$rang);

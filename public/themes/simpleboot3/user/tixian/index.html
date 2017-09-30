@@ -55,7 +55,7 @@
 												({$vo.yinhang})
 											</notempty>
 											{$vo.zhanghao}</td>
-										<td>{$vo.post_jine}</td>
+										<td>{:number_format($vo.post_jine,2)}</td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
 										<td>
 											<eq name="vo.status" value="1">

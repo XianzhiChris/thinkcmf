@@ -791,6 +791,7 @@ class UserModel extends Model
         $data2['type']=3;
         $data2['post_title']='申请提现';
         $data2['jine']=$data['post_jine'];
+        $data2['score']=$data['post_jine']*10;
         $userMoneyQuery->insert($data2);
 
         return $userQuery;

@@ -44,15 +44,18 @@ class TixianController extends UserBaseController
         $score=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         //$score['score']   剩余积分
         $userMoneyQuery=Db::name('user_money_log');
-        $zscore=$userMoneyQuery->field('score')->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        $zscore=$userMoneyQuery->field(['sum(score)'=>'score'])->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        $tscore=$userMoneyQuery->field(['sum(score)'=>'score'])->where(array('user_id'=>$user['id'],'type'=>3))->find();
         //$zscore['score']  赠送积分
+        //$tscore['score']  提现积分
+        $ketixian=$zscore['score']-$tscore['score'];
         //如果赠送积分大于剩余积分
-        if($zscore['score']>=$score['score']){
+        if($ketixian>=$score['score']){
             $tixian_score=$score['score'];
         }
         //如果赠送积分小于剩余积分
-        if($zscore['score']<$score['score']){
-            $tixian_score=$zscore['score'];
+        if($ketixian<$score['score']){
+            $tixian_score=$ketixian;
         }
         if($tixian_score>=1000){
             $tixian=$tixian_score / 10;
@@ -76,15 +79,18 @@ class TixianController extends UserBaseController
         $score=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         //$score['score']   剩余积分
         $userMoneyQuery=Db::name('user_money_log');
-        $zscore=$userMoneyQuery->field('score')->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        $zscore=$userMoneyQuery->field(['sum(score)'=>'score'])->where(array('user_id'=>$user['id'],'type'=>4))->find();
+        $tscore=$userMoneyQuery->field(['sum(score)'=>'score'])->where(array('user_id'=>$user['id'],'type'=>3))->find();
         //$zscore['score']  赠送积分
+        //$tscore['score']  提现积分
+        $ketixian=$zscore['score']-$tscore['score'];
         //如果赠送积分大于剩余积分
-        if($zscore['score']>=$score['score']){
+        if($ketixian>=$score['score']){
             $tixian_score=$score['score'];
         }
         //如果赠送积分小于剩余积分
-        if($zscore['score']<$score['score']){
-            $tixian_score=$zscore['score'];
+        if($ketixian<$score['score']){
+            $tixian_score=$ketixian;
         }
         if($tixian_score>=1000){
             $tixian=$tixian_score / 10;
@@ -94,8 +100,8 @@ class TixianController extends UserBaseController
         }
         //判断提现次数
         $yuetime=mktime(0,0,0,date('m'),1,date('Y'));//本月0点时间戳
-        $cishu=$userMoneyQuery->field(['count(*)'=>'count'])->where(array('user_id'=>$user['id'],'type'=>4,'create_time'=>['>',$yuetime]))->find();
-        if($cishu>=2){
+        $cishu=$userMoneyQuery->field(['count(*)'=>'count'])->where(array('user_id'=>$user['id'],'type'=>3,'create_time'=>['>',$yuetime]))->find();
+        if($cishu['count']>=2){
             $this->error('添加失败，已超过本月提现次数，请下个月进行提现！', url('user/tixian/index'));
         }
 

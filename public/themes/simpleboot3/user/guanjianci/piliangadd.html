@@ -78,11 +78,11 @@
                     $("#jieguo").html('无排名关键词');
                     return false;
                 }
-                str = '<table id="list" class="table table-bordered"><thead><tr><th>关键词</th><th width="150">百度排名</th><!--<th width="100">操作</th>--></tr></thead><tbody>';
+                str = '<table id="list" class="table table-bordered"><thead><tr><th>关键词</th><th width="100">百度排名</th><th width="100">百度指数</th><th width="150">竞价公司数量</th><th width="300">网页标题</th><!--<th width="100">操作</th>--></tr></thead><tbody>';
 
                 console.log(json);
                 for (var i = 0; i < json.length; i++) {
-                    str += '<tr><td>' + json[i]['key'] + '</td><td>' + json[i]['num'] + '</td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
+                    str += '<tr><td>' + json[i]['key'] + '</td><td>' + json[i]['num'] + '</td><td>' + json[i]['zhishu'] + '</td><td>' + json[i]['jingjia'] + '</td><td><span title="' + json[i]['biaoti'] + '">' + json[i]['biaoti'].substring(0,15) + '</span></td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
                 }
                 str += '</tbody></table>';
                 $('#jieguo').html(str);

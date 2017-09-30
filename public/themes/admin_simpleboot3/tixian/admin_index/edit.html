@@ -19,10 +19,12 @@
                         <td>
                             <if $post.post_type=="1">
                                 微信
-                                <elseif $post.post_type=="2">
-                                    支付宝
-                                    <else/>
-                                    银行卡
+                            </if>
+                            <if $post.post_type=="2">
+                                支付宝
+                            </if>
+                            <if $post.post_type=="3">
+                                银行卡
                             </if>
                         </td>
                     </tr>
@@ -34,6 +36,34 @@
                         <th>金额</th>
                         <td>
                             {$post.post_jine}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>姓名</th>
+                        <td>
+                            {$post.xingming}
+                        </td>
+                    </tr>
+                    <if $post.post_type=="1">
+                    <tr>
+                        <th>二维码</th>
+                        <td>
+                            <img src="/upload/{$post.erweima}" width="120">
+                        </td>
+                    </tr>
+                    </if>
+                    <if $post.post_type=="3">
+                        <tr>
+                            <th>所属银行</th>
+                            <td>
+                                {$post.yinhang}
+                            </td>
+                        </tr>
+                    </if>
+                    <tr>
+                        <th>提现帐号</th>
+                        <td>
+                            {$post.zhanghao}
                         </td>
                     </tr>
                     <tr>
