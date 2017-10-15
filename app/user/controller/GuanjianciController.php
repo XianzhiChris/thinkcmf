@@ -157,6 +157,13 @@ class GuanjianciController extends UserBaseController
                 $ssyq="so360";
                 break;
         }
+        if($ssyq_value==1){
+            $jieguo=file_get_contents("http://api.91cha.com/bdsort?key=3aaeff25baa645b49657cec54982b4c1&host=$url&wd=$title");
+            $data_jieguo=json_decode($jieguo,true);
+            $data=str_replace("名以外","",$data_jieguo['data']['sort']);
+            echo $data;
+            exit;
+        }
         $key_json="";
         $i=0;
         $headers = array(

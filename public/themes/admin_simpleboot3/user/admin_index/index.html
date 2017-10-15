@@ -54,7 +54,7 @@
                                    data-msg="{:lang('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:lang('ACTIVATE_USER')}</a>
                                 <else/>
                                 <a href="{:url('adminIndex/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn"
-                                   data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a>
+                                   data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a> | <a href="{:url('adminIndex/chongzhi',array('id'=>$vo['id']))}">充值</a> | <a href="{:url('adminMoney/index',array('user_id'=>$vo['id']))}">明细</a>
                             </empty>
                             <else/>
                             <a style="color: #ccc;">{:lang('BLOCK_USER')}</a>

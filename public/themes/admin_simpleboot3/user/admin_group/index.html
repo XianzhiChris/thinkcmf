@@ -24,6 +24,7 @@
                 </th>
                 <th>名称</th>
                 <th width="150">金额</th>
+                <th width="150">分成比例</th>
                 <th width="150">操作</th>
             </tr>
             </thead>
@@ -35,6 +36,7 @@
                     </td>
                     <td>{$vo.post_title}</td>
                     <td>{$vo.post_jine}</td>
+                    <td>{$vo.fenchengbili}</td>
                     <td><a href="{:url('AdminGroup/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a> |
                         <a href="{:url('AdminGroup/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a></td>
                 </tr>

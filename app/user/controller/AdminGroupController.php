@@ -61,7 +61,7 @@ class AdminGroupController extends AdminBaseController
         if ($this->request->isPost()) {
             $param   = $this->request->param();
 
-            $data=['post_title'=>$param['post_title'],'post_jine'=>$param['post_jine'],'remark'=>$param['remark'],'create_time'=>time()];
+            $data=['post_title'=>$param['post_title'],'post_jine'=>$param['post_jine'],'fenchengbili'=>$param['fenchengbili'],'remark'=>$param['remark'],'create_time'=>time()];
             Db::name('user_group')->insert($data);
 
             $this->success('添加成功!', url('AdminGroup/index'));

@@ -62,8 +62,8 @@ class AdminMoneyController extends AdminBaseController
         $request = input('request.');
         $param = $this->request->param();
 
-        if (!empty($request['uid'])) {
-            $where['id'] = intval($request['uid']);
+        if (!empty($param['user_id'])) {
+            $where['user_id'] = intval($param['user_id']);
         }
         if (!empty($param['type'])) {
             $where['type'] = $param['type'];

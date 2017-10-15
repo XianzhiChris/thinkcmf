@@ -127,20 +127,22 @@ class ChongzhiController extends UserBaseController
             $parent_id=$user['parent_id'];
             if(isset($parent_id)) {
                 $parent_group=$userQuery->field('user_group')->where('id', $parent_id)->find();
-                switch ($parent_group['user_group']){
-                    case 1:
-                        $fandian=0.03;
-                        break;
-                    case 2:
-                        $fandian=0.06;
-                        break;
-                    case 3:
-                        $fandian=0.09;
-                        break;
-                    case 4:
-                        $fandian=0.12;
-                        break;
-                }
+                $fenchengbili=$userGroupQuery->field('fenchengbili')->where('id', $parent_group['user_group'])->find();
+//                switch ($parent_group['user_group']){
+//                    case 1:
+//                        $fandian=0.03;
+//                        break;
+//                    case 2:
+//                        $fandian=0.06;
+//                        break;
+//                    case 3:
+//                        $fandian=0.09;
+//                        break;
+//                    case 4:
+//                        $fandian=0.12;
+//                        break;
+//                }
+                $fandian=$fenchengbili['fenchengbili'];
                 $userQuery->where('id',$parent_id)->setInc('score',$jifen*$fandian);
                 //明细增加,赠送为4
                 $moneyData2=['user_id'=>$parent_id,'create_time'=>time(),'type'=>4,'post_title'=>'团队成员【'.$user['user_nickname'].'】充值赠送米币','score'=>$jifen*$fandian];

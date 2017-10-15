@@ -63,7 +63,7 @@ class AliyunMobileCodePlugin extends Plugin
             $config['TemplateCode'], // 短信模板编号
             $mobile, // 短信接收者
             Array(  // 短信模板中字段的值
-                "no"=>$code
+                "code"=>$code
             )
         );
         $result = [
