@@ -144,3 +144,6 @@ body.body-white{color: #e6e6e6;background: #282d2f;}
     margin-bottom: 0;
     border: 0;
 }
+.submenu .current-menu-item a {
+    color:#18BC9C!important;
+}

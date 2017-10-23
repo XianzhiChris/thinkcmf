@@ -162,6 +162,9 @@ class GuanjianciController extends UserBaseController
             $data_jieguo=json_decode($jieguo,true);
             $data=str_replace("名以外","",$data_jieguo['data']['sort']);
             echo $data;
+            if($num!=''){
+                echo ",".$num;
+            }
             exit;
         }
         $key_json="";

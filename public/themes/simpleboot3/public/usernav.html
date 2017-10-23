@@ -254,3 +254,10 @@
 <script src="__TMPL__/public/assets/js/bootstrap.min.js"></script>
 <script src="__STATIC__/js/admin.js"></script>
 <script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>
+<script>
+    $(".nav-list a").each(function(){
+        if ($(this)[0].href == String(window.location) && $(this).attr('href')!="") {
+            $(this).parent("li").addClass("current-menu-item");
+        }
+    });
+</script>
