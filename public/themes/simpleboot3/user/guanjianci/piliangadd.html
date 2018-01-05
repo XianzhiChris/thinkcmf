@@ -72,7 +72,7 @@
             }
             var str = "<img src='__STATIC__/images/loading.gif' width='20' height='20' />";
             $('#jieguo').html(str);
-            $.get("/user/guanjianci/paiming2/post_url/" + url + "/sj/" + Math.random(), function (data) {
+            $.get("/user/guanjianci/paiming3/post_url/" + url + "/sj/" + Math.random(), function (data) {
                 var json=JSON.parse(data);
                 if(json.length==0){
                     $("#jieguo").html('无排名关键词');
@@ -82,7 +82,7 @@
 
                 console.log(json);
                 for (var i = 0; i < json.length; i++) {
-                    str += '<tr><td>' + json[i]['key'] + '</td><td>' + json[i]['num'] + '</td><td>' + json[i]['zhishu'] + '</td><td>' + json[i]['jingjia'] + '</td><td><span title="' + json[i]['biaoti'] + '">' + json[i]['biaoti'].substring(0,15) + '</span></td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
+                    str += '<tr><td>' + json[i]['keyword'] + '</td><td>' + json[i]['rank'] + '</td><td>' + json[i]['baidu_index'] + '</td><td>' + json[i]['bidword_company_count \t'] + '</td><td><span title="' + json[i]['page_title'] + '">' + json[i]['page_title'].substring(0,15) + '</span></td><!--<td><a href="javascript:;" data-handle="delete">删除</a></td>--></tr>';
                 }
                 str += '</tbody></table>';
                 $('#jieguo').html(str);

@@ -241,6 +241,23 @@ $i=0;
         array_shift($jieguo);
         echo json_encode($jieguo);
     }
+    //5118 api
+    public function paiming3()
+    {
+        //todo:来源判断，网址，防止其他人恶意调用
+        $data = $this->request->param();
+        $url=$data['post_url'];
+
+        $header = array(
+            "Content-Type:application/x-www-form-urlencoded", //post请求
+            'Authorization: APIKEY A85D6AD070C54CA996A5101DA41BD47E'
+        );
+        $result = $this->curl_get_contents_post("http://apis.5118.com/keyword/baidupc","url=".$url,$header);
+
+        $jieguo=json_decode($result,true);
+        //var_dump($jieguo['data']['baidupc']);
+        echo json_encode($jieguo['data']['baidupc']);
+    }
     //续费
     public function xufei(){
         $userId               = cmf_get_current_user_id();
@@ -312,6 +329,23 @@ $i=0;
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
 //        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);   //HTTS请求
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $r = curl_exec($ch);
+        curl_close($ch);
+        return $r;
+    }
+    function curl_get_contents_post($url,$curlPost='',$headers='')
+    {
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
+        curl_setopt($ch,CURLOPT_HEADER,0);            //是否显示头部信息
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);           //设置超时
+        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);      //跟踪301
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);   //HTTS请求
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
         $r = curl_exec($ch);
         curl_close($ch);
         return $r;

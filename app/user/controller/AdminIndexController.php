@@ -136,29 +136,29 @@ class AdminIndexController extends AdminBaseController
         $data = $this->request->param();
         switch ($data['jifen']){
             case 1:
-                $jifen=2200;
-                $jine=200;
-                break;
-            case 2:
-                $jifen=6000;
-                $jine=500;
-                break;
-            case 3:
-                $jifen=12000;
+                $jifen=1000;
                 $jine=1000;
                 break;
+            case 2:
+                $jifen=2000;
+                $jine=1960;
+                break;
+            case 3:
+                $jifen=5000;
+                $jine=4750;
+                break;
             case 4:
-                $jifen=25000;
-                $jine=2000;
+                $jifen=10000;
+                $jine=8800;
                 break;
-            case 5:
-                $jifen=70000;
-                $jine=5000;
-                break;
-            case 6:
-                $jifen=160000;
-                $jine=10000;
-                break;
+//            case 5:
+//                $jifen=70000;
+//                $jine=5000;
+//                break;
+//            case 6:
+//                $jifen=160000;
+//                $jine=10000;
+//                break;
         }
         $type='后台充值';
 //        switch ($data['type']){
