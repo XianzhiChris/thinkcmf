@@ -4,7 +4,7 @@
 <title>{$user_nickname}  - 修改资料</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
-<include file="public@head"/>
+<include file="public@head2"/>
 
 </head>
 <body class="body-white" id="top">
@@ -24,29 +24,76 @@
                                    <div class="tab-pane active" id="one">
                                    		<br>
                                    		<form class="js-ajax-form" action="{:url('user/profile/editPost')}" method="post">
+                                   			企业资料：
                                    			<div class="form-group">
-                                   				<label for="input-user_nickname">昵称<span style="color:red"> *</span></label>
-                                   				<input type="text" class="form-control" id="input-user_nickname" name="user_nickname" value="{$user_nickname}" required>
-                                   			</div>
-                                   			<div class="form-group">
-												<label for="input-gongsimingcheng">公司名称<span style="color:red"> *</span></label>
+												<label for="input-gongsimingcheng">企业名称<span style="color:red"> *</span></label>
 												<input type="text" class="form-control" id="input-gongsimingcheng" name="gongsimingcheng" value="{$gongsimingcheng}" required>
                                    			</div>
+											<div class="form-group">
+												<label for="input-yingyezhizhaohaoma">营业执照号码<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-yingyezhizhaohaoma" name="yingyezhizhaohaoma" value="{$yingyezhizhaohaoma}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-yingyezhizhao">营业执照<span style="color:red"> *</span></label>
+												<br/>
+												<input type="hidden" name="yingyezhizhao" id="input-yingyezhizhao" value="{$yingyezhizhao}">
+												<a href="javascript:uploadOneImage('图片上传','#input-yingyezhizhao');">
+													<if condition="!empty($yingyezhizhao)">
+														<img src="/upload/{$yingyezhizhao}" id="input-yingyezhizhao-preview" width="135" style="cursor: pointer"/>
+														<else/>
+														<img src="__TMPL__/public/assets/images/default-thumbnail.png" id="input-yingyezhizhao-preview" width="135" style="cursor: pointer"/>
+													</if>
+												</a>
+											</div>
+											<div class="form-group">
+												<label for="input-faren">法人<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-faren" name="faren" value="{$faren}" required>
+											</div>
                                    			<div class="form-group">
-                                   				<label for="input-lianxiren">联系人<span style="color:red"> *</span></label>
-												<input type="text" class="form-control" id="input-lianxiren" name="lianxiren" value="{$lianxiren}" required>
+                                   				<label for="input-lianxidianhua">联系电话<span style="color:red"> *</span></label>
+                                   				<input class="form-control" type="text" id="input-lianxidianhua" name="lianxidianhua" value="{$lianxidianhua}" required>
                                    			</div>
+											<div class="form-group">
+												<label for="input-dianziyouxiang">电子邮箱<span style="color:red"> *</span></label>
+												<input class="form-control" type="text" id="input-dianziyouxiang" name="dianziyouxiang" value="{$dianziyouxiang}" required>
+											</div>
                                    			<div class="form-group">
-                                   				<label for="input-dianhua">电话<span style="color:red"> *</span></label>
-                                   				<input class="form-control" type="text" id="input-dianhua" name="dianhua" value="{$dianhua}" required>
-                                   			</div>
-                                   			<div class="form-group">
-                                   				<label for="input-dizhi">地址<span style="color:red"> *</span></label>
+                                   				<label for="input-dizhi">公司地址<span style="color:red"> *</span></label>
 												<input class="form-control" type="text" id="input-dizhi" name="dizhi" value="{$dizhi}" required>
                                    			</div>
 											<div class="form-group">
 												<label for="input-wangzhi">官网网址<span style="color:red"> *</span></label>
 												<input class="form-control" type="text" id="input-wangzhi" name="wangzhi" value="{$wangzhi}" required>
+											</div>
+											<br>
+											操作员资料：
+											<!--<div class="form-group">-->
+												<!--<label for="input-user_nickname">昵称<span style="color:red"> *</span></label>-->
+												<!--<input type="text" class="form-control" id="input-user_nickname" name="user_nickname" value="{$user_nickname}" required>-->
+											<!--</div>-->
+											<div class="form-group">
+												<label for="input-lianxiren">姓名<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-lianxiren" name="lianxiren" value="{$lianxiren}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-xingbie">性别<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-xingbie" name="xingbie" value="{$xingbie}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-gangwei">岗位<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-gangwei" name="gangwei" value="{$gangwei}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-dianhua">电话<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-dianhua" name="dianhua" value="{$dianhua}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-qq">QQ<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-qq" name="qq" value="{$qq}" required>
+											</div>
+											<div class="form-group">
+												<label for="input-youxiang">邮箱<span style="color:red"> *</span></label>
+												<input type="text" class="form-control" id="input-youxiang" name="youxiang" value="{$youxiang}" required>
 											</div>
                                    			<div class="form-group">
                                    				<button type="submit" class="btn btn-primary js-ajax-submit">保存</button>

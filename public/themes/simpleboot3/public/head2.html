@@ -1,10 +1,5 @@
 <taglib name="app\portal\taglib\Portal"/>
 <include file="public@function"/>
-<?php
-if(isset($user_status)&&$user_status==2){
-    header("Location: /user/profile/edit.html");
-}
-?>
 <meta name="author" content="ThinkCMF">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,3 +46,10 @@ if(isset($user_status)&&$user_status==2){
         display: none
     }
 </style>
+<script>
+    var user_status="{$user_status}";
+
+    if(user_status==2){
+        alert('请完善资料并等待审核');
+    }
+</script>

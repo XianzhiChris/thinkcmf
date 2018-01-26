@@ -34,7 +34,10 @@ var GV = {
 				if(data.data.user.avatar){
 				}
 
-				$("#main-menu-user span.user-nickname").text(data.data.user.user_nickname?data.data.user.user_nickname:data.data.user.user_login);
+				$("#main-menu-user span.user-nickname").text((data.data.user.mobile?data.data.user.mobile:data.data.user.user_login)+(data.data.user.user_status==2?"(待审核)":''));
+				if(data.data.user.user_status==2){
+                    $("#main-menu-user span.user-nickname").css('color','red');
+                }
 				$("#main-menu-user li.login").show();
                 $("#main-menu-user li.offline").hide();
 

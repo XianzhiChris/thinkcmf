@@ -12,6 +12,7 @@ namespace app\guanjianci\service;
 
 use app\guanjianci\model\GuanjianciPostModel;
 use app\guanjianci\model\GuanjianciXiangguanciPostModel;
+use app\guanjianci\model\GuanjianciJinciPostModel;
 use app\guanjianci\model\TaskdjdataModel;
 use app\guanjianci\model\TaskdjdataModelModel;
 
@@ -21,6 +22,27 @@ class PostService
     public function adminArticleList($filter)
     {
         return $this->adminPostList($filter);
+    }
+    public function adminJinciList($filter)
+    {
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0
+        ];
+
+
+        $keyword = empty($filter['keyword']) ? '' : $filter['keyword'];
+        if (!empty($keyword)) {
+            $where['a.post_title'] = ['like', "%$keyword%"];
+        }
+
+        $portalPostModel = new GuanjianciJinciPostModel();
+        $articles        = $portalPostModel->alias('a')
+            ->where($where)
+            ->order('id', 'DESC')
+            ->paginate(10);
+
+        return $articles;
     }
     public function adminXiangguanciList($filter)
     {

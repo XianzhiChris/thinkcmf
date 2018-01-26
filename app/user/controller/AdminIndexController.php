@@ -117,6 +117,28 @@ class AdminIndexController extends AdminBaseController
         }
     }
 
+    public function edit(){
+        $id = input('param.id', 0, 'intval');
+        if ($id) {
+            $result = Db::name("user")->where(["id" => $id, "user_type" => 2])->find();
+            $user_group=Db::name("user_group")->field('id,post_title')->order('id asc')->select();
+            $this->assign('user', $result);
+            $this->assign('id', $id);
+            $this->assign('user_group', $user_group);
+            // 渲染模板输出
+            return $this->fetch();
+        } else {
+            $this->error('数据传入失败！');
+        }
+    }
+    public function editPost(){
+        $data = $this->request->param();
+        $user_id=$data['id'];
+        $userQuery = Db::name('user');
+        $result=$userQuery->where(["id" => $user_id])->update(["gongsimingcheng" => $data['gongsimingcheng'],"yingyezhizhaohaoma"=>$data['yingyezhizhaohaoma'],"yingyezhizhao"=>$data['yingyezhizhao'],"faren"=>$data['faren'],"lianxidianhua"=>$data['lianxidianhua'],"dianziyouxiang"=>$data['dianziyouxiang'],"dizhi"=>$data['dizhi'],"wangzhi"=>$data['wangzhi'],"lianxiren"=>$data['lianxiren'],"xingbie"=>$data['xingbie'],"gangwei"=>$data['gangwei'],"dianhua"=>$data['dianhua'],"qq"=>$data['qq'],"youxiang"=>$data['youxiang'],"score"=>$data['score'],"user_group"=>$data['user_group'],"user_status"=>1]);
+        $this->success("更新成功！");
+    }
+
     public function chongzhi(){
         $id = input('param.id', 0, 'intval');
         if ($id) {

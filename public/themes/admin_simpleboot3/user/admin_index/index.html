@@ -16,8 +16,8 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>{:lang('USERNAME')}</th>
-                <th>{:lang('NICENAME')}</th>
+                <th>{:lang('用户')}</th>
+                <!--<th>{:lang('NICENAME')}</th>-->
                 <th>{:lang('米币')}</th>
                 <th>{:lang('资金')}</th>
                 <th>{:lang('会员级别')}</th>
@@ -36,9 +36,8 @@
             <foreach name="list" item="vo">
                 <tr>
                     <td>{$vo.id}</td>
-                    <td>{$vo['user_login']?$vo['user_login']:($vo['mobile']?$vo['mobile']:lang('THIRD_PARTY_USER'))}
-                    </td>
-                    <td>{$vo['user_nickname']?$vo['user_nickname']:lang('NOT_FILLED')}</td>
+                    <td>{$vo.mobile}</td>
+                    <!--<td>{$vo['user_nickname']?$vo['user_nickname']:lang('NOT_FILLED')}</td>-->
                     <td>{$vo.score}</td>
                     <td>{$vo.coin}</td>
                     <td>{$vo.user_group_name}</td>
@@ -54,7 +53,7 @@
                                    data-msg="{:lang('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:lang('ACTIVATE_USER')}</a>
                                 <else/>
                                 <a href="{:url('adminIndex/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn"
-                                   data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a> | <a href="{:url('adminIndex/chongzhi',array('id'=>$vo['id']))}">充值</a> | <a href="{:url('adminMoney/index',array('user_id'=>$vo['id']))}">明细</a>
+                                   data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a> | <a href="{:url('adminIndex/edit',array('id'=>$vo['id']))}">{:lang('编辑')}</a> | <!--<a href="{:url('adminIndex/chongzhi',array('id'=>$vo['id']))}">充值</a> | --><a href="{:url('adminMoney/index',array('user_id'=>$vo['id']))}">明细</a>
                             </empty>
                             <else/>
                             <a style="color: #ccc;">{:lang('BLOCK_USER')}</a>

@@ -114,11 +114,11 @@ class UserModel extends Model
     {
         $result = Db::name("user")->where('mobile', $user['mobile'])->find();
 
-        $userStatus = 1;
+        $userStatus = 2;
 
-        if (cmf_is_open_registration()) {
-            $userStatus = 2;
-        }
+//        if (cmf_is_open_registration()) {
+//            $userStatus = 2;
+//        }
 
         if (empty($result)) {
             $data   = [

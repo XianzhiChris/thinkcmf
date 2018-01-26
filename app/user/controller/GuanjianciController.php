@@ -35,7 +35,14 @@ class GuanjianciController extends UserBaseController
             $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->find();
             $v['task_ok_num']=$task_ok['count'];
             $list[]=$v;
+
+            //todo:判断是否结束，然后进行费用结算
+//            if(){ //如果结束
+//                $this->jiesuan($v['id']);
+//            }
         }
+
+
         $user = cmf_get_current_user();
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
@@ -78,9 +85,138 @@ class GuanjianciController extends UserBaseController
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
         $this->assign('myscore',$coin['score']);
-        $this->assign('url',$data['url']);
-        $this->assign('guanjianci',$data['guanjianci']);
+        $this->assign('domain',$data['domain']);
+        $this->assign('check',$data['check']);
+        $this->assign('tal',0);
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $this->assign("jiage", $jiageQuery['guanjianci']);
         return $this->fetch();
+    }
+    public function piliangadd3()
+    {
+        $data = $this->request->param();
+        $userId               = cmf_get_current_user_id();
+        $userGuanjianciQuery            = Db::name("guanjianci_post");
+        $userQuery            = Db::name("user");
+        $renwuQuery=Db::name('taskdjdata');
+        $cookieQuery=Db::name('baiducookie');
+
+        //进行循环
+        $tal=0;
+        $count=count($data['post_biaoti']);
+        //计算价格
+        for($i=0;$i<$count;$i++){
+            $mey=0;
+            if($data['post_zhishu'][$i]<1){ //无指数
+                if($data['post_chushipaiming'][$i]<100){
+                    $mey=$data['post_chushipaiming'][$i]*0.11;
+                }
+                if($data['post_chushipaiming'][$i]<50){
+                    $mey=($data['post_chushipaiming'][$i]-1)*0.104+1;
+                }
+            }else{
+                if($data['post_chushipaiming'][$i]<100){
+                    $mey=($data['post_chushipaiming'][$i]-50)*0.061+12;
+                }
+                if($data['post_chushipaiming'][$i]<50){
+                    $mey=($data['post_chushipaiming'][$i]-1)*0.062+9;
+                }
+            }
+            $mey*=$data['post_tianshu'][$i];
+            $mey=round($mey);
+            $tal+=$mey;
+        }
+        //合计
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $xiaofei=$tal*$jiageQuery['guanjianci'];
+
+        //查询现有积分
+        $coin=$userQuery->field('score')->where(array('id'=>$userId))->find();
+        if($coin['score']<$xiaofei){
+            $this->error('米币不足！');
+        }
+
+        //积分减少
+        $where=[];
+        $where['id']=$userId;
+        $userQuery->where($where)->setDec('score', $xiaofei);
+//        $userQuery->where($where)->update(array('score'=>$coin['score']-$xiaofei));
+
+        //加入任务
+        for($i=0;$i<$count;$i++){
+            $d=[];
+            $d['post_type']=$data['post_type'][$i];
+            $d['post_biaoti']=$data['post_biaoti'][$i];
+            $d['post_title']=$data['post_title'][$i];
+            $d['post_url']=$data['post_url'][$i];
+            $d['post_chushipaiming']=$d['shishipaiming']=$data['post_chushipaiming'][$i];
+            $d['post_dianjicishu']=$data['post_dianjicishu'][$i];
+            $d['post_tianshu']=$data['post_tianshu'][$i];
+            $d['post_zhishu']=$data['post_zhishu'][$i];
+            for($t=0;$t<24;$t++) {
+                $d['txt_time'.$t]=0;
+            }
+            if ($d['post_dianjicishu'] <= 24) {
+                for ($t = 0; $t < $d['post_dianjicishu']; $t++) {
+                    $d["txt_time".$t]=1;
+                }
+            }else {
+                $pj = intval($d['post_dianjicishu'] / 24);
+                for ($t=0;$t<24;$t++) {
+                    $d["txt_time".$t]=$pj;
+                }
+                $shengyu= $d['post_dianjicishu']-$pj * 24;
+                for ($t=0;$t<$shengyu;$t++){
+                    $current_val=$d["txt_time".$t];
+                    $d["#txt_time".$t]=intval($current_val)+1;
+                }
+            }
+
+            //加入任务表
+            $d['user_id']     = $userId;
+            $d['create_time']     = time();
+            $userGuanjianciQuery->insert($d);
+            $renwu_id=$userGuanjianciQuery->getLastInsID();
+
+            //生成任务列表
+            switch ($d['post_type']){
+                case 1:
+                    $sou="baidu";
+                    break;
+                case 2:
+                    $sou="sogou";
+                    break;
+                case 3:
+                    $sou="so";
+                    break;
+            }
+            $time=time();
+            for($x=0;$x<$d['post_tianshu'];$x++){
+                $rq=strtotime(date('Y-m-d' , strtotime('+'.$x.' day')));
+                for($t=0;$t<24;$t++) {
+                    $renwudata=[];
+                    for ($j = 0; $j < $d['txt_time' . $t]; $j++) {
+                        $xs = $t * 3600;
+                        //随机百度cookie
+                        $baidu_cookie = $cookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+                        $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($d['post_title']), 'title' => base64_encode($d['post_biaoti']), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+                    }
+                    $renwuQuery->insertAll($renwudata);
+                }
+            }
+        }
+
+        //增加消费明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=2;
+        $data2['post_title']='关键词点击任务';
+        $data2['score']=$xiaofei;
+        $userMoneyQuery->insert($data2);
+
+        $this->success('添加成功！', url('user/guanjianci/index'));
     }
 
     public function addPost()
@@ -241,22 +377,118 @@ $i=0;
         array_shift($jieguo);
         echo json_encode($jieguo);
     }
-    //5118 api
+    //5118 api 排名列表
     public function paiming3()
     {
         //todo:来源判断，网址，防止其他人恶意调用
         $data = $this->request->param();
         $url=$data['post_url'];
+        //过滤http://
+        $url=str_replace('http://','',$url);
+        $tt=time();
 
-        $header = array(
-            "Content-Type:application/x-www-form-urlencoded", //post请求
-            'Authorization: APIKEY A85D6AD070C54CA996A5101DA41BD47E'
-        );
-        $result = $this->curl_get_contents_post("http://apis.5118.com/keyword/baidupc","url=".$url,$header);
+        $gc_query=Db::name('guanjianci_cache');
+        $cache_f=$gc_query->field('id,s_data,s_time')->where('domain',$url)->find();
+        if(!empty($cache_f)){
+            if($tt-$cache_f['s_time']<604800) {
+                $result = $cache_f['s_data'];
+            }else{
+                $header = array(
+                    "Content-Type:application/x-www-form-urlencoded", //post请求
+                    'Authorization: APIKEY A85D6AD070C54CA996A5101DA41BD47E'
+                );
+                $result = $this->curl_get_contents_post("http://apis.5118.com/keyword/baidupc","url=".$url,$header);
+                //结果存入cmf_guanjianci_cache表
+                $data=['s_data'=>$result,'s_time'=>$tt];
+                $gc_query->where('id',$cache_f['id'])->update($data);
+            }
+        }else{
+            $header = array(
+                "Content-Type:application/x-www-form-urlencoded", //post请求
+                'Authorization: APIKEY A85D6AD070C54CA996A5101DA41BD47E'
+            );
+            $result = $this->curl_get_contents_post("http://apis.5118.com/keyword/baidupc","url=".$url,$header);
+            //结果存入cmf_guanjianci_cache表
+            $data=['domain'=>$url,'s_data'=>$result,'s_time'=>$tt,'addtime'=>$tt];
+            $gc_query->insert($data);
+        }
 
         $jieguo=json_decode($result,true);
+        //todo:对结果进行禁词检测
+        if($jieguo['errcode']==0){
+            echo json_encode($jieguo['data']['baidupc']);
+        }else{
+            echo 0;
+        }
         //var_dump($jieguo['data']['baidupc']);
-        echo json_encode($jieguo['data']['baidupc']);
+
+    }
+    //5118 api 单个关键词排名
+    public function paiming4(){
+        $data = $this->request->param();
+        $url=$data['post_url'];
+        $key=$data['post_title'];
+        $type=$data['post_type'];
+        if($type==1){ //baidu
+            $apikey="FB9AAB8384A4440698E31A4EAA9918C0";
+            $posturl="http://apis.5118.com/morerank/baidupc";
+        }
+        if($type==2){
+            $apikey="";
+            $posturl="";
+        }
+        if($type==3){ //360
+            $apikey="439D85D3CAA24A00821CF6C2417937E2";
+            $posturl="http://apis.5118.com/morerank/haosou";
+        }
+        $header = array(
+            "Content-Type:application/x-www-form-urlencoded", //post请求
+            'Authorization: APIKEY '.$apikey
+        );
+        $result = $this->curl_get_contents_post($posturl,"url=".$url."&keywords=".$key."&checkrow=100",$header);
+        $jieguo=json_decode($result,true);
+        if($jieguo['errcode']==0) {
+            $taskid = $jieguo['data']['taskid'];
+            $i=1;
+            do{
+                $pm=$this->paiming4_1($posturl,$taskid,$header);
+//                var_dump($pm);
+                $i++;
+                if($i>20){
+                    $pm=1;
+                }
+            }while(!$pm);
+            echo $pm;
+        }else{
+            echo 0;
+        }
+    }
+    function paiming4_1($posturl,$taskid,$header){
+        sleep(3);
+        $result = $this->curl_get_contents_post($posturl, "taskid=" . $taskid, $header);
+        $jieguo = json_decode($result, true);
+        if ($jieguo['errcode'] == '0') {
+            $d=$jieguo['data']['keywordmonitor'][0]['ranks'];
+            if($d){
+                return json_encode($d[0]);
+            }else{
+                return 1;
+            }
+//            return json_encode($jieguo['data']['keywordmonitor'][0]['ranks']);
+//        }elseif($jieguo['errcode'] == '200104'){
+//            echo "200104";
+        }else{
+            return false;
+        }
+    }
+    //实时排名
+    function paiming5(){
+        $data = $this->request->param();
+        $id=$data['id'];
+        $num=$data['num'];
+        $userGuanjianciQuery            = Db::name("guanjianci_post");
+        $gjc=$userGuanjianciQuery->field('shishipaiming')->where('id',$id)->find();
+        echo $gjc['shishipaiming'].','.$num;
     }
     //续费
     public function xufei(){
