@@ -13,9 +13,10 @@
                     <tr>
                         <th width="100">类型</th>
                         <td>
-                            <select class="form-control" name="post[type]">
-                                <option value="1">百度新号</option>
-                                <option value="2">优质老号</option>
+                            <select class="form-control" name="post[jiage_id]">
+                                <foreach name="jiage" item="vo">
+                                    <option value="{$vo.id}">{$vo.title}</option>
+                                </foreach>
                             </select>
                         </td>
                     </tr>

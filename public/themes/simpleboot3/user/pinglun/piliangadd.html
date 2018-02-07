@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$user_nickname}  - 回答任务添加</title>
+<title>回答任务添加</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
@@ -28,6 +28,20 @@
 						<div class="tab-pane active" id="one">
 							<br>
 							<table class="table table-bordered">
+								<tr>
+									<th>百度帐号</th>
+									<td>
+										<if condition="$mybaidu neq ''">
+											<select name="cookie_id" id="selectCookie" class="form-control">
+												<foreach name="mybaidu" item="vo">
+													<option value="{$vo.id}">[ ID:{$vo.id} ] {$vo.title}</option>
+												</foreach>
+											</select>
+											<else />
+											<a href="{:url('user/pinglun/baidu')}">购买帐号</a>
+										</if>
+									</td>
+								</tr>
 								<tr>
 									<th width="150">关键词</th>
 									<td>
@@ -64,15 +78,7 @@
 										<input class="form-control" type="text" name="post_content_num" id="post_content_num" value="" required readonly>
 									</td>
 								</tr>
-								<tr>
-									<th>百度帐号Cookie</th>
-									<td>
-										<select name="type" id="selectCookie" class="form-control">
-											<option value="1">百度新号</option>
-											<option value="2">优质老号</option>
-										</select>
-									</td>
-								</tr>
+
 							</table>
 						</div>
 					</div>
@@ -134,7 +140,11 @@
             $(this).parent().parent().remove();
         });
         $('#submit').click(function(){
-
+            var cookie_id=$('#selectCookie').val();
+            if(!cookie_id){
+                alert('请选择百度帐号');
+                return false;
+            }
             var con_arr=$('#pinglun_content').val().split("\n");
             var j=0;
             for(var i=0;i<con_arr.length;i++){
@@ -145,18 +155,18 @@
             var post_content_num=j;
 console.log(j);
             //判断积分是否足够
-            var type=$('#selectCookie').val();
+            // var type=$('#selectCookie').val();
 
             var score_my = {$myscore};
 			var title_num=$("input[name='post_url[]']").length;
             console.log($("input[name='post_url[]']").length);
             var score_need = '';
-            if(type==2){
-                score_need =post_content_num * title_num * {$jiage2};
-            }
-            if(type==1){
+            // if(type==2){
+            //     score_need =post_content_num * title_num * {$jiage2};
+            // }
+            // if(type==1){
                 score_need =post_content_num * title_num * {$jiage};
-            }
+            // }
 
             if (parseInt(score_my) < parseInt(score_need)) {
                 alert("对不起，你的米币不足！您的米币：" + score_my + "，所需米币：" + score_need + "");

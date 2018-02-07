@@ -85,8 +85,16 @@
                         if(json[i]['rank']<100) {
                             if(json[i]['baidu_index']<0)json[i]['baidu_index']=0;
                             str += '<tr><td>';
-                            str +='<input type="checkbox" value="'+json[i]['keyword']+'@'+json[i]['rank']+'@'+json[i]['page_title']+'@'+json[i]['baidu_index']+'" name="check[]"/>';
-                            str+='</td><td>' + json[i]['keyword'] + '</td><td>' + json[i]['rank'] + '</td><td>' + json[i]['baidu_index'] + '</td><td>' + json[i]['bidword_companycount'] + '</td><td><span title="' + json[i]['page_title'] + '">' + json[i]['page_title'].substring(0, 20) + '</span></td></tr>';
+                            // str += json[i]['jin'];
+                            if(json[i]['jin']===0) {
+                                str += '<input type="checkbox" value="' + json[i]['keyword'] + '@' + json[i]['rank'] + '@' + json[i]['page_title'] + '@' + json[i]['baidu_index'] + '" name="check[]"/>';
+                                str+='</td><td>' + json[i]['keyword'] + '</td>';
+                            }else{
+                                str+='</td><td><span style="color:red;">' + json[i]['keyword'] + '(不允许)</span></td>';
+							}
+
+
+                            str+='<td>' + json[i]['rank'] + '</td><td>' + json[i]['baidu_index'] + '</td><td>' + json[i]['bidword_companycount'] + '</td><td><span title="' + json[i]['page_title'] + '">' + json[i]['page_title'].substring(0, 20) + '</span></td></tr>';
                         }
                     }
                     str += '</tbody></table><div class="submit"><button type="submit" id="submit" class="btn btn-primary js-ajax-submit">{:lang("提交")}</button></div></form>';

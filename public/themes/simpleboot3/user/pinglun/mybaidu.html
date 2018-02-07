@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>已购买帐号</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="">
+<include file="public@head"/>
+
+</head>
+
+<body class="body-white" id="top">
+<include file="public@nav" />
+
+	<div class="container tc-main">
+		<div class="row">
+			<div class="col-md-3">
+				<include file="public@usernav" />
+			</div>
+			<div class="col-md-9">
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+						<li><a href="{:url('user/pinglun/baidu')}"><i class="fa fa-building-o"></i> 百度帐号购买</a></li>
+						<li class="active"><a href="#one" data-toggle="tab">已购买帐号</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="one">
+							<br>
+							<table class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th width="50">ID</th>
+									<th width="100">类型</th>
+									<th>Cookie</th>
+									<th width="200">备注</th>
+									<!--<th width="100">操作</th>-->
+								</tr>
+								</thead>
+								<tbody id="tbody1">
+								<foreach name="lists" item="vo">
+									<tr>
+										<td>{$vo.id}</td>
+										<td>{$vo.jiage_name}</td>
+										<td>
+											{:substr(base64_decode($vo.baidu_cookie),0,40)}...
+										</td>
+										<td>
+											{$vo.remark}
+										</td>
+
+									</tr>
+								</foreach>
+								</tbody>
+							</table>
+						</div>
+
+						<div><ul class="pagination">{$page}</ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<include file="public@footer" />
+	</div>
+<!-- /container -->
+<include file="public@scripts" />
+
+</body>
+</html>

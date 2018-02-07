@@ -59,14 +59,28 @@ class PinglunController extends UserBaseController
             $tiwen_title=base64_decode($task['title']);
         }
 
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user");
+        $usermobile=$userQuery->field('mobile')->where('id',$userId)->cache(true)->find();
+        $user_mobile=$usermobile['mobile'];
+
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0,
+            'a.user_mobile' => $user_mobile
+        ];
+        $mybaidu = $cook->alias('a')->join('zhidaobaiducook_jiage w','a.jiage_id = w.id')->field('a.id,w.title')->where($where)->order('a.id desc')->cache(true)->select();
+
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
+        $this->assign('mybaidu',count($mybaidu)>0?$mybaidu:'');
         $this->assign('myscore',$coin['score']);
         $this->assign('tiwen_url',$tiwen_url);
         $this->assign('tiwen_title',$tiwen_title);
-        $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->where('id',1)->cache(true)->find();
         $this->assign("jiage", $jiageQuery['huida']);
         $this->assign("jiage2", $jiageQuery['huida2']);
         return $this->fetch();
@@ -81,7 +95,7 @@ class PinglunController extends UserBaseController
         $pinglunQuery=Db::name('pinglun_post');
         $where['pinglun_id']=$data['id'];
         $where['return_code']=['in','0,2,3'];
-        $pinglun=$pinglunQuery->field('post_url,post_title')->where('id',$data['id'])->find();
+        $pinglun=$pinglunQuery->field('post_url,post_title')->where('id',$data['id'])->cache(true)->find();
         $data=$taskQuery->field('id,content')->where($where)->select();
 
         $this->assign($user);
@@ -102,7 +116,7 @@ class PinglunController extends UserBaseController
         $where['pinglun_id']=$data['id'];
         $where['return_code']=['in','0,2,3'];
 
-        $data=$taskQuery->field('id,title,content')->where($where)->find();
+        $data=$taskQuery->field('id,title,content')->where($where)->cache(true)->find();
 
         $this->assign($user);
         $this->assign('post',$data);
@@ -117,9 +131,23 @@ class PinglunController extends UserBaseController
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
+
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user");
+        $usermobile=$userQuery->field('mobile')->where('id',$userId)->cache(true)->find();
+        $user_mobile=$usermobile['mobile'];
+
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0,
+            'a.user_mobile' => $user_mobile
+        ];
+        $mybaidu = $cook->alias('a')->join('zhidaobaiducook_jiage w','a.jiage_id = w.id')->field('a.id,w.title')->where($where)->order('a.id desc')->cache(true)->select();
+        $this->assign('mybaidu',count($mybaidu)>0?$mybaidu:'');
         $this->assign('myscore',$coin['score']);
-        $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->where('id',1)->cache(true)->find();
         $this->assign("jiage", $jiageQuery['huida']);
         $this->assign("jiage2", $jiageQuery['huida2']);
         return $this->fetch();
@@ -154,7 +182,7 @@ class PinglunController extends UserBaseController
         $CookieQuery=Db::name('zhidaobaiducook');
         //禁词验证
         $jinciQuery=Db::name('pinglun_jinci_post');
-        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->cache(true)->select();
         foreach($data['content'] as $v){
             //内容禁词检测
             foreach ($jinci as $val) {
@@ -166,13 +194,13 @@ class PinglunController extends UserBaseController
 
         foreach($data['id'] as $k=>$v) {
             //读取任务信息
-            $task = $taskQuery->field('user_id,content_id,is_ok,zhidao,pinglun_id,get_url,title,content')->where('id', $v)->find();
+            $task = $taskQuery->field('user_id,content_id,is_ok,zhidao,pinglun_id,get_url,title,content')->where('id', $v)->cache(true)->find();
             //标记失败任务
             $taskQuery->where('id', $v)->update(['delete_time'=>time()]);
             //更新任务时间
             $pinglunQuery->where('id',$task['pinglun_id'])->update(['create_time'=>time()]);
             //任务cookie类型
-            $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->find();
+            $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->cache(true)->find();
             //随机百度cookie
             $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'type'=>$cookie_type['cookie_type'],'delete_time'=>0])->order('rand()')->limit(1)->find();
             //生成任务列表
@@ -203,7 +231,7 @@ class PinglunController extends UserBaseController
         if(isset($data['id'])) {
             //当前任务名称
             $PinglunQuery = Db::name("pinglun_post");
-            $title = $PinglunQuery->field('post_title')->where('id', $data['id'])->find();
+            $title = $PinglunQuery->field('post_title')->where('id', $data['id'])->cache(true)->find();
             $this->assign('title',$title['post_title']);
         }
 
@@ -262,6 +290,100 @@ class PinglunController extends UserBaseController
         return json_encode($result);
     }
     /**
+     * 个人中心百度帐号购买
+     */
+    public function baidu()
+    {
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'create_time' => ['>=', 0],
+            'delete_time' => 0,
+            'user_mobile' => 0
+        ];
+        $data = $cook->where($where)->cache(true)->order('id desc')->paginate(10);
+        $jiage=Db::name('zhidaobaiducook_jiage');
+        $items=array();
+        foreach($data->items() as $v){
+            $jiagetitle=$jiage->field('title,jiage')->where('id',$v['jiage_id'])->cache(true)->find();
+            $v['jiage_name']=$jiagetitle['title'];
+            $v['jiage']=$jiagetitle['jiage'];
+            $items[]=$v;
+        }
+        $user = cmf_get_current_user();
+        $userQuery=Db::name('user');
+        $coin=$userQuery->where(array('id'=>$user['id']))->cache(true)->find();
+        $this->assign('myscore',$coin['score']);
+        $this->assign($user);
+        $this->assign("page", $data->render());
+        $this->assign("lists", $items);
+        return $this->fetch();
+    }
+    public function mybaidu()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user");
+//        $usermobile=$userQuery->field('mobile')->where('id',$userId)->cache(true)->find();
+//        $user_mobile=$usermobile['mobile'];
+        $user_mobile=session('user.mobile');
+
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'create_time' => ['>=', 0],
+            'delete_time' => 0,
+            'user_mobile' => $user_mobile
+        ];
+        $data = $cook->where($where)->order('id desc')->paginate(10);
+        $jiage=Db::name('zhidaobaiducook_jiage');
+        $items=array();
+        foreach($data->items() as $v){
+            $jiagetitle=$jiage->field('title,jiage')->where('id',$v['jiage_id'])->cache(true)->find();
+            $v['jiage_name']=$jiagetitle['title'];
+            $v['jiage']=$jiagetitle['jiage'];
+            $items[]=$v;
+        }
+        $user = cmf_get_current_user();
+
+        $this->assign($user);
+        $this->assign("page", $data->render());
+        $this->assign("lists", $items);
+        return $this->fetch();
+    }
+    public function baidugoumai()
+    {
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user");
+//        $usermobile=$userQuery->field('mobile')->where('id',$userId)->cache(true)->find();
+//        $user_mobile=$usermobile['mobile'];
+        $user_mobile=session('user.mobile');
+
+        $data = $this->request->param();
+        $cook_id=$data['id'];
+        $cookQuery=Db::name('zhidaobaiducook');
+
+        //查询价格
+        $jiage_id=$cookQuery->field('jiage_id')->where('id',$cook_id)->cache(true)->find();
+
+        $jiage=Db::name('zhidaobaiducook_jiage')->field('jiage,title')->where('id',$jiage_id['jiage_id'])->cache(true)->find();
+
+        //积分减少
+        $result=$userQuery->where('id',$userId)->setDec('score',$jiage['jiage']);
+
+        //增加明细记录
+        $userMoneyQuery            = Db::name("user_money_log");
+        $data2=[];
+        $data2['user_id']=$userId;
+        $data2['create_time']=time();
+        $data2['type']=2;
+        $data2['post_title']='购买百度【'.$jiage['title'].'】';
+        $data2['score']=$jiage['jiage'];
+        $userMoneyQuery->insert($data2);
+
+        $result=$cookQuery->where('id',$cook_id)->update(['user_mobile'=>$user_mobile]);
+
+
+        $this->success('购买成功！', url('user/pinglun/mybaidu'));
+    }
+    /**
      * 个人中心提问管理
      */
     public function tiwen()
@@ -292,7 +414,7 @@ class PinglunController extends UserBaseController
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
 
         //获取上次的百度Cookie
@@ -302,8 +424,23 @@ class PinglunController extends UserBaseController
         if($baidu_cookie['post_cookie']){
             $post_cookie=$baidu_cookie['post_cookie'];
         }
+
+        $userId               = cmf_get_current_user_id();
+        $userQuery            = Db::name("user");
+//        $usermobile=$userQuery->field('mobile')->where('id',$userId)->cache(true)->find();
+//        $user_mobile=$usermobile['mobile'];
+        $user_mobile=session('user.mobile');
+
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0,
+            'a.user_mobile' => $user_mobile
+        ];
+        $mybaidu = $cook->alias('a')->join('zhidaobaiducook_jiage w','a.jiage_id = w.id')->field('a.id,w.title')->where($where)->order('a.id desc')->cache(true)->select();
+        $this->assign('mybaidu',count($mybaidu)>0?$mybaidu:'');
         $this->assign('post_cookie',$post_cookie);
-        $jiageQuery=Db::name('user_jiage')->field('tiwen,tiwen2')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->where('id',1)->cache(true)->find();
         $this->assign("jiage", $jiageQuery['tiwen']);
         $this->assign("jiage2", $jiageQuery['tiwen2']);
         return $this->fetch();
@@ -327,7 +464,7 @@ class PinglunController extends UserBaseController
         $CookieQuery=Db::name('zhidaobaiducook');
         //禁词验证
         $jinciQuery=Db::name('pinglun_jinci_post');
-        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->select();
+        $jinci = $jinciQuery->field('post_title')->where(['delete_time'=>0])->cache(true)->select();
         foreach ($jinci as $val) {
             if (strpos($data['post_title'], $val['post_title']) !== false) {
                 $this->error('添加失败！内容包含禁止词语【'.$val['post_title'].'】');
@@ -338,13 +475,13 @@ class PinglunController extends UserBaseController
         }
 
         //读取任务信息
-        $task = $taskQuery->field('user_id,content_id,zhidao,pinglun_id')->where('id', $data['id'])->find();
+        $task = $taskQuery->field('user_id,content_id,zhidao,pinglun_id')->where('id', $data['id'])->cache(true)->find();
         //标记失败任务
         $taskQuery->where('id', $data['id'])->update(['delete_time'=>time()]);
         //更新任务时间
         $pinglunQuery->where('id',$task['pinglun_id'])->update(['create_time'=>time()]);
         //任务cookie类型
-        $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->find();
+        $cookie_type=$pinglunQuery->field('cookie_type')->where('id',$task['pinglun_id'])->cache(true)->find();
         //随机百度cookie
         $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'type'=>$cookie_type['cookie_type'],'delete_time'=>0])->order('rand()')->limit(1)->find();
         //生成任务列表
@@ -358,7 +495,7 @@ class PinglunController extends UserBaseController
         $data = $this->request->param();
         //获取提问信息
         $renwuQuery=Db::name('pinglun_post');
-        $pinglun=$renwuQuery->field('post_title,post_content,post_cookie')->where('id',$data['id'])->find();
+        $pinglun=$renwuQuery->field('post_title,post_content,post_cookie')->where('id',$data['id'])->cache(true)->find();
         $renwuQuery->where('id',$data['id'])->update(['create_time'=>time()]);
         //失败任务标记
         $taskQuery=Db::name('zhidaotaskdata');

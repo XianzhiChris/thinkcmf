@@ -311,12 +311,12 @@ class UserModel extends Model
             //积分减少
             $jiage=1;
             $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
-            if($data['type']==1){
+//            if($data['type']==1){
                 $jiage=$jiageQuery['huida'];
-            }
-            if($data['type']==2){
-                $jiage=$jiageQuery['huida2'];
-            }
+//            }
+//            if($data['type']==2){
+//                $jiage=$jiageQuery['huida2'];
+//            }
             $userQuery = Db::name("user");
             $where = [];
             $where['id'] = $userId;
@@ -330,13 +330,13 @@ class UserModel extends Model
             $data2['user_id'] = $userId;
             $data2['create_time'] = time();
             $data2['type'] = 2;
-            $data2['post_title'] = '百度知道【' . $data['post_title'] . '】评论任务';
+            $data2['post_title'] = '百度知道【' . $data['post_title'] . '】回答任务';
             $data2['score'] = $xiaofei;
             $userMoneyQuery->insert($data2);
 
             //增加评论
             $userPinglunQuery = Db::name("pinglun_post");
-            $pinglun_data = ['cookie_type'=>$data['type'],'post_type' => 1, 'post_title' => $data['post_title'], 'post_content' => '', 'post_url' => $data['post_url'], 'post_content_num' => $content_num, 'user_id' => $userId, 'create_time' => time()];
+            $pinglun_data = ['cookie_id'=>$data['cookie_id'],'post_type' => 1, 'post_title' => $data['post_title'], 'post_content' => '', 'post_url' => $data['post_url'], 'post_content_num' => $content_num, 'user_id' => $userId, 'create_time' => time()];
             $userPinglunQuery->insert($pinglun_data);
             $renwu_id = $userPinglunQuery->getLastInsID();
 
@@ -358,7 +358,9 @@ class UserModel extends Model
                     $contentQuery->insert($content_data);
                     $content_id = $contentQuery->getLastInsID();
                     //随机百度cookie
-                    $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+//                    $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+                    //根据ID获取cookie
+                    $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['id'=>$data['cookie_id']])->find();
                     //生成任务列表
                     $renwudata = ['user_id'=>$userId,'is_ok'=>$is_ok,'pinglun_id' => $renwu_id, 'title' => base64_encode($data['post_title']), 'content_id' => $content_id, 'zhidao' => 'hd', 'get_url' => $data['post_url'], 'content' => base64_encode($v), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
                     $renwuQuery->insert($renwudata);
@@ -401,12 +403,12 @@ class UserModel extends Model
             //积分减少
             $jiage=1;
             $jiageQuery=Db::name('user_jiage')->field('huida,huida2')->where('id',1)->find();
-            if($data['type']==1){
+//            if($data['type']==1){
                 $jiage=$jiageQuery['huida'];
-            }
-            if($data['type']==2){
-                $jiage=$jiageQuery['huida2'];
-            }
+//            }
+//            if($data['type']==2){
+//                $jiage=$jiageQuery['huida2'];
+//            }
             $userQuery = Db::name("user");
             $where = [];
             $where['id'] = $userId;
@@ -420,7 +422,7 @@ class UserModel extends Model
             $data2['user_id'] = $userId;
             $data2['create_time'] = time();
             $data2['type'] = 2;
-            $data2['post_title'] = '百度知道【批量】评论任务';
+            $data2['post_title'] = '百度知道【批量】回答任务';
             $data2['score'] = $xiaofei;
             $userMoneyQuery->insert($data2);
 
@@ -437,6 +439,8 @@ class UserModel extends Model
             $renwuQuery = Db::name('zhidaotaskdata');
             $CookieQuery = Db::name('zhidaobaiducook');
 
+            //根据ID获取cookie
+            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['id'=>$data['cookie_id']])->find();
 
             foreach ($content_data as $v) {
                 if (strlen($v) > 1) {
@@ -447,7 +451,7 @@ class UserModel extends Model
                     //循环url
                     foreach($data['post_url'] as $key=>$va) {
                         //随机百度cookie
-                        $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail' => ['lt', 10], 'delete_time' => 0])->order('rand()')->limit(1)->find();
+//                        $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$data['type'],'cookie_fail' => ['lt', 10], 'delete_time' => 0])->order('rand()')->limit(1)->find();
                         //生成任务列表
                         $renwudata[] = ['user_id'=>$userId,'pinglun_id' => $renwu_id, 'title' => base64_encode($data['post_title'][$key]), 'content_id' => $content_id, 'zhidao' => 'hd', 'get_url' => $va, 'content' => base64_encode($v), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
                     }
@@ -527,17 +531,21 @@ class UserModel extends Model
 
         $post_title=$data['post_title'];
         $post_content=$data['post_content'];
-        $type=$data['type'];
+//        $type=$data['type'];
 
-        $post_cookie=base64_encode($data['post_cookie']);
-        if($type=='1'||$type=='2'){
-            //随机百度cookie
-            $CookieQuery = Db::name('zhidaobaiducook');
-            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$type,'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
-            $post_cookie =$baidu_cookie['baidu_cookie'];
-        }
+//        $post_cookie=base64_encode($data['post_cookie']);
+        $CookieQuery = Db::name('zhidaobaiducook');
+//        if($type=='1'||$type=='2'){
+//            //随机百度cookie
+//            $CookieQuery = Db::name('zhidaobaiducook');
+//            $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['type'=>$type,'cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+//            $post_cookie =$baidu_cookie['baidu_cookie'];
+//        }
+        //根据ID获取cookie
+        $baidu_cookie = $CookieQuery->field('baidu_cookie')->where(['id'=>$data['cookie_id']])->find();
+        $post_cookie =$baidu_cookie['baidu_cookie'];
 
-        $pinglun_data=['user_id'=>$userId,'cookie_type'=>$type,'post_type'=>2,'post_title'=>$post_title,'post_content'=>base64_encode($post_content),'post_cookie'=>$post_cookie,'create_time'=>time()];
+        $pinglun_data=['user_id'=>$userId,'cookie_id'=>$data['cookie_id'],'post_type'=>2,'post_title'=>$post_title,'post_content'=>base64_encode($post_content),'post_cookie'=>$post_cookie,'create_time'=>time()];
 
 
         $userPinglunQuery->insert($pinglun_data);
@@ -553,15 +561,15 @@ class UserModel extends Model
         //积分减少
         $jiage=1;
         $jiageQuery=Db::name('user_jiage')->field('tiwen,tiwen2')->where('id',1)->find();
-        if($data['type']==1){
+//        if($data['type']==1){
             $jiage=$jiageQuery['tiwen'];
-        }
-        if($data['type']==2){
-            $jiage=$jiageQuery['tiwen2'];
-        }
-        if($data['type']==3){
-            $jiage=$jiageQuery['tiwen'];
-        }
+//        }
+//        if($data['type']==2){
+//            $jiage=$jiageQuery['tiwen2'];
+//        }
+//        if($data['type']==3){
+//            $jiage=$jiageQuery['tiwen'];
+//        }
         $userQuery            = Db::name("user");
         $where=[];
         $where['id']=$userId;

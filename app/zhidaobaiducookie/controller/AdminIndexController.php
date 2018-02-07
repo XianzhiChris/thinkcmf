@@ -30,13 +30,20 @@ class AdminIndexController extends AdminBaseController
 
         $postService = new PostService();
         $data        = $postService->adminArticleList($param);
+        $jiage=Db::name('zhidaobaiducook_jiage');
 
         $data->appends($param);
+        $items=array();
+        foreach($data->items() as $v){
+            $jiagetitle=$jiage->field('title')->where('id',$v['jiage_id'])->find();
+            $v['jiage_name']=$jiagetitle['title'];
+            $items[]=$v;
+        }
 
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $data->items());
+        $this->assign('articles', $items);
         $this->assign("page", $data->render());
 
 
@@ -60,6 +67,9 @@ class AdminIndexController extends AdminBaseController
 //        $themeModel        = new ThemeModel();
 //        $articleThemeFiles = $themeModel->getActionThemeFiles('chongzhixiaofei/Index/index');
 //        $this->assign('index_theme_files', $articleThemeFiles);
+        $jiage=Db::name('zhidaobaiducook_jiage')->select();
+
+        $this->assign('jiage', $jiage);
         return $this->fetch();
     }
     /**
@@ -122,6 +132,9 @@ class AdminIndexController extends AdminBaseController
 //        $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
 //        $this->assign('article_theme_files', $articleThemeFiles);
         $this->assign('post', $post);
+        $jiage=Db::name('zhidaobaiducook_jiage')->select();
+
+        $this->assign('jiage', $jiage);
 //        $this->assign('post_categories', $postCategories);
 //        $this->assign('post_category_ids', $postCategoryIds);
 

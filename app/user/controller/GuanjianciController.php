@@ -32,7 +32,7 @@ class GuanjianciController extends UserBaseController
         $list=[];
         $taskQuery=Db::name('taskdjdata');
         foreach($data['lists'] as $v){
-            $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->find();
+            $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->cache(600)->find();
             $v['task_ok_num']=$task_ok['count'];
             $list[]=$v;
 
@@ -45,12 +45,12 @@ class GuanjianciController extends UserBaseController
 
         $user = cmf_get_current_user();
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
         $this->assign($user);
         $this->assign("page", $data['page']);
         $this->assign("lists", $list);
-        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->cache(true)->find();
         $this->assign("jiage", $jiageQuery['guanjianci']);
         return $this->fetch();
     }
@@ -83,12 +83,12 @@ class GuanjianciController extends UserBaseController
         $user = cmf_get_current_user();
         $this->assign($user);
         $userQuery=Db::name('user');
-        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
         $this->assign('domain',$data['domain']);
         $this->assign('check',$data['check']);
         $this->assign('tal',0);
-        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->cache(true)->find();
         $this->assign("jiage", $jiageQuery['guanjianci']);
         return $this->fetch();
     }
@@ -127,11 +127,11 @@ class GuanjianciController extends UserBaseController
             $tal+=$mey;
         }
         //合计
-        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->find();
+        $jiageQuery=Db::name('user_jiage')->field('guanjianci')->where('id',1)->cache(true)->find();
         $xiaofei=$tal*$jiageQuery['guanjianci'];
 
         //查询现有积分
-        $coin=$userQuery->field('score')->where(array('id'=>$userId))->find();
+        $coin=$userQuery->field('score')->where(array('id'=>$userId))->cache(true)->find();
         if($coin['score']<$xiaofei){
             $this->error('米币不足！');
         }
@@ -175,6 +175,7 @@ class GuanjianciController extends UserBaseController
             //加入任务表
             $d['user_id']     = $userId;
             $d['create_time']     = time();
+//            $d['task_num']=$d['post_dianjicishu']*$d['post_tianshu'];
             $userGuanjianciQuery->insert($d);
             $renwu_id=$userGuanjianciQuery->getLastInsID();
 
@@ -191,6 +192,13 @@ class GuanjianciController extends UserBaseController
                     break;
             }
             $time=time();
+            $baidu_cookie_list = $cookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('id desc')->cache(true)->select();
+            foreach($baidu_cookie_list as $v){
+                $baidu_arr[]=$v;
+            }
+            $rand_key=array_rand($baidu_arr,1);
+            $baidu_cookie=$baidu_arr[$rand_key]['baidu_cookie'];
+//var_dump($baidu_cookie);exit;
             for($x=0;$x<$d['post_tianshu'];$x++){
                 $rq=strtotime(date('Y-m-d' , strtotime('+'.$x.' day')));
                 for($t=0;$t<24;$t++) {
@@ -198,8 +206,11 @@ class GuanjianciController extends UserBaseController
                     for ($j = 0; $j < $d['txt_time' . $t]; $j++) {
                         $xs = $t * 3600;
                         //随机百度cookie
-                        $baidu_cookie = $cookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
-                        $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($d['post_title']), 'title' => base64_encode($d['post_biaoti']), 'baidu_cookie' => $baidu_cookie['baidu_cookie'], 'create_time' => $time];
+//                        $baidu_cookie = $cookieQuery->field('baidu_cookie')->where(['cookie_fail'=>['lt', 10],'delete_time'=>0])->order('rand()')->limit(1)->find();
+//                        $rand_key=array_rand($baidu_arr,1);
+//                        $baidu_cookie=$baidu_arr[$rand_key[0]]['baidu_cookie'];
+
+                        $renwudata[] = ['renwu_id' => $renwu_id, 'task_time' => $rq + $xs, 'sou' => base64_encode($sou), 'key' => base64_encode($d['post_title']), 'title' => base64_encode($d['post_biaoti']), 'baidu_cookie' => $baidu_cookie, 'create_time' => $time];
                     }
                     $renwuQuery->insertAll($renwudata);
                 }
@@ -388,7 +399,7 @@ $i=0;
         $tt=time();
 
         $gc_query=Db::name('guanjianci_cache');
-        $cache_f=$gc_query->field('id,s_data,s_time')->where('domain',$url)->find();
+        $cache_f=$gc_query->field('id,s_data,s_time')->where('domain',$url)->cache(true)->find();
         if(!empty($cache_f)){
             if($tt-$cache_f['s_time']<604800) {
                 $result = $cache_f['s_data'];
@@ -414,9 +425,30 @@ $i=0;
         }
 
         $jieguo=json_decode($result,true);
-        //todo:对结果进行禁词检测
+        //对结果进行禁词检测
+        $jinci = Db::name('guanjianci_jinci_post')->field('post_title')->where(['delete_time'=>0])->cache(true)->select();
+
+        $data=array();
+        foreach ($jieguo['data']['baidupc'] as $v) {
+//            if (strlen($v['keyword']) > 1) {
+                //内容禁词检测
+                $v['jin']=0;
+                if ($jinci) {
+                    foreach ($jinci as $val) {
+                        if (strpos($v['keyword'], $val['post_title']) !== false) {
+//                            return "err:" . $val['post_title'];
+                            $v['jin']=1;
+                        }
+                    }
+                }
+                $data[]=$v;
+//            }
+        }
+
+
         if($jieguo['errcode']==0){
-            echo json_encode($jieguo['data']['baidupc']);
+//            echo json_encode($jieguo['data']['baidupc']);
+            echo json_encode($data);
         }else{
             echo 0;
         }
@@ -487,7 +519,7 @@ $i=0;
         $id=$data['id'];
         $num=$data['num'];
         $userGuanjianciQuery            = Db::name("guanjianci_post");
-        $gjc=$userGuanjianciQuery->field('shishipaiming')->where('id',$id)->find();
+        $gjc=$userGuanjianciQuery->field('shishipaiming')->where('id',$id)->cache(true)->find();
         echo $gjc['shishipaiming'].','.$num;
     }
     //续费

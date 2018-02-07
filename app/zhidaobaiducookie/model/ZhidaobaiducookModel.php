@@ -85,7 +85,7 @@ class ZhidaobaiducookModel extends Model
         $create_time=time();
         foreach($content_data as $v){
             if(strlen($v)>1){
-                $renwudata[] = ['type'=>$data['type'],'baidu_cookie'=>base64_encode($v),'cookie_md5'=>md5($v),'create_time'=>$create_time,'remark'=>$data['remark']];
+                $renwudata[] = ['jiage_id'=>$data['jiage_id'],'baidu_cookie'=>base64_encode($v),'cookie_md5'=>md5($v),'create_time'=>$create_time,'remark'=>$data['remark']];
             }
         }
 

@@ -16,12 +16,13 @@
                     <tr>
                         <th width="100">类型</th>
                         <td>
-                            <php>
-                                $selected=$post['type']==2?"selected":"";
-                            </php>
-                            <select class="form-control" name="post[type]">
-                                <option value="1">百度新号</option>
-                                <option value="2" {$selected}>优质老号</option>
+                            <select class="form-control" name="post[jiage_id]">
+                                <foreach name="jiage" item="vo">
+                                    <php>
+                                        $selected=$post['jiage_id']==$vo['id']?"selected":"";
+                                    </php>
+                                    <option value="{$vo.id}" {$selected}>{$vo.title}</option>
+                                </foreach>
                             </select>
                         </td>
                     </tr>
@@ -37,6 +38,10 @@
                         <th>备注</th>
                         <td><input class="form-control" type="text" name="post[remark]" id="source" value="{$post.remark}"
                                    placeholder="请输入备注"></td>
+                    </tr>
+                    <tr>
+                        <th>购买用户</th>
+                        <td><input class="form-control" type="text" name="post[user_mobile]" id="user_mobile" value="{$post.user_mobile}"></td>
                     </tr>
                 </table>
             </div>

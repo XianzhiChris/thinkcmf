@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$user_nickname}  - 提问任务添加</title>
+<title>提问任务添加</title>
 <meta name="keywords" content=""/>
 <meta name="description" content="">
 <include file="public@head"/>
@@ -37,28 +37,26 @@
 									</td>
 								</tr>
 								<tr>
+									<th>百度帐号</th>
+									<td>
+										<if condition="$mybaidu neq ''">
+											<select name="cookie_id" id="selectCookie" class="form-control">
+												<foreach name="mybaidu" item="vo">
+													<option value="{$vo.id}">[ ID:{$vo.id} ] {$vo.title}</option>
+												</foreach>
+											</select>
+											<else />
+											<a href="{:url('user/pinglun/baidu')}">购买帐号</a>
+										</if>
+									</td>
+								</tr>
+								<tr>
 									<th>知道提问内容</th>
 									<td>
 										<textarea name="post_content" id="post_content" class="form-control" rows="15" required></textarea>
 									</td>
 								</tr>
-								<tr>
-									<th>百度帐号Cookie</th>
-									<td>
-										<select name="type" id="selectCookie" class="form-control">
-											<option value="1">百度新号</option>
-											<option value="2">优质老号</option>
-											<option value="3">使用自有帐号</option>
-										</select>
-									</td>
-								</tr>
-								<tr id="mycookie">
-									<th>我的百度Cookie</th>
-									<td>
-										<input class="form-control" type="text" name="post_cookie" id="post_cookie" />
-										<input type="checkbox" id="shangci"/>使用上次任务Cookie<a href="javascript:void(0)" style="float:right" onclick="doSelect();">百度帐号Cookie获取方法</a>
-									</td>
-								</tr>
+
 							</table>
 						</div>
 					</div>
@@ -79,6 +77,11 @@
 <script>
 	$(function(){
         $('#submit').click(function(){
+            var cookie_id=$('#selectCookie').val();
+            if(!cookie_id){
+                alert('请选择百度帐号');
+                return false;
+            }
             if($('#post_title').val().length<1){
                 alert("请输入标题");
                 return false;
@@ -89,24 +92,24 @@
             }
             //判断积分是否足够
             var score_my = {$myscore};
-            var type=$('#selectCookie').val();
+            // var type=$('#selectCookie').val();
 
             var score_need = '';
-            if(type==2){
-                score_need = {$jiage2};
-			}
-            if(type==1){
+            // if(type==2){
+             //    score_need = {$jiage2};
+			// }
+            // if(type==1){
                 score_need = {$jiage};
-            }
-            if(type==3){
-                var cookie=$('#post_cookie').val();
-                if(cookie.length<150){
-                    alert("Cookie输入错误");
-                    $('#post_cookie').val('');
-                    return false;
-				}
-                score_need = {$jiage};
-            }
+            // }
+            // if(type==3){
+            //     var cookie=$('#post_cookie').val();
+            //     if(cookie.length<150){
+            //         alert("Cookie输入错误");
+            //         $('#post_cookie').val('');
+            //         return false;
+				// }
+            //     score_need = {$jiage};
+            // }
 
             if (parseInt(score_my) < parseInt(score_need)) {
                 alert("对不起，你的米币不足！您的米币：" + score_my + "，所需米币：" + score_need + "");
