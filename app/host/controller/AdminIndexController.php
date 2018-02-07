@@ -31,12 +31,22 @@ class AdminIndexController extends AdminBaseController
         $postService = new PostService();
         $data        = $postService->adminArticleList($param);
 
+        $task=Db::name('taskdjdata');
+        $newdata=[];
+        foreach($data->items() as $v){
+            $task_all=$task->where('get_host',$v['name'])->cache(600)->count();
+            $v['task_all']=$task_all;
+            $task_today=$task->where('get_host',$v['name'])->whereTime('task_time', 'today')->cache(600)->count();
+            $v['task_today']=$task_today;
+            $newdata[]=$v;
+        }
+
         $data->appends($param);
 
         $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
         $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
         $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
-        $this->assign('articles', $data->items());
+        $this->assign('articles', $newdata);
 
 
         return $this->fetch();

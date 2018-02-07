@@ -24,6 +24,8 @@
                 </th>
                 <!--<th width="50">ID</th>-->
                 <th>名称</th>
+                <th width="200">任务总量</th>
+                <th width="200">今日任务量</th>
                 <th width="150">IP</th>
                 <th width="150">在线时间</th>
                 <!--<th width="200">备注</th>-->
@@ -38,6 +40,8 @@
                     </td>
                     <!--<td><b>{$vo.id}</b></td>-->
                     <td>{$vo.name}</td>
+                    <td>{$vo.task_all}</td>
+                    <td>{$vo.task_today}</td>
                     <td>{$vo.client_ip}</td>
                     <td>
                         <notempty name="vo.out_time">
@@ -51,21 +55,6 @@
                     </td>
                 </tr>
             </foreach>
-            <tfoot>
-            <tr>
-                <th width="15">
-                    <label>
-                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
-                    </label>
-                </th>
-                <!--<th width="50">ID</th>-->
-                <th>名称</th>
-                <th width="150">IP</th>
-                <th width="150">在线时间</th>
-                <!--<th width="200">备注</th>-->
-                <th width="90">操作</th>
-            </tr>
-            </tfoot>
         </table>
         <div class="table-actions">
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"

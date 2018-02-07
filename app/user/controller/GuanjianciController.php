@@ -32,8 +32,8 @@ class GuanjianciController extends UserBaseController
         $list=[];
         $taskQuery=Db::name('taskdjdata');
         foreach($data['lists'] as $v){
-            $task_ok=$taskQuery->field(array('count(*)'=>'count'))->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->cache(600)->find();
-            $v['task_ok_num']=$task_ok['count'];
+            $task_ok=$taskQuery->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->cache(600)->count();
+            $v['task_ok_num']=$task_ok;
             $list[]=$v;
 
             //todo:判断是否结束，然后进行费用结算
