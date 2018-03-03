@@ -26,6 +26,8 @@ class GuanjianciController extends UserBaseController
      */
     public function index()
     {
+        $user = cmf_get_current_user();
+        $userQuery=Db::name('user');
         $editData = new UserModel();
         $data = $editData->guanjianci();
         //查询任务执行情况
@@ -37,14 +39,62 @@ class GuanjianciController extends UserBaseController
             $list[]=$v;
 
             //todo:判断是否结束，然后进行费用结算
-//            if(){ //如果结束
-//                $this->jiesuan($v['id']);
-//            }
+            $zsl=$v['post_dianjicishu'] * $v['post_tianshu'];
+            if($task_ok==$zsl){ //如果结束
+                $this->jiesuan($v['id']);
+                $chushi=intval($v['post_chushipaiming']);//初始排名
+                $shishi=intval($v['post_shishipaiming']);//当前排名
+                $feiyong=$v['feiyong'];//当前费用
+                $jiesuan=0;
+                if($shishi>=$chushi){//排名没有变化或下降
+                    $jiesuan=$feiyong;//费用全额退回
+                }
+                if($shishi>=90){//第10页及以后
+                    $jiesuan=$feiyong;//费用全额退回
+                }
+                if($shishi>=80){//第9页
+                    $jiesuan=$feiyong*0.8;//费用20%，退回80%
+                }
+                if($shishi>=70){//第8页
+                    $jiesuan=$feiyong*0.7;//费用30%，退回70%
+                }
+                if($shishi>=60){//第7页
+                    $jiesuan=$feiyong*0.6;//费用40%，退回60%
+                }
+                if($shishi>=50){//第6页
+                    $jiesuan=$feiyong*0.5;//费用50%，退回50%
+                }
+                if($shishi>=40){//第5页
+                    $jiesuan=$feiyong*0.4;//费用60%，退回40%
+                }
+                if($shishi>=30){//第4页
+                    $jiesuan=$feiyong*0.3;//费用70%，退回30%
+                }
+                if($shishi>=20){//第3页
+                    $jiesuan=$feiyong*0.2;//费用80%，退回20%
+                }
+                if($shishi>=10){//第2页
+                    $jiesuan=$feiyong*0.1;//费用90%，退回10%
+                }
+                //费用退回操作
+                if($jiesuan>0){
+                    //米币增加
+                    $where['id']=$user['id'];
+                    $userQuery->where($where)->setInc('score', $jiesuan);
+                    //增加消费明细记录
+                    $userMoneyQuery            = Db::name("user_money_log");
+                    $data2=[];
+                    $data2['user_id']=$user['id'];
+                    $data2['create_time']=time();
+                    $data2['type']=1;
+                    $data2['post_title']='关键词【'.$v['post_title'].'】点击任务费用结算';
+                    $data2['score']=$jiesuan;
+                    $userMoneyQuery->insert($data2);
+                }
+            }
         }
 
 
-        $user = cmf_get_current_user();
-        $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
         $this->assign($user);
@@ -124,6 +174,7 @@ class GuanjianciController extends UserBaseController
             }
             $mey*=$data['post_tianshu'][$i];
             $mey=round($mey);
+            $data['post_tianshu'][$i]['feiyong']=$mey;  //当前费用
             $tal+=$mey;
         }
         //合计
@@ -153,6 +204,7 @@ class GuanjianciController extends UserBaseController
             $d['post_dianjicishu']=$data['post_dianjicishu'][$i];
             $d['post_tianshu']=$data['post_tianshu'][$i];
             $d['post_zhishu']=$data['post_zhishu'][$i];
+            $d['feiyong']=$data['feiyong'][$i];//当前费用
             for($t=0;$t<24;$t++) {
                 $d['txt_time'.$t]=0;
             }
