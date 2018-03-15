@@ -13,6 +13,7 @@ namespace app\user\controller;
 use cmf\controller\HomeBaseController;
 use think\Validate;
 use app\user\model\UserModel;
+use think\Db;
 
 class RegisterController extends HomeBaseController
 {
@@ -118,5 +119,11 @@ class RegisterController extends HomeBaseController
             $this->error("请求错误");
         }
 
+    }
+    public function checkmobile(){
+        $data = $this->request->param();
+        $userQuery            = Db::name("user");
+        $task_ok=$userQuery->where(['mobile'=>$data['mobile']])->count();
+        echo json_encode($task_ok);
     }
 }

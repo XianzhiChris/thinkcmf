@@ -33,12 +33,13 @@
 									<th width="50">搜索</th>
 									<th width="60">排名(初次)</th>
 									<th width="50">模式</th>
-									<th width="80">实时排名<a href="javascript:void(0)" id="sspm">查询</a></th>
+									<th width="80">实时排名</th>
 									<!--<th width="50">日点击</th>-->
 									<th width="50">持续天数</th>
 									<th width="50">添加时间</th>
 									<th width="50">进度</th>
 									<!--<th width="50">操作</th>-->
+									<th width="100">状态</th>
 								</tr>
 								</thead>
 								<tbody id="tbody1">
@@ -66,7 +67,15 @@
 										<td>
 											{$vo.post_chushipaiming}</td>
 										<td>智能分配</td>
-										<td></td>
+										<td>
+											{$vo.shishipaiming}
+											<php>
+												if($vo['shishipaiming']<$vo['post_chushipaiming']){
+												echo '&nbsp;<i style="color:#18BC9C" class="fa fa-long-arrow-up"></i>';
+												}
+											</php>
+
+										</td>
 										<!--<td>{$vo.post_dianjicishu}</td>-->
 										<td>{$vo.post_tianshu}</td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
@@ -81,6 +90,15 @@
 												<!--<a class="js-ajax-dialog-btn" href="{:url('user/guanjianci/xufei',array('id'=>$vo['id']))}" data-msg="扣除{$vo.post_dianjicishu * $vo.post_tianshu}个米币，您确定要续费吗？" data-ok="" data-cacel="取消" onclick="xufei({$vo.post_dianjicishu * $vo.post_tianshu})">续费</a>-->
 											<!--</if>-->
 										<!--</td>-->
+										<td>
+											<php>
+												if($zsl>$vo['task_ok_num']){
+													echo '<span style="color:#18BC9C">优化中</span>';
+												}else{
+													echo '<span style="color:red">优化结束</span>';
+												}
+											</php>
+										</td>
 									</tr>
 								</foreach>
 								</tbody>

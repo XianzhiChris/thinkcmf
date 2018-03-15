@@ -54,11 +54,7 @@
                     <td>{$vo.post_title}</td>
                     <td><a href="{$vo.post_url}" target="_blank">查看</a></td>
                     <td>
-                        <notempty name="vo.user_nickname">
-                            {$vo.user_nickname}
-                            <else/>
-                            {$vo.user_email}
-                        </notempty>
+                        <a href="/user/admin_index/edit/id/{$vo.user_id}.html">{$vo.mobile}</a>
                     </td>
                     <td>{$vo.task}/{$vo.post_content_num}</td>
                     <!--<td><a href="javascript:doContentList({$vo.id});">查看内容</a></td>-->

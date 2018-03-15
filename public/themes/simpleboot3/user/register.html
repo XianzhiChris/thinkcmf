@@ -88,5 +88,27 @@
 <!-- /container -->
 
 <include file="public@scripts"/>
+<script>
+    $(function(){
+        $('#js-mobile-input').keyup(function(){
+            var mobile=$(this).val();
+            console.log(mobile);
+            if(mobile.length===11) {
+                $.ajax({
+                    type: "GET",
+                    url: '/user/register/checkmobile/mobile/' + mobile + '/sj/' + Math.random(),
+                    dataType: "json",
+                    success: function (json) {
+                        console.log(json);
+                        if (json === 1) {
+                            alert('此手机已注册');
+                            $('#js-mobile-input').val('');
+                        }
+                    }
+                });
+            }
+        });
+    })
+</script>
 </body>
 </html>

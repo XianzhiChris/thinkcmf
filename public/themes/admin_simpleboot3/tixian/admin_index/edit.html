@@ -69,11 +69,20 @@
                     <tr>
                         <th>提现</th>
                         <td>
-                            <if $post.status=="1">
-                                <input type="checkbox" name="post[status]" id="status" value="1" checked>
-                                <else/>
-                                <input type="checkbox" name="post[status]" id="status" value="1">
-                            </if>
+                            <php>
+                                $radio0=$radio1=$radio2='';
+                                switch($post['status']){
+                                    case 1:
+                                    $radio1='checked';break;
+                                    case 2:
+                                    $radio2='checked';break;
+                                    default:
+                                    $radio0='checked';
+                                }
+                            </php>
+                            <input type="radio" name="post[status]" value="0" {$radio0}> 未操作
+                            <input type="radio" name="post[status]" value="1" {$radio1}> 成功
+                            <input type="radio" name="post[status]" value="2" {$radio2}> 失败
                         </td>
                     </tr>
                     <tr>

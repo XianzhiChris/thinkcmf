@@ -289,6 +289,31 @@ class PinglunController extends UserBaseController
         $result=['count'=>count($data),'data'=>$data];
         return json_encode($result);
     }
+    /* 判断url重新获取帐号*/
+    public function url_mybaidu(){
+        $data = $this->request->param();
+        $userId               = cmf_get_current_user_id();
+        $url=$data['url'];
+        //查询url是否存在
+        $tiwen=Db::name('pinglun_post')->field('cookie_id')->where(['user_id'=>$userId,'post_type'=>2,'post_url'=>$url])->order('id desc')->limit(1)->find();
+        if($tiwen){
+            $where['a.id']=['<>',$tiwen['cookie_id']];
+        }
+        $user_mobile=session('user.mobile');
+        $cook=Db::name('zhidaobaiducook');
+        $where = [
+            'a.create_time' => ['>=', 0],
+            'a.delete_time' => 0,
+            'a.user_mobile' => $user_mobile
+            //'a.id'=>['<>',$tiwen['cookie_id']]
+        ];
+        $mybaidu = $cook->alias('a')->join('zhidaobaiducook_jiage w','a.jiage_id = w.id')->field('a.id,w.title')->where($where)->order('a.id desc')->select();
+        echo '<select name="cookie_id" id="selectCookie" class="form-control">';
+		foreach($mybaidu as $v){
+		    echo '<option value="'.$v['id'].'">[ ID:'.$v['id'].' ] '.$v['title'].'</option>';
+        }
+        echo '</select>';
+    }
     /**
      * 个人中心百度帐号购买
      */

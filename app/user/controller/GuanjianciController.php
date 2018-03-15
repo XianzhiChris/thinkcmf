@@ -41,9 +41,9 @@ class GuanjianciController extends UserBaseController
             //todo:判断是否结束，然后进行费用结算
             $zsl=$v['post_dianjicishu'] * $v['post_tianshu'];
             if($task_ok==$zsl){ //如果结束
-                $this->jiesuan($v['id']);
+//                $this->jiesuan($v['id']);
                 $chushi=intval($v['post_chushipaiming']);//初始排名
-                $shishi=intval($v['post_shishipaiming']);//当前排名
+                $shishi=intval($v['shishipaiming']);//当前排名
                 $feiyong=$v['feiyong'];//当前费用
                 $jiesuan=0;
                 if($shishi>=$chushi){//排名没有变化或下降
@@ -132,6 +132,9 @@ class GuanjianciController extends UserBaseController
         $data = $this->request->param();
         $user = cmf_get_current_user();
         $this->assign($user);
+        if(!isset($data['check'])){
+            $this->error('请选择关键词',url('user/guanjianci/piliangadd'));
+        }
         $userQuery=Db::name('user');
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
@@ -174,7 +177,7 @@ class GuanjianciController extends UserBaseController
             }
             $mey*=$data['post_tianshu'][$i];
             $mey=round($mey);
-            $data['post_tianshu'][$i]['feiyong']=$mey;  //当前费用
+            $data['feiyong'][$i]=$mey;  //当前费用
             $tal+=$mey;
         }
         //合计
@@ -220,7 +223,7 @@ class GuanjianciController extends UserBaseController
                 $shengyu= $d['post_dianjicishu']-$pj * 24;
                 for ($t=0;$t<$shengyu;$t++){
                     $current_val=$d["txt_time".$t];
-                    $d["#txt_time".$t]=intval($current_val)+1;
+                    $d["txt_time".$t]=intval($current_val)+1;
                 }
             }
 
@@ -449,7 +452,7 @@ $i=0;
         //过滤http://
         $url=str_replace('http://','',$url);
         $tt=time();
-
+        $userId               = cmf_get_current_user_id();
         $gc_query=Db::name('guanjianci_cache');
         $cache_f=$gc_query->field('id,s_data,s_time')->where('domain',$url)->cache(true)->find();
         if(!empty($cache_f)){
@@ -479,6 +482,8 @@ $i=0;
         $jieguo=json_decode($result,true);
         //对结果进行禁词检测
         $jinci = Db::name('guanjianci_jinci_post')->field('post_title')->where(['delete_time'=>0])->cache(true)->select();
+        //已添加检测
+        $tianjia=Db::name('guanjianci_post')->field('post_title')->where(['delete_time'=>0,'user_id'=>$userId])->cache()->select();
 
         $data=array();
         foreach ($jieguo['data']['baidupc'] as $v) {
@@ -490,6 +495,14 @@ $i=0;
                         if (strpos($v['keyword'], $val['post_title']) !== false) {
 //                            return "err:" . $val['post_title'];
                             $v['jin']=1;
+                        }
+                    }
+                }
+                $v['jia']=0;
+                if($tianjia){
+                    foreach ($tianjia as $val) {
+                        if ($v['keyword']==$val['post_title']) {
+                            $v['jia']=1;
                         }
                     }
                 }
@@ -513,6 +526,15 @@ $i=0;
         $url=$data['post_url'];
         $key=$data['post_title'];
         $type=$data['post_type'];
+        //禁词检测
+        $jinci = Db::name('guanjianci_jinci_post')->cache()->select();
+        foreach ($jinci as $val) {
+            if (strpos($key, $val['post_title']) !== false) {
+                echo 3;
+                exit;
+            }
+        }
+        //
         if($type==1){ //baidu
             $apikey="FB9AAB8384A4440698E31A4EAA9918C0";
             $posturl="http://apis.5118.com/morerank/baidupc";
@@ -544,7 +566,7 @@ $i=0;
             }while(!$pm);
             echo $pm;
         }else{
-            echo 0;
+            echo 1;
         }
     }
     function paiming4_1($posturl,$taskid,$header){

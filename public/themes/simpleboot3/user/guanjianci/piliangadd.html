@@ -79,7 +79,7 @@
                         $("#jieguo").html('无排名关键词');
                         return false;
                     }
-                    str = '<form action="piliangadd2.html" method="post"><input type="hidden" name="domain" value="'+url+'"><table id="list" class="table table-bordered"><thead><tr><th width="15"><input type="checkbox" id="all"/></th><th>关键词</th><th width="100">百度排名</th><th width="100">百度指数</th><th width="150">竞价公司数量</th><th width="300">网页标题</th></tr></thead><tbody>';
+                    str = '<form action="piliangadd2.html" method="post"><input type="hidden" name="domain" value="'+url+'"><table id="list" class="table table-bordered"><thead><tr><th width="15"><input type="checkbox" id="all"/></th><th>关键词</th><th width="100">百度排名</th><th width="100">百度指数</th><th width="150">竞价公司数量</th><th width="400">网页标题</th></tr></thead><tbody>';
 
                     for (var i = 0; i < json.length; i++) {
                         if(json[i]['rank']<100) {
@@ -87,18 +87,30 @@
                             str += '<tr><td>';
                             // str += json[i]['jin'];
                             if(json[i]['jin']===0) {
-                                str += '<input type="checkbox" value="' + json[i]['keyword'] + '@' + json[i]['rank'] + '@' + json[i]['page_title'] + '@' + json[i]['baidu_index'] + '" name="check[]"/>';
-                                str+='</td><td>' + json[i]['keyword'] + '</td>';
+                                str += '<input type="checkbox" value="' + json[i]['keyword'] + '@' + json[i]['rank'] + '@' + json[i]['page_title'] + '@' + json[i]['baidu_index'] + '" class="check" name="check[]"/>';
+                                str+='</td><td>';
+                                if(json[i]['jia']===1){
+                                    str+='<span style="color:yellow">'+ json[i]['keyword'] +'(关键词已添加)</span>';
+								}else{
+                                    str+=json[i]['keyword'];
+								}
+								str+='</td>';
                             }else{
-                                str+='</td><td><span style="color:red;">' + json[i]['keyword'] + '(不允许)</span></td>';
+                                str+='</td><td><span style="color:red;">' + json[i]['keyword'] + '(违禁词)</span></td>';
 							}
 
-
-                            str+='<td>' + json[i]['rank'] + '</td><td>' + json[i]['baidu_index'] + '</td><td>' + json[i]['bidword_companycount'] + '</td><td><span title="' + json[i]['page_title'] + '">' + json[i]['page_title'].substring(0, 20) + '</span></td></tr>';
+                            str+='<td>' + json[i]['rank'] + '</td><td>' + json[i]['baidu_index'] + '</td><td>' + json[i]['bidword_companycount'] + '</td><td><a href="'+ json[i]['baidu_url'] +'" target="_blank" title="' + json[i]['page_title'] + '">' + json[i]['page_title'].substring(0, 20) + '</a></td></tr>';
                         }
                     }
-                    str += '</tbody></table><div class="submit"><button type="submit" id="submit" class="btn btn-primary js-ajax-submit">{:lang("提交")}</button></div></form>';
+                    str += '</tbody></table><div class="submit"><button type="submit" id="submit" class="btn btn-primary js-ajax-submit">{:lang("下一步")}</button></div></form>';
                     $('#jieguo').html(str);
+                    $('#submit').click(function(){
+                        console.log($("#list :checkbox:checked").length);
+                        if($("#list :checkbox:checked").length==0){
+                            alert('请选择关键词');
+                            return false;
+						}
+					})
 
 				}
 			});

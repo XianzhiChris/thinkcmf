@@ -117,7 +117,7 @@ class PostService
         $join = [
             ['__USER__ u', 'a.user_id = u.id']
         ];
-        $field = 'a.*,u.user_login,u.user_nickname,u.user_email';
+        $field = 'a.*,u.user_login,u.user_nickname,u.mobile';
 
         $startTime = empty($filter['start_time']) ? 0 : strtotime($filter['start_time']);
         $endTime   = empty($filter['end_time']) ? 0 : strtotime($filter['end_time']);

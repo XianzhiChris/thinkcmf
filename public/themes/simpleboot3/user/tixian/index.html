@@ -33,6 +33,7 @@
 									<th width="100">提现金额</th>
 									<th width="150">申请时间</th>
 									<th width="100">状态</th>
+									<th width="200">备注</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -58,13 +59,17 @@
 										<td>{:number_format($vo.post_jine,2)}</td>
 										<td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
 										<td>
+											<eq name="vo.status" value="2">
+												<span style="color:red">提现失败</span>
+											</eq>
 											<eq name="vo.status" value="1">
-												已审核
+												<span style="color:#18BC9C">提现成功</span>
 											</eq>
 											<eq name="vo.status" value="0">
 												未审核
 											</eq>
 										</td>
+										<td>{$vo.remark}</td>
 									</tr>
 								</foreach>
 								</tbody>

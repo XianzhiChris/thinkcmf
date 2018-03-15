@@ -85,9 +85,10 @@
                     </td>
                     <td>
                         <if $vo.status=="1">
-                            <!--已--><i class="fa fa-check"></i>
-                            <else/>
-                            <!--未--><i class="fa fa-close"></i>
+                            <!--成功--><i class="fa fa-check"></i>
+                        </if>
+                        <if $vo.status=="2">
+                            <!--失败--><i class="fa fa-close"></i>
                         </if>
                     </td>
                     <td>

@@ -8,6 +8,10 @@
 <style>
 	#submit {float:right;margin-right: 80px;}
 	#submit button {padding:10px 50px;margin-left: 30px;}
+	#add {padding:20px 0 0 27px;}
+	#add select {margin-right:35px;}
+	#add button {border:0;background:#18BC9C;color:#fff;line-height: 25px;}
+	#add input {border:0;border-radius:3px;color:#000;}
 </style>
 </head>
 
@@ -26,10 +30,18 @@
 						<li class="active" data-toggle="tab"><a href="#">关键词添加任务</a></li>
 						<!--<li><a href="{:url('user/guanjianci/piliangadd')}">关键词添加任务</a></li>-->
 					</ul>
+					<div id="add">
+						<select style="color:#000;" class="post_type">
+							<option value="1">百度</option>
+							<!--<option value="2">搜狗</option>-->
+							<option value="3">360</option>
+						</select>
+						关键词：<input type="text" value=""/>
+						<button>添加</button>
+					</div>
 					<form action="{:url('user/guanjianci/piliangadd3')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
-							<br>
 							<table class="table table-bordered">
 								<tr>
 									<th width="100">搜索引擎</th>
@@ -37,9 +49,10 @@
 									<th>域名</th>
 									<th width="100">当前排名</th>
 									<th width="100">指数</th>
-									<th width="150">每日优化次数</th>
+
 									<th width="200">优化天数</th>
 									<th width="100">费用</th>
+									<th width="100">操作</th>
 								</tr>
 								<foreach name="check" item="vo" key="k">
 									<php>
@@ -82,7 +95,7 @@
 										$mey=round($mey*$jiage);
 										$tal+=$mey;
 									</php>
-								<tr>
+								<tr data-k="{$k}">
 									<td>
 										<input type="hidden" name="post_biaoti[]" value="{$data.2}" class="{$k}_post_biaoti"/>
 										<select style="color:#000;" class="post_type" data-id="{$k}">
@@ -96,9 +109,10 @@
 									<td>{$domain}<input type="hidden" name="post_url[]" id="{$k}_post_url" value="{$domain}"/></td>
 									<td><span class="{$k}_post_chushipaiming">{$data.1}</span><input type="hidden" name="post_chushipaiming[]" id="{$k}_post_chushipaiming" value="{$data.1}"/></td>
 									<td>{$data.3}<input type="hidden" name="post_zhishu[]" id="{$k}_post_zhishu" value="{$data.3}"/></td>
-									<td>{$dj}<input type="hidden" name="post_dianjicishu[]" id="{$k}_post_dianjicishu" value="{$dj}"/></td>
+									<input type="hidden" name="post_dianjicishu[]" id="{$k}_post_dianjicishu" value="{$dj}"/>
 									<td><input type="text" size="3" name="post_tianshu[]" class="post_tianshu" data-id="{$k}" required style="color:#000;" data-min="{$t1}" data-max="{$t2}" value="{$t2}" id="{$k}_post_tianshu"/> {$tig}</td>
 									<td><span id="{$k}_mey" class="mey">{$mey}</span> 米币</td>
+									<td><a href="javascript:void(0)" data-hald="del">删除</a></td>
 								</tr>
 								</foreach>
 							</table>
@@ -116,8 +130,9 @@
 <include file="public@scripts" />
 <script type="text/javascript" src="__STATIC__/js/admin.js"></script>
 <script>
+
 	$(function(){
-	   $('.post_type').change(function(){
+	   $('#one .post_type').change(function(){
 	       var dataid=$(this).attr('data-id');
 	       var c_chushipaiming=$('.'+dataid+'_post_chushipaiming');
 	       var i_chushipaiming=$('#'+dataid+'_post_chushipaiming');
@@ -179,11 +194,12 @@
            });
            return false;
 	   });
-	   $('.post_tianshu').keyup(function(){
+	   $('.post_tianshu').blur(function(){
            	var dataid=$(this).attr('data-id');
 			var tianshu=parseInt($(this).val());
 			if(tianshu<7){
 			    alert('优化天数不得小于7天');
+                $(this).val('');
 			    return false;
 			}
 			var paiming=parseInt($('#'+dataid+'_post_chushipaiming').val());
@@ -244,7 +260,92 @@
 
             return true;
         });
+        $('#add button').click(function(){
+            //状态
+            $('#add input').attr("disabled",true);
+            $('#add button').text("查询中。。");
+            //查询
+			var post_title=$('#add input').val();
+			var post_url='{$domain}';
+			var post_type=$('#add select').val();
+
+            $.ajax({
+                type:"GET",
+                url:'/user/guanjianci/paiming4/post_title/'+post_title+'/post_url/'+post_url+'/post_type/'+post_type,
+                async:true,
+                dataType : "json",
+                success:function(data){
+                    console.log(data);
+                    if(data===3){
+                        alert('关键词包含违禁词，不允许添加');
+                        //清空
+                        $('#add input').val('');
+                        $('#add input').attr("disabled",false);
+                        $('#add button').text("添加");
+                        return false;
+					}
+                    if(data===1) {
+                        alert('获取不到排名数据');
+                        //清空
+                        $('#add input').val('');
+                        $('#add input').attr("disabled",false);
+                        $('#add button').text("添加");
+                    }else{
+                        var k=$('#one tr:last-child').attr('data-k');
+                        k++;
+                        var str='<tr data-k="'+k+'"><td><input type="hidden" name="post_biaoti[]" value="'+data.page_title+'" class="'+k+'_post_biaoti"/><select style="color:#000;" class="post_type" data-id="'+k+'">';
+                        var bd='';
+                        if(post_type==1){
+                            bd='selected';
+						}
+                        str+='<option value="1" '+bd+'>百度</option>';
+                        var hs='';
+                        if(post_type==3){
+                            hs='selected';
+                        }
+                        str+='<option value="3" '+hs+'>360</option></select> <input type="hidden" name="post_type[]" id="'+k+'_post_type" value="1"/></td><td>'+post_title+'<input type="hidden" name="post_title[]" id="'+k+'_post_title" value="'+post_title+'"/></td><td>'+post_url+'<input type="hidden" name="post_url[]" id="'+k+'_post_url" value="'+post_url+'"/></td><td><span class="'+k+'_post_chushipaiming">'+data.rank+'</span><input type="hidden" name="post_chushipaiming[]" id="'+k+'_post_chushipaiming" value="'+data.rank+'"/></td><td>0<input type="hidden" name="post_zhishu[]" id="'+k+'_post_zhishu" value="0"/></td><input type="hidden" name="post_dianjicishu[]" id="'+k+'_post_dianjicishu" value="1"/><td>';
+                        var tig,t1,t2,mey;
+                        if(data.rank<100){
+                            tig="(建议:7-20天)";
+                            t1=7;t2=20;
+                            mey=data.rank*0.11;
+                        }
+                        if(data.rank<50){
+                            tig="(建议:7-15天)";
+                            t1=7;t2=15;
+                            mey=(data.rank-1)*0.104+1;
+                        }
+                        mey=Math.round(mey*t2*{$jiage});
+                        str+='<input type="text" size="3" name="post_tianshu[]" class="post_tianshu" data-id="'+k+'" required style="color:#000;" data-min="'+t1+'" data-max="'+t2+'" value="'+t2+'" id="'+k+'_post_tianshu"/> '+tig+'</td><td><span id="'+k+'_mey" class="mey">'+mey+'</span> 米币</td><td><a href="javascript:void(0)" data-hald="del">删除</a></td></tr>';
+
+                        console.log(str);
+                        //添加
+						$('#one table').append(str);
+                        //合计
+                        var tal=0;
+                        $(".mey").each(function(){
+                            tal+=parseInt($(this).html());
+                        });
+                        $('#tal').html(tal);
+                        //清空
+                        $('#add input').val('');
+                        $('#add input').attr("disabled",false);
+                        $('#add button').text("添加");
+                    }
+                }
+            });
+		});
+        $('a[data-hald=del]').click(function(){
+            $(this).parent().parent().remove();
+            //合计
+            var tal=0;
+            $(".mey").each(function(){
+                tal+=parseInt($(this).html());
+            });
+            $('#tal').html(tal);
+		})
 	});
+
 </script>
 </body>
 </html>

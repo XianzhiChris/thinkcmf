@@ -80,8 +80,9 @@ class AdminMoneyController extends AdminBaseController
         $list = $usersMoneyQuery->where($where)->whereOr($keywordComplex)->order("create_time DESC,id desc")->paginate(10);
         foreach($list as $v){
             $wh['id']=['=',$v['user_id']];
-            $nickname=$usersQuery->where($wh)->field('user_nickname')->find();
+            $nickname=$usersQuery->where($wh)->field('user_nickname,mobile')->find();
             $v['user_nickname']=$nickname['user_nickname'];
+            $v['mobile']=$nickname['mobile'];
             $aa[]=$v;
         }
         // 获取分页显示

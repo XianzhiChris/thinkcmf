@@ -85,7 +85,8 @@
                     <td>{$vo.post_title}</td>
                     <td>{$vo.score}</td>
                     <td>{$vo.jine}</td>
-                    <td><!--{$vo.user_id}-->{$vo.user_nickname}
+                    <td>
+                        <a href="/user/admin_index/edit/id/{$vo.user_id}.html">{$vo.mobile}</a>
                     </td>
                     <td>
                         <notempty name="vo.create_time">

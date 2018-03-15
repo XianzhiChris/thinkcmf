@@ -52,11 +52,7 @@
                     <td><b>{$vo.id}</b></td>
                     <td>{$vo.post_title}</td>
                     <td>
-                        <notempty name="vo.user_nickname">
-                            {$vo.user_nickname}
-                            <else/>
-                            {$vo.user_email}
-                        </notempty>
+                        <a href="/user/admin_index/edit/id/{$vo.user_id}.html">{$vo.mobile}</a>
                     </td>
                     <td>
                         <notempty name="vo.create_time">

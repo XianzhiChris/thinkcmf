@@ -63,7 +63,14 @@
                                    			</div>
 											<div class="form-group">
 												<label for="input-wangzhi">官网网址<span style="color:red"> *</span></label>
-												<input class="form-control" type="text" id="input-wangzhi" name="wangzhi" value="{$wangzhi}" required>
+												<php>
+													if($wangzhi){
+														echo '<input class="form-control" type="text" value="'.$wangzhi.'" disabled><input type="hidden" name="wangzhi" value="'.$wangzhi.'">';
+													}else{
+														echo '<input class="form-control" type="text" id="input-wangzhi" name="wangzhi" value="" required>';
+													}
+												</php>
+
 											</div>
 											<br>
 											操作员资料：

@@ -35,8 +35,14 @@
 									</td>
 								</tr>
 								<tr>
-									<th>百度帐号</th>
+									<th>知道URL</th>
 									<td>
+										<input class="form-control" type="text" name="post_url" id="post_url" value="{$tiwen_url}" placeholder="请输入url" required>
+									</td>
+								</tr>
+								<tr>
+									<th>百度帐号</th>
+									<td id="zhanghao">
 										<if condition="$mybaidu neq ''">
 											<select name="cookie_id" id="selectCookie" class="form-control">
 												<foreach name="mybaidu" item="vo">
@@ -48,12 +54,7 @@
 										</if>
 									</td>
 								</tr>
-								<tr>
-									<th>知道URL</th>
-									<td>
-										<input class="form-control" type="text" name="post_url" id="post_url" value="{$tiwen_url}" placeholder="请输入url" required>
-									</td>
-								</tr>
+
 								<tr>
 									<th>回答内容</th>
 									<td>
@@ -95,6 +96,14 @@
 <include file="public@scripts" />
 <script type="text/javascript">
 	$(function(){
+	    //重新获取帐号
+		$('#post_url').blur(function(){
+		    var url=$(this).val();
+            $.get("/user/pinglun/url_mybaidu/url/" + url, function (result) {
+                console.log(result);
+				$('#zhanghao').html(result);
+            });
+		});
 	    $('#pinglun_content').blur(function(){
             var con_arr=$(this).val().split("\n");
             var j=0;

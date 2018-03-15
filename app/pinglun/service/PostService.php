@@ -53,7 +53,7 @@ class PostService
         $join = [
             ['__USER__ u', 'a.user_id = u.id'],['__ZHIDAOTASKDATA__ z','z.pinglun_id = a.id']
         ];
-        $field = 'a.*,u.user_login,u.user_nickname,u.user_email,z.return_code,z.return_url,z.return_img';
+        $field = 'a.*,u.user_login,u.user_nickname,u.mobile,z.return_code,z.return_url,z.return_img';
 
         $keyword = empty($filter['keyword']) ? '' : $filter['keyword'];
         if (!empty($keyword)) {
@@ -100,7 +100,7 @@ class PostService
         $join = [
             ['__USER__ u', 'a.user_id = u.id']
         ];
-        $field = 'a.*,u.user_login,u.user_nickname,u.user_email';
+        $field = 'a.*,u.user_login,u.user_nickname,u.mobile';
 
         $startTime = empty($filter['start_time']) ? 0 : strtotime($filter['start_time']);
         $endTime   = empty($filter['end_time']) ? 0 : strtotime($filter['end_time']);
