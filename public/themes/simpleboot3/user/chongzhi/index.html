@@ -22,9 +22,14 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="one">
+							<div id="zf" style="position: absolute;z-index: 9;width:400px;border:7px solid #232829;background:#eee;color:#000;font-size:16px;margin-left:50px;display:none;">
+								<div style="line-height: 40px;background:#2C3E50;color:#fff;text-align:center;">支付状态</div>
+								<div class="zt" style="height:120px;padding:30px 0 0 20px;font-size:24px;">请进行付款</div>
+								<div class="qd" style="height:40px;text-align:center;"></div>
+							</div>
 							<br>
 							<table class="table table-bordered table-striped table-hover">
-
+								<form action="/user/chongzhi/chongzhi/" target="_blank" method="post">
 								<tr>
 									<td width="100">
 										当前米币：
@@ -38,27 +43,27 @@
 										充值米币：
 									</td>
 									<td>
-										<if condition="$user_group==0">
+										<if condition="$usergroup==0">
 										<table width="100%">
 											<tbody><tr>
-												<td><input id="rbl_sel_11" name="rbl_sel" value="11" type="radio"><label for="rbl_sel_11">体验者-200米币（200元）</label></td><td><input id="rbl_sel_12" name="rbl_sel" value="12" type="radio"><label for="rbl_sel_12">消费者-3000米币（6800元）</label></td>
-												<td><input id="rbl_sel_13" name="rbl_sel" value="13" type="radio"><label for="rbl_sel_13">合伙人-3000米币（9800元）</label></td>
+												<td><input id="rbl_sel_11" name="jifen" value="11" type="radio"><label for="rbl_sel_11">体验者-200米币（200元）</label></td><td><input id="rbl_sel_12" name="jifen" value="12" type="radio" checked><label for="rbl_sel_12">消费者-3000米币（6800元）</label></td>
+												<td><input id="rbl_sel_13" name="jifen" value="13" type="radio"><label for="rbl_sel_13">合伙人-3000米币（9800元）</label></td>
 											</tr>
 											</tbody></table>
-										<elseif condition="$user_group==1">
+										<elseif condition="$usergroup==1">
 												<table width="100%">
 													<tbody><tr>
-														<td><input id="rbl_sel_12" name="rbl_sel" value="12" type="radio"><label for="rbl_sel_12">消费者-3000米币（6800元）</label></td>
-														<td><input id="rbl_sel_13" name="rbl_sel" value="13" type="radio"><label for="rbl_sel_13">合伙人-3000米币（9800元）</label></td>
+														<td><input id="rbl_sel_12" name="jifen" value="12" type="radio" checked><label for="rbl_sel_12">消费者-3000米币（6800元）</label></td>
+														<td><input id="rbl_sel_13" name="jifen" value="13" type="radio"><label for="rbl_sel_13">合伙人-3000米币（9800元）</label></td>
 													</tr>
 													</tbody></table>
 												<else/>
 										<table width="100%">
 											<tbody><tr>
-												<td><input id="rbl_sel_0" name="rbl_sel" value="1" type="radio"><label for="rbl_sel_0">1000米币（1000元）</label></td><td><input id="rbl_sel_1" name="rbl_sel" value="2" type="radio"><label for="rbl_sel_1">2000米币（1960元）</label></td>
+												<td><input id="rbl_sel_0" name="jifen" value="1" type="radio" checked><label for="rbl_sel_0">1000米币（1000元）</label></td><td><input id="rbl_sel_1" name="jifen" value="2" type="radio"><label for="rbl_sel_1">2000米币（1960元）</label></td>
 												<!--<td><input id="rbl_sel_2" name="rbl_sel" value="3" type="radio"><label for="rbl_sel_2">12000米币（1000元）</label></td>-->
 											</tr><tr>
-												<td><input id="rbl_sel_3" name="rbl_sel" value="3" type="radio"><label for="rbl_sel_3">5000米币（4750元）</label></td><td><input id="rbl_sel_4" name="rbl_sel" value="4" type="radio"><label for="rbl_sel_4">10000米币（8800元）</label></td>
+												<td><input id="rbl_sel_3" name="jifen" value="3" type="radio"><label for="rbl_sel_3">5000米币（4750元）</label></td><td><input id="rbl_sel_4" name="jifen" value="4" type="radio"><label for="rbl_sel_4">10000米币（8800元）</label></td>
 												<!--<td><input id="rbl_sel_5" name="rbl_sel" value="6" type="radio"><label for="rbl_sel_5">160000米币（10000元）</label></td>-->
 											</tr>
 											</tbody></table>
@@ -70,13 +75,24 @@
 
 									</td>
 									<td>
-										<!--<a href="javascript:void(0)" id="zfb" class="btn btn-primary">支付宝付款</a>-->
-										<!--<a href="javascript:void(0)" id="wx" class="btn btn-primary">微信付款</a>-->
-										<!--<a href="javascript:void(0)" id="yhk" class="btn btn-primary">银行卡付款</a>-->
+										<input type="hidden" name="type" id="type" value="zfb">
+										<input type="hidden" name="WIDout_trade_no" id="WIDout_trade_no" value="">
+										<input type="submit" data="zfb" class="zf btn btn-primary" value="支付宝付款">
+										<!--<a href="javascript:void(0)" data="wx" class="zf btn btn-primary">微信付款</a>-->
+										<!--<a href="javascript:void(0)" data="yhk" class="zf btn btn-primary">银行卡付款</a>-->
 									</td>
 								</tr>
-
+								</form>
 							</table>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
 						</div>
 					</div>
 				</div>
@@ -88,72 +104,42 @@
 <include file="public@scripts" />
 <script>
 	$(function(){
-	    $('#zfb').click(function(){
-            var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
-            var btn = $(this);
-            if(chongzhijifen==null){
-                alert("请选择充值米币数量!");
-                return false;
-			}
-            $.ajax({
-                url: "/user/chongzhi/chongzhi/",
-                type: "Get",
-                data: "jifen=" + chongzhijifen + "&type=zfb&random=" + Math.random(),
-                dataType: "json",
-                success: function (data) {
-					if(data=='ok'){
-                        console.log('123');
-//                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
-						alert('充值成功');
-                        self.location.href='/user/chongzhi/index';
-					}
-                }
-            })
+	    $('.zf').hover(function(){
+            var vNow = new Date();
+            var sNow = "";
+            sNow += String(vNow.getFullYear());
+            sNow += String(vNow.getMonth() + 1);
+            sNow += String(vNow.getDate());
+            sNow += String(vNow.getHours());
+            sNow += String(vNow.getMinutes());
+            sNow += String(vNow.getSeconds());
+            sNow += String(vNow.getMilliseconds());
+            $("#WIDout_trade_no").val(sNow);
+
+	        var data=$(this).attr('data');
+	        $('#type').val(data);
+
 		});
-        $('#wx').click(function(){
-            var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
-            var btn = $(this);
-            if(chongzhijifen==null){
-                alert("请选择充值米币数量!");
-                return false;
-            }
-            $.ajax({
-                url: "/user/chongzhi/chongzhi/",
-                type: "Get",
-                data: "jifen=" + chongzhijifen + "&type=wx&random=" + Math.random(),
-                dataType: "json",
-                success: function (data) {
-                    if(data=='ok'){
-                        console.log('123');
-//                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
-                        alert('充值成功');
-                        self.location.href='/user/chongzhi/index';
+	    //支付状态监控
+	    $('.zf').click(function(){
+	        $('#zf').show();
+	        var WIDout_trade_no=$('#WIDout_trade_no').val();
+            var send=setInterval(function(){
+                $.ajax({
+                    url: "/user/chongzhi/status/WIDout_trade_no/"+WIDout_trade_no,
+                    type: "get",
+                    dataType: "text",
+                    success: function (data) {
+                        console.log(data);
+                        if(data==='ok') {
+                            $('#zf .zt').text('支付成功');
+                            $('#zf .qd').html('<a href="/user/mingxi" class="btn btn-primary">&nbsp;&nbsp;确定&nbsp;&nbsp;</a>');
+                            clearInterval(send);
+                        }
                     }
-                }
-            })
-        });
-        $('#yhk').click(function(){
-            var chongzhijifen=$('input:radio[name="rbl_sel"]:checked').val();
-            var btn = $(this);
-            if(chongzhijifen==null){
-                alert("请选择充值米币数量!");
-                return false;
-            }
-            $.ajax({
-                url: "/user/chongzhi/chongzhi/",
-                type: "Get",
-                data: "jifen=" + chongzhijifen + "&type=yhk&random=" + Math.random(),
-                dataType: "json",
-                success: function (data) {
-                    if(data=='ok'){
-                        console.log('123');
-//                        $('<span class="tips_error">充值成功</span>').appendTo(btn.parent()).fadeIn('fast');
-                        alert('充值成功');
-                        self.location.href='/user/chongzhi/index';
-                    }
-                }
-            })
-        });
+                });
+			},1000);
+		})
 	})
 </script>
 </body>
