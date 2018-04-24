@@ -527,7 +527,7 @@ $i=0;
         $key=$data['post_title'];
         $type=$data['post_type'];
         //禁词检测
-        $jinci = Db::name('guanjianci_jinci_post')->cache()->select();
+        $jinci = Db::name('guanjianci_jinci_post')->where(['delete_time'=>0])->cache()->select();
         foreach ($jinci as $val) {
             if (strpos($key, $val['post_title']) !== false) {
                 echo 3;
