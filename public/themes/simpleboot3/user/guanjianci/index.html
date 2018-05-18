@@ -68,13 +68,13 @@
 											{$vo.post_chushipaiming}</td>
 										<td>智能分配</td>
 										<td>
-											{$vo.shishipaiming}
 											<php>
 												if($vo['shishipaiming']<$vo['post_chushipaiming']){
-												echo '&nbsp;<i style="color:#18BC9C" class="fa fa-long-arrow-up"></i>';
+													echo $vo['shishipaiming'].'&nbsp;<i style="color:#18BC9C" class="fa fa-long-arrow-up"></i>';
+												}else{
+													echo $vo['post_chushipaiming'];
 												}
 											</php>
-
 										</td>
 										<!--<td>{$vo.post_dianjicishu}</td>-->
 										<td>{$vo.post_tianshu}</td>

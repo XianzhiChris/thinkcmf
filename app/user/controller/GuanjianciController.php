@@ -200,8 +200,32 @@ class GuanjianciController extends UserBaseController
         for($i=0;$i<$count;$i++){
             $d=[];
             $d['post_type']=$data['post_type'][$i];
-            $d['post_biaoti']=$data['post_biaoti'][$i];
+            $pt=$data['post_biaoti'][$i];
             $d['post_title']=$data['post_title'][$i];
+            //2018.5.18 对标题符号进行过滤
+            if(substr($pt,0,3) == '...'){//过滤开头...
+                $pt=substr($pt,3);
+            }
+            if(substr($pt,-3,3) == '...'){//过滤结尾...
+                $pt=substr_replace($pt,'',-3);
+            }
+            if(substr($pt,-1,1) == ']'){//过滤结尾]
+                $pt=substr_replace($pt,'',-1);
+            }
+            if(substr($pt,-1,1) == '!'){//过滤结尾!
+                $pt=substr_replace($pt,'',-1);
+            }
+            if(substr($pt,-1,1) == '_'){//过滤结尾_
+                $pt=substr_replace($pt,'',-1);
+            }
+            if(substr($pt,-1,1) == ')'){//过滤结尾)
+                $pt=substr_replace($pt,'',-1);
+            }
+            if(substr($pt,-1,1) == '#'){//过滤结尾#
+                $pt=substr_replace($pt,'',-1);
+            }
+            $d['post_biaoti']=$pt;
+            //
             $d['post_url']=$data['post_url'][$i];
             $d['post_chushipaiming']=$d['shishipaiming']=$data['post_chushipaiming'][$i];
             $d['post_dianjicishu']=$data['post_dianjicishu'][$i];
