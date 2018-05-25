@@ -27,18 +27,17 @@ class GuanjianciController extends UserBaseController
     public function index()
     {
         $user = cmf_get_current_user();
+        $userId               = cmf_get_current_user_id();
         $userQuery=Db::name('user');
         $editData = new UserModel();
         $data = $editData->guanjianci();
         //查询任务执行情况
         $list=[];
         $taskQuery=Db::name('taskdjdata');
-        foreach($data['lists'] as $v){
-            $task_ok=$taskQuery->where(['renwu_id'=>$v['id'],'return_ip'=>['neq','']])->cache(600)->count();
-            $v['task_ok_num']=$task_ok;
-            $list[]=$v;
-
-            //todo:判断是否结束，然后进行费用结算
+        //获取所有任务
+        $data_lists=Db::name("guanjianci_post")->where(['user_id'=>$userId,'jiesuan'=>0])->select();
+        foreach($data_lists as $v){
+            $task_ok = $taskQuery->where(['renwu_id' => $v['id'], 'return_ip' => ['neq', '']])->cache(600)->count();
             $zsl=$v['post_dianjicishu'] * $v['post_tianshu'];
             if($task_ok==$zsl && $v['jiesuan']==0){ //如果结束 并且未结算
 //                $this->jiesuan($v['id']);
@@ -107,7 +106,11 @@ class GuanjianciController extends UserBaseController
             }
         }
 
-
+        foreach($data['lists'] as $v) {
+            $task_ok = $taskQuery->where(['renwu_id' => $v['id'], 'return_ip' => ['neq', '']])->cache(600)->count();
+            $v['task_ok_num'] = $task_ok;
+            $list[] = $v;
+        }
         $coin=$userQuery->field('score')->where(array('id'=>$user['id']))->cache(true)->find();
         $this->assign('myscore',$coin['score']);
         $this->assign($user);
