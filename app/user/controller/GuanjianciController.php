@@ -40,15 +40,14 @@ class GuanjianciController extends UserBaseController
 
             //todo:判断是否结束，然后进行费用结算
             $zsl=$v['post_dianjicishu'] * $v['post_tianshu'];
-            if($task_ok==$zsl){ //如果结束
+            if($task_ok==$zsl && $v['jiesuan']==0){ //如果结束 并且未结算
 //                $this->jiesuan($v['id']);
                 $chushi=intval($v['post_chushipaiming']);//初始排名
-                $shishi=intval($v['shishipaiming']);//当前排名
+                $dangqian=intval($v['shishipaiming']);//当前排名
+                $shishi=$dangqian<$chushi?$dangqian:$chushi;
                 $feiyong=$v['feiyong'];//当前费用
                 $jiesuan=0;
-                if($shishi>=$chushi){//排名没有变化或下降
-                    $jiesuan=$feiyong;//费用全额退回
-                }
+
                 if($shishi>=90){//第10页及以后
                     $jiesuan=$feiyong;//费用全额退回
                 }
@@ -76,20 +75,34 @@ class GuanjianciController extends UserBaseController
                 if($shishi>=10){//第2页
                     $jiesuan=$feiyong*0.1;//费用90%，退回10%
                 }
+                if($shishi>=$chushi){//排名没有变化或下降
+                    $jiesuan=$feiyong;//费用全额退回
+                }
                 //费用退回操作
                 if($jiesuan>0){
-                    //米币增加
-                    $where['id']=$user['id'];
-                    $userQuery->where($where)->setInc('score', $jiesuan);
-                    //增加消费明细记录
-                    $userMoneyQuery            = Db::name("user_money_log");
-                    $data2=[];
-                    $data2['user_id']=$user['id'];
-                    $data2['create_time']=time();
-                    $data2['type']=1;
-                    $data2['post_title']='关键词【'.$v['post_title'].'】点击任务费用结算';
-                    $data2['score']=$jiesuan;
-                    $userMoneyQuery->insert($data2);
+                    // 启动事务
+                    Db::startTrans();
+                    try{
+                        //米币增加
+                        $where['id']=$user['id'];
+                        $userQuery->where($where)->setInc('score', $jiesuan);
+                        //增加消费明细记录
+                        $userMoneyQuery            = Db::name("user_money_log");
+                        $data2=[];
+                        $data2['user_id']=$user['id'];
+                        $data2['create_time']=time();
+                        $data2['type']=1;
+                        $data2['post_title']='关键词【'.$v['post_title'].'】点击任务费用结算';
+                        $data2['score']=$jiesuan;
+                        $userMoneyQuery->insert($data2);
+                        //更新结算状态为已结算
+                        Db::name("guanjianci_post")->where('id',$v['id'])->update(['jiesuan'=>1]);
+                        // 提交事务
+                        Db::commit();
+                    } catch (\Exception $e) {
+                        // 回滚事务
+                        Db::rollback();
+                    }
                 }
             }
         }
